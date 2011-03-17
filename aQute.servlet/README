@@ -1,0 +1,3 @@
+This project shows how to use servlets with OSGi.
+
+Basic - A very simple servlet that shows how to register a servlet and how to map static resources.

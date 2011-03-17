@@ -1,0 +1,39 @@
+# General Options
+project.dependson       = ${p-dependson;:}
+project.bootclasspath   = ${p-bootclasspath;:}
+project.buildpath       = ${p-buildpath;:}
+project.sourcepath      = ${p-sourcepath;:}
+project.allsourcepath   = ${p-allsourcepath;:}
+project.output          = ${p-output}
+project.testpath        = ${p-testpath;:}
+
+-verbose:     true
+project:      ${basedir}
+src:          src
+bin:          bin
+target-dir:   generated
+target:       ${project}/${target-dir}
+build:        ${workspace}/cnf
+repo:         ${build}/repo
+p:            ${basename;${project}}
+project.name: ${p}
+
+# Java Compiler Options
+java:         java
+javac:        javac
+javac.source: 1.5
+javac.target: 1.5
+javac.debug:  on
+
+# Bnd Options
+-sources:       true
+-sourcepath:    ${project}/src 
+-plugin:        aQute.lib.deployer.FileRepo;location=${repo}
+-versionpolicy: "[${version;==;${@}},${version;+;${@}})"
+
+
+Bundle-Copyright = (c) 2011 All Rights Reserved by aQute SARL, Licensed under Apache ASL 2.0
+Bundle-Vendor: 					aQute SARL http://www.aQute.biz
+Bundle-License: 				http://www.opensource.org/licenses/apache2.0.php; \
+									description="${Bundle-Copyright}"; \
+									link=LICENSE

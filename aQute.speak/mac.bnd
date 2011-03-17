@@ -1,0 +1,3 @@
+Private-Package: aQute.speak.mac
+Export-Package: aQute.service.speak
+Service-Component: *

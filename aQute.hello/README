@@ -1,0 +1,4 @@
+This is the ground-zero bundle for OSGi. It shows a simple 
+hello/goodbye world example using DS.
+
+The component is an immediate component because it has no references.

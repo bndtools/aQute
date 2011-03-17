@@ -1,0 +1,9 @@
+Speak
+This project implements a speak service. It defines an API in the aQute.service.speak
+package and implements it in the aQute.toolchest.speak.mac package. A Felix command
+is implemented in the aQute.toolchest.felix.talker. There is also a Gossip component 
+that listens to the log and tells you what's happening with your system. As usual, gossip
+can quickly become annoying :-)
+
+If you get want to add additional commands (Eclipse, Gogo, etc.) or additional
+implementations (Windows, Linux), feel free to send me the code.

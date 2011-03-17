@@ -1,0 +1,20 @@
+-runbundles: osgi.cmpn,\
+	org.apache.felix.scr,\
+	org.apache.felix.shell,\
+	org.apache.felix.shell.tui,\
+	org.apache.felix.configadmin,\
+	org.apache.felix.http.jetty,\
+	org.apache.felix.log,\
+	org.apache.felix.metatype,\
+	org.apache.felix.webconsole
+-runfw: org.apache.felix.framework
+-buildpath: osgi.core,\
+	osgi.cmpn,\
+	junit.osgi,\
+	biz.aQute.bnd.annotation;version=1.42.0
+Service-Component: *
+Private-Package: aQute.metatype.components,\
+	aQute.bnd.annotation.metatype,\
+	aQute.metatype.samples
+
+-metatype: *

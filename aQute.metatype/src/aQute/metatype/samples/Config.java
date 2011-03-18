@@ -1,6 +1,6 @@
 package aQute.metatype.samples;
 
-import aQute.bnd.annotation.metatype.Metadata.*;
+import aQute.bnd.annotation.metatype.Meta.*;
 
 @OCD
 public interface Config {

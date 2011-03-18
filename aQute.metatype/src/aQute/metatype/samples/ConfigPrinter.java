@@ -14,8 +14,10 @@ import aQute.bnd.annotation.metatype.*;
  *
  */
 
-@Metadata.OCD
+@Meta.OCD
 interface SampleConfig {
+	String _secret();
+	String $new();
 	String name();
 	enum X { A, B, C; }
 	X x();
@@ -23,7 +25,7 @@ interface SampleConfig {
 	URI uri();
 	URI[] uris();
 	Collection<URI> curis();
-	Collection<Integer> ints(); // does not work with webconsole
+	//Collection<Integer> ints(); // does not work with webconsole
 }
 
 @Component(properties="service.pid=aQute.metatype.samples.SampleConfig")

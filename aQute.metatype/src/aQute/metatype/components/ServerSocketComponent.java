@@ -19,14 +19,14 @@ public class ServerSocketComponent extends Thread {
 		String message();
 		int port();
 		
-		@Metadata.AD(deflt="bandwidth")
+		@Meta.AD(deflt="bandwidth")
 		Performance performance();
 		
-		@Metadata.AD(deflt="0")
+		@Meta.AD(deflt="0")
 		int soTimeout();
 		
 		
-		@Metadata.AD(deflt="8192")
+		@Meta.AD(deflt="8192")
 		int receiveBufferSize();
 	}
 

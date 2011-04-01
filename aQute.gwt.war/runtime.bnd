@@ -1,0 +1,2 @@
+Private-Package: aQute.gwt.dispatch
+Include-Resource: @jar/de.kalpatec.pojosr.framework-0.1.0-SNAPSHOT.jar

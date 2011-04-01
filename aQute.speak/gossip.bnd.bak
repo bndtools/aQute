@@ -1,0 +1,3 @@
+Private-Package: aQute.speak.gossip,\
+	aQute.bnd.annotation.metatype
+Service-Component: *

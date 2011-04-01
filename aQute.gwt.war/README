@@ -10,7 +10,12 @@ This example includes two bundles:
   runtime - Provides Karl's code and a Dispatcher servlet
   demo    - An implementation of the GreetingService based on DS
 
-The dependencies are stored in the WEB-INF/lib directory
+The bundles must be stored in the WEB-INF/lib directory
+
+Requirements:
+
+- Use latest version of bndtools from the Eclipse market place
+- Use latest version of the Eclipse GWT Plugin from the Eclipse market place
 
 The way of working is a bit cumbersome because you must copy your "bundles" to 
 the war/WEB-INF/lib directory before you run the application. Every time ...

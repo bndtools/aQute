@@ -45,6 +45,4 @@ public class BlobStoreComponent implements Store {
 		client.putObject(config.domain(), name, input, null);
 	}
 	
-	
-	
 }

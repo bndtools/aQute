@@ -1,0 +1,4 @@
+Service-Component: *
+Private-Package: aQute.hello.impl,\
+	aQute.bnd.annotation.metatype
+Export-Package: aQute.service.hello

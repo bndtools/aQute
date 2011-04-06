@@ -1,0 +1,44 @@
+This is an example of a trivial flow system and a command to create the pipeline.
+
+There are Sink and Source objects that can be connected through Pipe (who is both
+a Source and a Sink). A Producer can produce object and will push them into
+a Sink. Interfaces are defined in the aQute.service.flow package.
+
+As an example, this code contains the following implementations:
+
+ * SysInProducer - Reads System.in and pushes it to the sink
+ * Duplicate - duplicates the source to the sync. It is possible to 
+   give a parameter for the number of duplications.
+ * Upper - makes the input stream upper case
+ * SysOutSink - prints the input on the System.out
+ 
+ The element classes are implemented as factory components where the factory id
+ describes their type as well as their function name, like:
+ 
+ 	factory="aQute.service.Pipe/upper"
+ 	
+The factory model means that the DS runtime actually declares a Component Factory
+and registers this instead of the real service. This Component Factory can be
+used to create a Component Instance, which is associated with a new instance of the
+component class. The Component Instance must be disposed once the instance is no
+longer used.  
+ 
+ 
+ The Flow class implements a simple Felix command. The syntax is 
+ 
+ 	cmd       ::= 'flow' producer ( pipe )* sink
+ 	producer  ::= element
+ 	pipe      ::= element
+ 	sink      ::= element
+ 	element   ::= NAME ( "(" parm ( "," parm ) * ")" )?  # no spaces between tokens!
+    parm      ::= [^,\\s]+
+
+So some examples:
+
+	-> flow sys.in upper duplicate(4) sys.out
+	-> flow sys.in sys.out
+	
+The sys.in is a producer that will quit if you type "quit"
+
+Possible extensions
+Components can also be driven by configuration. 

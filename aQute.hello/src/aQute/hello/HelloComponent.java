@@ -10,8 +10,6 @@ public class HelloComponent {
 		System.out.println("Hello World");
 	}
 	
-	
-	
 	@Deactivate
 	void deactivate() {
 		System.out.println("Goodbye World");

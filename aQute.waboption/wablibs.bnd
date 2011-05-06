@@ -1,4 +1,15 @@
+# Show the use of the wab options.
+#
+# The following instruction will copy the contents of resources folder 
+# into the root of the JAR after the root has been renamed to 
+# WEB-INF/classes
 -wab: resources
+
+# Get a file from the repo (the result of the flow project) and put
+# it in the WEB-INF/lib directory as well as putting it on the
+# Bundle-ClassPath
 -wablib: ${repo;aQute.flow}
+
+
 Web-ContextPath: /waboption/libs
 Private-Package: biz.aQute.waboption

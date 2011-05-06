@@ -1,0 +1,13 @@
+This project shows how the bnd -wab and -wablib options are working:
+
+-wab        - Moves the completely build JAR's root to the WEB-INF/classes 
+              directory (except for directories that start with an upper 
+              case character, like META-INF or OSGI-INF). As a parameter
+              you can specify resources in the same format as Include-Resource
+-wablib     - Specify a list of files that are placed in the WEB-INF/lib directory
+              and put on the Bundle-ClassPath
+              
+The nolibs project shows how the most basic -wab works. The wablibs also uses 
+the -wablib option.
+
+              

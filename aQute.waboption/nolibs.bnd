@@ -1,0 +1,3 @@
+-wab: resources
+Web-ContextPath: /waboption/nolibs
+Private-Package: biz.aQute.waboption

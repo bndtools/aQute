@@ -1,0 +1,4 @@
+-wab: resources
+-wablib: ${repo;aQute.flow}
+Web-ContextPath: /waboption/libs
+Private-Package: biz.aQute.waboption

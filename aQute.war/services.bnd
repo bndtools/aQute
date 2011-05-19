@@ -1,0 +1,11 @@
+Private-Package: aQute.war.services
+Include-Resource: @jar/de.kalpatec.pojosr.framework-0.1.0-SNAPSHOT.jar, \
+	@jar/org.apache.felix.http.proxy-2.2.0.jar, \
+	@jar/kxml2-2.3.0.jar, \
+	@jar/org.apache.felix.http.bridge-2.2.0.jar
+
+# We have unrolled the bridge code which is normally a bundle. So 
+# this bundle (the startup code) is also acting now as the
+# bridge bundle
+Bundle-Activator: org.apache.felix.http.bridge.internal.BridgeActivator
+Bundle-Version: 2.2.0

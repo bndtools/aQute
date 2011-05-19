@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  
+    <listener>
+        <listener-class>aQute.war.services.ServicesStartupListener</listener-class>
+    </listener>
+
+
+<!-- The following creates a proxy which will register a normal Http Service in the registry -->
+<!--
+    <servlet>
+        <servlet-name>proxy</servlet-name>
+        <servlet-class>org.apache.felix.http.proxy.ProxyServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>proxy</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+-->
+
+	<!-- The following uses standard WAR servlet model to activate only the dispatcher -->
+	
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>aQute.gwt.dispatcher.GWTDispatchServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        
+        <!-- All dispatch requests must end with .dispatch as extension -->
+        <url-pattern>*.dispatch</url-pattern>
+    </servlet-mapping>
+
+</web-app>

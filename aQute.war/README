@@ -1,0 +1,46 @@
+This project creates a JAR for use in WARs where you want to use the services
+but due to class loading problems cannot handle a full framework.
+
+Karl Pauls has created PojoSR. This is an OSGi framework that does everything
+but class loading. In this model you can use services but any JARs that do
+class loading hacks will continue to function. Obviously this is at the cost
+of the isolation that OSGi provides, i.e. no side by side versions, and no
+dynamic installs. However, the full service model works, including DS.
+
+This bundle takes PojoSR and wraps it in a JAR together with the code necessary to run
+the Servlet Bridge. To activate the code you only need to provide the following
+in the web.xml of the WAR:
+
+	    <listener>
+	        <listener-class>aQute.war.services.ServicesStartupListener</listener-class>
+	    </listener>
+
+If only a listener is registered then only the the PojoSR is initialized and the
+Bundle Context is set in the Servlet Context attribute with the name:
+
+	org.osgi.framework.BundleContext
+	
+If you register the Proxy servlet then you automatically get a registered Http Service.
+The proxy uses the bundle context in the servlet context to find its bridge. This is
+all done in the Apache Felix Http Bridge and Proxy bundles. These bundles are 
+unrolled in our JAR. 
+
+The proxy registration can look like: 
+
+    <servlet>
+        <servlet-name>proxy</servlet-name>
+        <servlet-class>org.apache.felix.http.proxy.ProxyServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>proxy</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+This last step is optional, you can either use an Http Service or you can directly
+start your servlet form your web.xml, the choice is yours.
+
+The bundle created by this project is used in an advanced example using
+GWT in 3 different modes, see aQute.gwt
+

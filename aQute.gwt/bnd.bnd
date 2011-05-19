@@ -1,0 +1,16 @@
+-buildpath: biz.aQute.bnd.annotation,\
+	osgi.cmpn;version=4.2.1,\
+	osgi.core;version=4.2.1
+
+-sub: *.bnd
+-runbundles: org.apache.felix.configadmin,\
+	org.apache.felix.log,\
+	org.apache.felix.scr,\
+	org.apache.felix.shell,\
+	org.apache.felix.shell.tui,\
+	org.apache.felix.webconsole,\
+	org.apache.felix.metatype,\
+	org.apache.felix.http.jetty
+-runfw: org.apache.felix.framework
+
+bin=war/WEB-INF/classes

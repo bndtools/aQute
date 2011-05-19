@@ -1,3 +1,7 @@
 aQute.gwt/.gwt/
 *.bak
 aQute.gwt/war/WEB-INF/classes
+aQute.gwt/war/WEB-INF/deploy/
+aQute.gwt/war/bundle*/
+aQute.gwt/war/aQute.gwt.greeter.greeter/
+

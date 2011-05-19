@@ -1,0 +1,8 @@
+Private-Package: aQute.gwt.greeter.server,\
+	aQute.gwt.greeter.shared
+Service-Component: *
+
+Include-Resource: STATIC/aQute.gwt.greeter.greeter=war/aQute.gwt.greeter.greeter, \
+	STATIC/index.html=war/index.html, \
+	STATIC/basic.css=war/basic.css
+

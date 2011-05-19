@@ -1,0 +1,17 @@
+-buildpath: biz.aQute.bnd.annotation,\
+	osgi.cmpn;version=4.2.1,\
+	jar/de.kalpatec.pojosr.framework-0.1.0-SNAPSHOT.jar;version=file,\
+	jar/org.apache.felix.http.proxy-2.2.0.jar;version=file,\
+	com.springsource.javax.servlet
+	
+	
+
+-runbundles: org.apache.felix.configadmin,\
+	org.apache.felix.log,\
+	org.apache.felix.scr,\
+	org.apache.felix.shell,\
+	org.apache.felix.shell.tui,\
+	org.apache.felix.webconsole,\
+	org.apache.felix.metatype,\
+	org.apache.felix.http.jetty
+-sub: *.bnd

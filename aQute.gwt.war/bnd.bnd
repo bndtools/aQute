@@ -1,6 +1,0 @@
--buildpath: \
-	biz.aQute.bnd.annotation, \
-	jar/de.kalpatec.pojosr.framework-0.1.0-SNAPSHOT.jar; version=file
-	
-
--sub: *.bnd

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package aQute.gwt.dispatcher.gwtimpl;
+package com.google.gwt.user.server.rpc.impl;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -23,7 +23,6 @@ import com.google.gwt.user.client.rpc.*;
 import com.google.gwt.user.client.rpc.impl.*;
 import com.google.gwt.user.server.*;
 import com.google.gwt.user.server.rpc.*;
-import com.google.gwt.user.server.rpc.impl.*;
 
 /**
  * For internal use only. Used for server call serialization. This class is

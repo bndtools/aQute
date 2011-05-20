@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package aQute.gwt.dispatcher.gwtimpl;
+package com.google.gwt.user.server.rpc.impl;
 
 import java.io.*;
 import java.lang.reflect.*;

@@ -1,3 +1,0 @@
-Include-Resource: @war/WEB-INF/lib/gwt-servlet.jar
--exportcontents: *
-Import-Package: *;resolution:=optional

@@ -12,8 +12,6 @@ import org.osgi.framework.*;
 import org.osgi.service.http.*;
 
 import aQute.bnd.annotation.component.*;
-import aQute.gwt.dispatcher.gwtimpl.SerializabilityUtil;
-import aQute.gwt.dispatcher.gwtimpl.ServerSerializationStreamReader;
 
 import com.google.gwt.user.client.rpc.*;
 import com.google.gwt.user.client.rpc.impl.*;

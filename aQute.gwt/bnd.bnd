@@ -1,6 +1,7 @@
 -buildpath: biz.aQute.bnd.annotation,\
 	osgi.cmpn;version=4.2.1,\
-	osgi.core;version=4.2.1
+	osgi.core;version=4.2.1, \
+	jar/gwt-servlet.jar;version=file
 
 -sub: *.bnd
 -runbundles: org.apache.felix.configadmin,\
@@ -14,3 +15,5 @@
 -runfw: org.apache.felix.framework
 
 bin=war/WEB-INF/classes
+
+-source: true

@@ -118,6 +118,9 @@ public class GreetingClient implements EntryPoint {
 				sendButton.setEnabled(false);
 				textToServerLabel.setText(textToServer);
 				serverResponseLabel.setText("");
+				
+				greetingService.testTypes(1, new int[] {1,2}, new Custom(), null);
+				
 				greetingService.greetServer(textToServer,
 						new AsyncCallback<String>() {
 							public void onFailure(Throwable caught) {

@@ -18,4 +18,9 @@ public class Greeter implements GreetingService {
 	public String greetServer(String name) throws IllegalArgumentException {
 		return "Parlez vous Français " + name + "?<br/>You're running on: <b>" + framework + "</b>";
 	}
+
+	@Override
+	public void testTypes(int n, int nn[], Custom x) {
+		System.out.println("Tested!");
+	}
 }

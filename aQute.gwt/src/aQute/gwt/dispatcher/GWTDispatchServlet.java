@@ -10,12 +10,15 @@ import javax.servlet.http.*;
 
 import org.osgi.framework.*;
 import org.osgi.service.http.*;
-import org.osgi.util.tracker.*;
 
 import aQute.bnd.annotation.component.*;
+import aQute.gwt.dispatcher.gwtimpl.SerializabilityUtil;
+import aQute.gwt.dispatcher.gwtimpl.ServerSerializationStreamReader;
 
 import com.google.gwt.user.client.rpc.*;
+import com.google.gwt.user.client.rpc.impl.*;
 import com.google.gwt.user.server.rpc.*;
+import com.google.gwt.user.server.rpc.impl.*;
 
 /**
  * Implements a dispatching mechanism for for remote procedure requests from GWT
@@ -31,10 +34,31 @@ import com.google.gwt.user.server.rpc.*;
 @Component(provide = {}, immediate = true)
 public class GWTDispatchServlet extends RemoteServiceServlet {
 	private static final long serialVersionUID = 1L;
-
 	BundleContext context;
-	ServiceTracker tracker;
-	HashMap<String, Class<?>> rpcMap;
+
+	class Request {
+		RPCRequest request;
+		Object delegate;
+		ServiceReference reference;
+
+		public String invoke() throws SerializationException {
+			try {
+				return RPC.invokeAndEncodeResponse(delegate,
+						request.getMethod(), request.getParameters(),
+						request.getSerializationPolicy(), request.getFlags());
+			} finally {
+				context.ungetService(reference);
+			}
+		}
+
+		public void setRPCRequest(RPCRequest rq) {
+			this.request = rq;
+		}
+
+		public Object getDelegate() {
+			return delegate;
+		}
+	}
 
 	/**
 	 * Activate this component. We only need the BundleContext of our bundle.
@@ -43,32 +67,10 @@ public class GWTDispatchServlet extends RemoteServiceServlet {
 	 *            our bundle's context
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
+
 	@Activate
 	void activate(BundleContext context) throws Exception {
 		this.context = context;
-		Field fs[] = RPC.class.getDeclaredFields();
-		for (Field f : fs) {
-			if (f.getName().equals("TYPE_NAMES")) {
-				try {
-					f.setAccessible(true);
-					rpcMap = (HashMap<String, Class<?>>) f.get(null);
-					break;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		tracker = new ExportedTracker(context, rpcMap);
-		tracker.open();
-	}
-
-	/**
-	 * The destroy/deactivate method. We just close our tracker.
-	 */
-	@Deactivate
-	public void destroy() {
-		tracker.close();
 	}
 
 	/**
@@ -161,46 +163,35 @@ public class GWTDispatchServlet extends RemoteServiceServlet {
 	@Override
 	public String processCall(String payload) throws SerializationException {
 		try {
-			// Ensure we've the proper content
-			// because the RPC class does not do this, it assumes
-			// it never changes at start up.
-			synchronized (rpcMap) {
-			}
-
-			RPCRequest rpcRequest = RPC.decodeRequest(payload, null, null);
-			onAfterRequestDeserialized(rpcRequest);
-
-			Method method = rpcRequest.getMethod();
-			Class<?> interf = method.getDeclaringClass();
-			ServiceReference ref = context
-					.getServiceReference(interf.getName());
-
-			if (ref != null) {
-				if (isExported(ref, interf.getName())) {
-					Object service = context.getService(ref);
-					if (service != null) {
-						try {
-							return RPC.invokeAndEncodeResponse(service,
-									rpcRequest.getMethod(),
-									rpcRequest.getParameters(),
-									rpcRequest.getSerializationPolicy(),
-									rpcRequest.getFlags());
-						} finally {
-							context.ungetService(ref);
-						}
-					}
-				}
-			}
-			log("Could not find GWT service for "
-					+ method.getDeclaringClass().getName() + "."
-					+ method.getName());
-			return RPC.encodeResponseForFailure(null,
-					new IncompatibleRemoteServiceException());
-		} catch (IncompatibleRemoteServiceException ex) {
+			Request request = decodeRequest(payload);
+			onAfterRequestDeserialized(request.request);
+			return request.invoke();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 			log("An IncompatibleRemoteServiceException was thrown while processing this call.",
 					ex);
 			return RPC.encodeResponseForFailure(null, ex);
 		}
+		
+	}
+
+	/**
+	 * Return the delegate we've assigned to the server of the given interface
+	 * name.
+	 */
+	Request getForDelegate(String name) {
+		Request request = new Request();
+
+		request.reference = context.getServiceReference(name);
+		if (request.reference == null)
+			throw new IllegalStateException("No service available for " + name);
+
+		if (!isExported(request.reference, name))
+			throw new SecurityException("Service for " + name
+					+ " is not intended to be used remotely");
+
+		request.delegate = context.getService(request.reference);
+		return request;
 	}
 
 	/**
@@ -241,7 +232,117 @@ public class GWTDispatchServlet extends RemoteServiceServlet {
 	}
 
 	/**
-	 * Our dependency on Http for the case we use the Http Service with SCR.
+	 * Decode the incoming request
+	 * 
+	 * @param encodedRequest
+	 * @param type
+	 * @param serializationPolicyProvider
+	 * @return
+	 */
+	Request decodeRequest(String encodedRequest) throws Exception {
+		if (encodedRequest.length() == 0)
+			throw new IllegalArgumentException("encodedRequest cannot be empty");
+
+		// The first token is inside the GWT domain. So our class loader needs to be OUR
+		// class loader.
+		ServerSerializationStreamReader streamReader = new ServerSerializationStreamReader(
+				GWTDispatchServlet.class.getClassLoader(), null);
+		streamReader.prepareToRead(encodedRequest);
+
+		RpcToken rpcToken = null;
+		if (streamReader
+				.hasFlags(AbstractSerializationStream.FLAG_RPC_TOKEN_INCLUDED)) {
+			// Read the RPC token
+			rpcToken = (RpcToken) streamReader.deserializeValue(RpcToken.class);
+		}
+
+		// Read the name of the RemoteService interface
+		String serviceIntfName = maybeDeobfuscate(streamReader,
+				streamReader.readString());
+
+
+		// Ask whoever it is to create a request object that
+		// provides access to the delegate. Subclasses
+		// should be able to override it.
+		Request request = getForDelegate(serviceIntfName);
+
+		
+		// We must patch the SerializationStreamReader to use 
+		// the class loader of the delegate
+		ClassLoader loader = request.getDelegate().getClass().getClassLoader();
+		streamReader.setClassLoader(loader);
+		Class<?> serviceIntf = SerializabilityUtil.forName(serviceIntfName,
+				loader);
+
+		
+		String serviceMethodName = streamReader.readString();
+
+		int paramCount = streamReader.readInt();
+		if (paramCount > streamReader.getNumberOfTokens()) {
+			throw new IncompatibleRemoteServiceException(
+					"Invalid number of parameters");
+		}
+		Class<?>[] parameterTypes = new Class[paramCount];
+
+		for (int i = 0; i < parameterTypes.length; i++) {
+			String paramClassName = maybeDeobfuscate(streamReader,
+					streamReader.readString());
+
+			parameterTypes[i] = SerializabilityUtil.forName(paramClassName,
+					loader);
+		}
+
+		Method method = serviceIntf
+				.getMethod(serviceMethodName, parameterTypes);
+
+		Object[] parameterValues = new Object[parameterTypes.length];
+		for (int i = 0; i < parameterValues.length; i++) {
+			parameterValues[i] = streamReader
+					.deserializeValue(parameterTypes[i]);
+		}
+
+		SerializationPolicy serializationPolicy = streamReader
+		.getSerializationPolicy();
+		request.setRPCRequest(new RPCRequest(method, parameterValues, rpcToken,
+				serializationPolicy, streamReader.getFlags()));
+
+		return request;
+
+	}
+
+
+	/**
+	 * Given a type identifier in the stream, attempt to deobfuscate it. Retuns
+	 * the original identifier if deobfuscation is unnecessary or no mapping is
+	 * known.
+	 */
+	String maybeDeobfuscate(ServerSerializationStreamReader streamReader,
+			String name) throws SerializationException {
+		int index;
+		if (streamReader
+				.hasFlags(AbstractSerializationStream.FLAG_ELIDE_TYPE_NAMES)) {
+			SerializationPolicy serializationPolicy = streamReader
+					.getSerializationPolicy();
+			if (!(serializationPolicy instanceof TypeNameObfuscator)) {
+				throw new IncompatibleRemoteServiceException(
+						"RPC request was encoded with obfuscated type names, "
+								+ "but the SerializationPolicy in use does not implement "
+								+ TypeNameObfuscator.class.getName());
+			}
+
+			String maybe = ((TypeNameObfuscator) serializationPolicy)
+					.getClassNameForTypeId(name);
+			if (maybe != null) {
+				return maybe;
+			}
+		} else if ((index = name.indexOf('/')) != -1) {
+			return name.substring(0, index);
+		}
+		return name;
+	}
+
+	/**
+	 * Our dependency on Http for the case we use the Http Service with DS.
 	 * 
 	 * @param http
 	 * @throws ServletException

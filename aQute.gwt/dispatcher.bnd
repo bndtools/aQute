@@ -1,3 +1,4 @@
 
-Private-Package: aQute.gwt.dispatcher
+Private-Package: aQute.gwt.dispatcher,\
+	aQute.gwt.dispatcher.gwtimpl
 Service-Component: *

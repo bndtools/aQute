@@ -7,3 +7,4 @@ runtimefw/
 WEB-INF/deploy/
 WEB-INF/classes/
 aQute.gwt/.gwt/.gwt-log
+aQute.flow/bnd.bnd.bak

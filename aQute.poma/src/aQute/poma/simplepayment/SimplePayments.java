@@ -22,8 +22,7 @@ public class SimplePayments implements PaymentManager {
 		amount.subtract(discount);
 		option.transfer( bill.getCustomer(), amount);
 		
-		// Optimistic as we are ...
-		bill.setPaid(true);
+		bill.setPaid(Bill.Payment.TRANSFER);
 	}
 	
 	

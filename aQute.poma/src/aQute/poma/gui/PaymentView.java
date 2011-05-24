@@ -64,10 +64,14 @@ public class PaymentView extends CustomComponent {
 		paymentGatewayPanelLayout.setSizeFull();
 		
 		billTable.setImmediate(true);
-		billTable.setEditable(true);
-		payButton.setImmediate(true);
-		payButton.setEnabled(false);
+		billTable.setEditable(false);
 		
+		payButton.setImmediate(true);
+		
+		
+		
+		checkPayEnabled();
+
 		billTable.addListener(new Property.ValueChangeListener() {
 			private static final long serialVersionUID = 1L;
 
@@ -98,14 +102,28 @@ public class PaymentView extends CustomComponent {
 		paymentGatewaySelect.setImmediate(true);
 	}
 
-	private void checkPayEnabled() {
-		payButton.setEnabled(billTable.getValue() != null && paymentGatewaySelect.getValue() != null);				
+	void checkPayEnabled() {
+		String msg= null;
+		Bill bill = (Bill) billTable.getValue();
+		if ( bill == null)
+			msg = "No bill selected";
+		else if ( paymentGatewaySelect.getValue() == null) 
+			msg = "No payment method set";
+		else if ( model.paymentManager.get()==null)
+			msg = "No Payment Manager found";
+		else if ( bill.getPaid()!=Bill.Payment.UNPAID)
+			msg = "Bill already " + bill.getPaid();
+		
+		payButton.setEnabled(msg == null);
+		payButton.setDescription(msg);
 	}
 	
 	public void setBills(Collection<? extends Bill> bills2) {
 		BeanItemContainer<Bill> bills = new BeanItemContainer<Bill>(Bill.class);
 		bills.addAll(bills2);
 		this.billTable.setContainerDataSource(bills);
+		billTable.setVisibleColumns( new String[] {"id", "amount", "paid"});
+		billTable.setColumnWidth("id", 50);
 	}
 
 

@@ -16,3 +16,5 @@
 	biz.aQute.bnd.annotation,\
 	junit.osgi
 -sub: *.bnd
+
+

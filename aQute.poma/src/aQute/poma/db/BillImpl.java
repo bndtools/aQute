@@ -6,7 +6,7 @@ import aQute.poma.domain.*;
 
 public class BillImpl implements Bill {
 	BigDecimal amount;
-	boolean paid;
+	Payment paid = Payment.UNPAID;
 	final String id;
 	final Customer customer;
 
@@ -31,8 +31,13 @@ public class BillImpl implements Bill {
 		return customer;
 	}
 
-	public void setPaid(boolean p) {
+	public void setPaid(Payment p) {
 		this.paid = p;
+	}
+
+	@Override
+	public Payment getPaid() {
+		return paid;
 	}
 
 }

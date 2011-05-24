@@ -1,5 +1,7 @@
 package aQute.poma.gui;
 
+import java.util.concurrent.atomic.*;
+
 import aQute.bnd.annotation.component.*;
 import aQute.poma.domain.*;
 import aQute.poma.service.db.*;
@@ -30,11 +32,11 @@ public class POMApp extends Application {
 	private static final long serialVersionUID = 1;
 	Customer customer;
 	PaymentView paymentView = new PaymentView(this);
-	PaymentManager paymentManager;
+	AtomicReference<PaymentManager> paymentManager = new AtomicReference<PaymentManager>();
 
 	/*
-	 * Initialize the main window and add the payment view to it.
-	 * (non-Javadoc)
+	 * Initialize the main window and add the payment view to it. (non-Javadoc)
+	 * 
 	 * @see com.vaadin.Application#init()
 	 */
 	@Override
@@ -46,21 +48,22 @@ public class POMApp extends Application {
 
 	}
 
-
 	/**
 	 * Called from the GUI when the needs to be paid.
 	 * 
-	 * @param bill The bill to be paid
-	 * @param payment The payment method
+	 * @param bill
+	 *            The bill to be paid
+	 * @param payment
+	 *            The payment method
 	 */
 	public void pay(Bill bill, Payment payment) {
-		paymentManager.pay(bill, payment);
+		paymentManager.get().pay(bill, payment);
+		paymentView.setBills( customer.getBills());
 	}
-
+	
 	/**
-	 * Our database that gives us our domain objects. We
-	 * use it to get a dummy customers and set the payment
-	 * view to its bills.
+	 * Our database that gives us our domain objects. We use it to get a dummy
+	 * customers and set the payment view to its bills.
 	 * 
 	 * @param db
 	 */
@@ -69,17 +72,17 @@ public class POMApp extends Application {
 		this.customer = db.getCustomer("1234");
 		paymentView.setBills(customer.getBills());
 	}
-	
+
 	/**
-	 * A Payment Gateway represents a way of paying. As we
-	 * want to support multiple different ways of
-	 * paying we accept any number of payment gateways. In
-	 * general, a Payment Gateway represents VISA, Amex,
-	 * Wire transfer, Check, etc.
+	 * A Payment Gateway represents a way of paying. As we want to support
+	 * multiple different ways of paying we accept any number of payment
+	 * gateways. In general, a Payment Gateway represents VISA, Amex, Wire
+	 * transfer, Check, etc.
 	 * 
-	 * @param gateway The payment gateway
+	 * @param gateway
+	 *            The payment gateway
 	 */
-	@Reference(type='*')
+	@Reference(type = '*')
 	public void addPaymentGateway(PaymentGateway gateway) {
 		paymentView.addPaymentMethod(gateway);
 	}
@@ -94,12 +97,18 @@ public class POMApp extends Application {
 	}
 
 	/**
-	 * Set the payment manager. This guy knows how to handle the
-	 * different actions associated with a payment.
+	 * Set the payment manager. This guy knows how to handle the different
+	 * actions associated with a payment.
+	 * 
 	 * @param manager
 	 */
-	@Reference
+	@Reference(type = '?')
 	public void setPaymentStrategy(PaymentManager manager) {
-		this.paymentManager = manager;
+		this.paymentManager.set(manager);
+		paymentView.checkPayEnabled();
+	}
+	public void unsetPaymentStrategy(PaymentManager manager) {
+		paymentManager.compareAndSet(manager, null);
+		paymentView.checkPayEnabled();
 	}
 }

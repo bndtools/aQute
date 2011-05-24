@@ -31,11 +31,12 @@ public class WireForm extends CustomComponent {
 		buildMainLayout();
 		setCompositionRoot(mainLayout);
 
+		accountName.setImmediate(true);
 	}
 
 
 	public String getIBAN() {
-		return (String) accountName.getValue();
+		return (String) ibanNumber.getValue();
 	}
 
 

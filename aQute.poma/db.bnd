@@ -1,0 +1,3 @@
+Private-Package: aQute.poma.db
+Export-Package: aQute.poma.service.db
+Service-Component: *

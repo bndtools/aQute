@@ -1,0 +1,25 @@
+
+
+-buildpath: osgi.cmpn;version=4.2.1,\
+	jar/vaadin-6.6.0.jar;version=file,\
+	osgi.core;version=4.2.1,\
+	biz.aQute.bnd.annotation;version=1.43.0,\
+	org.apache.geronimo.specs.geronimo-servlet_2.5_spec
+
+-runfw: org.apache.felix.framework
+
+
+
+-runbundles: \
+	org.apache.geronimo.specs.geronimo-servlet_2.5_spec, \
+	org.apache.felix.log,\
+	org.apache.felix.webconsole,\
+	org.apache.felix.configadmin,\
+	org.apache.felix.http.jetty,\
+	osgi.cmpn;version=4.2.1,\
+	org.apache.felix.scr;version=1.0.4
+
+org.osgi.framework.
+-sources: true
+-sub: *.bnd
+

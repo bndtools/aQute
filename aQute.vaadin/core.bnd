@@ -1,0 +1,21 @@
+version = 				6.6.0
+Export-Package: 		com.vaadin.*;version=${version}
+Include-Resource: 		@jar/vaadin-${version}.jar
+Private-Package: aQute.vaadin.core.*,\
+	aQute.vaadin.core
+Bundle-Description: 	An OSGi'fied version of the Vaadin bundle. Its activator will register the /VAADIN alias on any HTTP \
+ service to map to its internal /VAADIN resources.
+ 
+Bundle-License: 		http://www.opensource.org/licenses/apache2.0.php; \
+							description="${Bundle-Copyright}"
+Bundle-Copyright: 		Based on Vaadin and added activator.
+Bundle-Version: 		${version}
+
+Import-Package: com.google.*;resolution:=optional,\
+	org.osgi.framework;version=[1.3','2),\
+	javax.portlet;resolution:=optional,\
+	javax.xml.namespace;resolution:=optional,\
+	com.vaadin.external.*;resolution:=optional,\
+	com.liferay.portal.kernel.util;resolution:=optional,\
+	*
+Service-Component: aQute.vaadin.core.VaadinOSGiManager

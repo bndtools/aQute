@@ -1,0 +1,29 @@
+This project is a demonstration of using Vaadin with OSGi.
+
+1) The project uses bndtools for development. You can download
+   bndtools from http://njbartlett.github.com/bndtools.html
+2) Checkout this git repository and import as a project into
+   Eclipse with bndtools.
+3) Do Run As ... OSGi Run
+
+You can now open a web browser on http://localhost:8080/hello
+
+The code is commented with explanations. First look at HelloWorld.java.
+This is a component annotated with the bnd annotations. It uses the
+Component Factory model of Declarative Services. The aQute.vaadin.core
+bundle picks up any factory that has a factory id of "com.vaadin.Application/<alias>".
+It will automatically create instances.
+
+Next look at the AddressBook.java. This is the standard Vaadin example
+that is actually easier than the original because no scaffolding is
+used.
+
+The DempApp.java shows how you can use OSGi to extend a tab with
+contributions through services. Also here, the ComponentFactory model
+is used however now with "com.vaadin.Component/<type>". In this
+example type is "contribution".
+
+Have fun!
+
+
+

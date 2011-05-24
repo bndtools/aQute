@@ -34,7 +34,7 @@ public class GreetingClient implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Button sendButton = new Button("Send");
+		final Button sendButton = new Button("Blurb");
 		final TextBox nameField = new TextBox();
 		nameField.setText("Your Name");
 		errorLabel = new Label();
@@ -44,12 +44,14 @@ public class GreetingClient implements EntryPoint {
 
 		// Add the nameField and sendButton to the RootPanel
 		// Use RootPanel.get() to get the entire body element
-		RootPanel.get("nameFieldContainer").add(nameField);
+		RootPanel rootPanel = RootPanel.get("nameFieldContainer");
+		rootPanel.add(nameField);
 		RootPanel.get("sendButtonContainer").add(sendButton);
 		RootPanel.get("errorLabelContainer").add(errorLabel);
 
 		// Focus the cursor on the name field when the app loads
 		nameField.setFocus(true);
+		
 		nameField.selectAll();
 
 		// Create the popup dialog box

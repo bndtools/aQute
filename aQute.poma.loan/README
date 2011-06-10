@@ -1,0 +1,75 @@
+POMA
+
+This project demonstrates the use of µServices in a business setting (not that I know 
+anything about business, but I am sure you will inform me where I am wrong). The project
+requires bndtools to change and run.
+
+POMApp is a trivial GUI that allows the user to select one his bills and pay it online
+via different payment methods. The actual payment is handled through a Payment 
+Manager to allow for different strategies, like auditing. The application has the
+following roles:
+
+  aQute.poma.domain            - Customer, Bill, domain objects
+  aQute.poma.service.audit     - Auditor service
+  aQute.poma.service.db        - Database abstraction for Customers, Bills, etc
+  aQute.poma.service.payments  - Defines a payment gateway (e.g. a credit card processor) 
+                                 and a payment that can transfer money. The idea is that
+                                 details of a payment method (i.e. CCV code and number for
+                                 credit cards, IBAN number for wire transfer) are properly
+                                 modularized in an implementation. In this example, the
+                                 payment gateway provides a GUI component for these
+                                 details and provides a Payment token in return.
+
+The project contains a number of different implementations for the different roles:
+
+  aQute.poma.wire              - A Payment Gateway for wire transfers. It provides a 
+                                 GUI component to edit the IBAN number and name that are 
+                                 specific to a wire transfer. 
+  aQute.poma.visa              - A Payment Gateway for a VISA credit card. Same as the previous.
+  aQute.poma.db                - A customer database with one customer
+  aQute.poma.simplepayment     - A simple payment manager
+  aQute.poma.simlpeauditor     - A simple auditor
+  
+To run this application, you can select the bnd.bnd file and select the context
+menu: Debug As ... -> OSGi Run. This will start an OSGi framework with all the bundles
+including a web server. Surf to http://localhost:8080/poma
+
+When you select a bill and a payment method the Pay button becomes enabled. If you
+pay, the console in Eclipse will show you a message.
+
+You can play enabling and disabling implementations with the Web Console. Surf to:
+
+  http://localhost:8080/system/console/components
+  
+The names of the components make it clear what they do. You can click on the action
+icon (a square to stop, a triangle to run) to disable/enable a component. You can see
+the effects in the GUI by refreshing the application browser window. For example,
+if you disable aQute.poma.wire.Wire you will see (after a refresh) that the "Wire transfer"
+option for payment methods has disappeared.
+ 
+ If you disable aQute.poma.simpleauditor.SimpleAuditor then you will see that most of the
+ components are disabled and so is your GUI. You can hover over the Pay button to see the
+ reason why it is disabled. Just enabling will enable your application (after refresh).
+
+You can of course also stop/start the bundles, see http://localhost:8080/system/console/bundles
+Or use the shell in the console window to control the framework.
+ 
+I am pretty sure I probably make a fool of myself about business logic (BigDecimal seems
+incredibly unpleasant to work with!) but that is not the purpose of this demo. The 
+idea is that you see that µServices reduce the accidental complexity to almost
+nothing, just a few annotations on information you already had to enter for Java
+anyway.
+ 
+Changes
+Feel free to play with the code, make changes, add new providers for Payment Gateways
+or make it in any way more like a real world app. I'd love to see you commits :-)
+
+Notice that in bndtools you normally just change any code and it this is immediately
+loaded in the server. So please do not restart your framework all the time, not necessary.
+It is however necessary to refresh your browser window because Vaadin cannot update the
+browser without the browser requesting an update.
+
+Have fun!
+
+
+     

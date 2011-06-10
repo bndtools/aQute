@@ -1,0 +1,2 @@
+Private-Package: com.extensiblejava.impl.dumbclient
+Service-Component: *

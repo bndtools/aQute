@@ -1,0 +1,2 @@
+Private-Package: com.extensiblejava.impl.facade
+Service-Component: *

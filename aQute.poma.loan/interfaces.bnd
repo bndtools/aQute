@@ -1,0 +1,2 @@
+Export-Package: com.extensiblejava.service.loan,\
+	com.extensiblejava.service.facade

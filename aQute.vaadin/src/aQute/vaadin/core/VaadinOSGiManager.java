@@ -126,6 +126,13 @@ public class VaadinOSGiManager {
 		}
 	}
 
+	@Reference(type = '*', target = "(component.factory=com.vaadin.Application/*)", service = ComponentFactory.class)
+	void setX(ServiceReference ref) {
+		System.out.println(ref + " " + ref.getProperty("component.factory"));
+		ComponentFactory factory = (ComponentFactory) context.getService(ref);
+		
+	}
+
 	/**
 	 * Remove an application. Make sure all https that hold this application
 	 * have it unregistered and close all application servlets.
@@ -272,7 +279,8 @@ public class VaadinOSGiManager {
 
 		public void close() {
 			if (open.getAndSet(false)) {
-				for (Map.Entry<ComponentInstance,Application> instance : instances.entrySet()) {
+				for (Map.Entry<ComponentInstance, Application> instance : instances
+						.entrySet()) {
 					instance.getValue().close();
 					instance.getKey().dispose();
 				}

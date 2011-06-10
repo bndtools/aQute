@@ -157,4 +157,9 @@ public class VisaForm extends CustomComponent {
 		return mainLayout;
 	}
 
+
+	public String getName() {
+		return (String) ccName.getValue();
+	}
+
 }

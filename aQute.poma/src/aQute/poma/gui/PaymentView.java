@@ -3,7 +3,7 @@ package aQute.poma.gui;
 import java.util.*;
 
 import aQute.poma.domain.*;
-import aQute.poma.service.payments.*;
+import aQute.poma.service.gateway.*;
 
 import com.vaadin.annotations.*;
 import com.vaadin.data.*;

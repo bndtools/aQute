@@ -19,7 +19,7 @@ public class HelloWorld extends Application {
 	public void init() {
 		Window window = new Window();
 		setMainWindow(window);
-		window.addComponent(new Label("Hello World!"));
+		window.addComponent(new Label("Hello Worldx!"));
 	}
 
 }

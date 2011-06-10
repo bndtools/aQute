@@ -88,4 +88,9 @@ public class WireForm extends CustomComponent {
 		return mainLayout;
 	}
 
+
+	public String getName() {
+		return (String) accountName.getValue();
+	}
+
 }

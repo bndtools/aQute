@@ -1,3 +1,4 @@
 Export-Package: aQute.poma.domain,\
 	aQute.poma.service.audit,\
-	aQute.poma.service.payments
+	aQute.poma.service.payments,\
+	aQute.poma.service.gateway

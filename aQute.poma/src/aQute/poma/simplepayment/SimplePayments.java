@@ -5,6 +5,7 @@ import java.math.*;
 import aQute.bnd.annotation.component.*;
 import aQute.poma.domain.*;
 import aQute.poma.service.audit.*;
+import aQute.poma.service.gateway.*;
 import aQute.poma.service.payments.*;
 
 /**
@@ -20,7 +21,7 @@ public class SimplePayments implements PaymentManager {
 		BigDecimal discount = auditor.audit(bill);
 		BigDecimal amount = bill.getAmount();
 		amount.subtract(discount);
-		option.transfer( bill.getCustomer(), amount);
+		option.transfer( amount);
 		
 		bill.setPaid(Bill.Payment.TRANSFER);
 	}

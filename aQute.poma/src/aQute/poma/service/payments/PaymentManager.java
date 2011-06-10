@@ -1,6 +1,7 @@
 package aQute.poma.service.payments;
 
 import aQute.poma.domain.*;
+import aQute.poma.service.gateway.*;
 
 /**
  * An actor that can handle the payments.

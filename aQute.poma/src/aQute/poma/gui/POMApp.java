@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.*;
 import aQute.bnd.annotation.component.*;
 import aQute.poma.domain.*;
 import aQute.poma.service.db.*;
+import aQute.poma.service.gateway.*;
 import aQute.poma.service.payments.*;
 
 import com.vaadin.*;

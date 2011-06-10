@@ -4,7 +4,7 @@ import java.math.*;
 
 import aQute.bnd.annotation.component.*;
 import aQute.poma.domain.*;
-import aQute.poma.service.payments.*;
+import aQute.poma.service.gateway.*;
 
 /**
  * Implements a payment gateway for VISA credit cards.
@@ -28,8 +28,8 @@ public class Visa implements PaymentGateway {
 		return new Payment() {
 
 			@Override
-			public void transfer(Customer customer, BigDecimal amount) {
-				System.out.println("Charging VISA card " + vf.getCCNumber() + " for "+ amount + " from " + customer.getName());
+			public void transfer(BigDecimal amount) {
+				System.out.println("Charging VISA card " + vf.getCCNumber() + " for "+ amount + " from " + vf.getName());
 			}
 			
 		};

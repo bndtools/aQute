@@ -3,8 +3,7 @@ package aQute.poma.wire;
 import java.math.*;
 
 import aQute.bnd.annotation.component.*;
-import aQute.poma.domain.*;
-import aQute.poma.service.payments.*;
+import aQute.poma.service.gateway.*;
 
 /**
  * Implements a silly Wire transfer gateway. THis is just and example to show
@@ -30,8 +29,8 @@ public class Wire implements PaymentGateway {
 		return new Payment() {
 
 			@Override
-			public void transfer(Customer customer, BigDecimal amount) {
-				System.out.println("Wire transfer from IBAN " + pf.getIBAN() + " amount " + amount + " for customer " + customer.getName());
+			public void transfer(BigDecimal amount) {
+				System.out.println("Wire transfer from IBAN " + pf.getIBAN() + " amount " + amount + " for customer " + pf.getName());
 			}
 			
 		};

@@ -1,0 +1,24 @@
+This project demonstrates how you can do continuous testing. 
+
+Testing is described at http://www.aqute.biz/Bnd/Testing
+
+In this project, we have a com.example.tests package that contains a single tests. This 
+code is packaged in the aQute.testing.jar bundle. The manifest contains the Test-Cases
+header that is calculated by a macro based on the content of the JAR. In short, all test
+cases in the JAR are listed. 
+
+In the -runbundles we add biz.aQute.junit. This bundle waits for active bundles and runs
+their test cases, reporting their results in the testdir directory. These testreports are
+useful in Hudson/Jenkins.
+
+To test the tester, select bnd.bnd and then call up the context menu, select 
+
+	Run As -> OSGi Run 
+	
+You should NOT select "OSGi Junit Test" as this will do a one shot test. In the run mode,
+the framework will activate the biz.aQute.junit bundle. As we set continuous to true,
+the tester will keep on running, waiting for bundles that become active, and then
+running their test cases. 
+
+Now very time you make a change in the test code, the tests are run again.
+

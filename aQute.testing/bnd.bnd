@@ -1,0 +1,22 @@
+
+# This header controls the running of the tests. The macro looks inside the generated JAR
+# and lists all the classes that are concrete and extend the junit.framework.TestCase class.
+Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}
+
+# The framework
+-runfw: org.apache.felix.framework
+
+# Our compile path
+-buildpath: osgi.core;version=[4.1','5),\
+	junit.osgi
+	
+# Where our test code resides
+Private-Package: org.example.tests
+
+# The magic bundle, will do the real testing.
+-runbundles: biz.aQute.junit
+
+# The properties to control the tester 
+-runproperties: tester.trace=true,\
+	tester.continuous=true,\
+	tester.dir=testdir

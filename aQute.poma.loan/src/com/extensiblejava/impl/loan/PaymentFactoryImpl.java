@@ -1,9 +1,9 @@
 package com.extensiblejava.impl.loan;
 import java.math.*;
 
-import com.extensiblejava.service.loan.*;
-
 import aQute.bnd.annotation.component.*;
+
+import com.extensiblejava.service.loan.*;
 
 @Component
 public class PaymentFactoryImpl implements PaymentFactory {

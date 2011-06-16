@@ -2,9 +2,9 @@ package com.extensiblejava.impl.calculator;
 
 import java.math.*;
 
-import com.extensiblejava.service.loan.*;
-
 import aQute.bnd.annotation.component.*;
+
+import com.extensiblejava.service.loan.*;
 
 @Component
 public class MinimumPaymentScheduleCalculator implements LoanCalculator {

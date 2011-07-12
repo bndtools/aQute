@@ -1,0 +1,2 @@
+Private-Package: com.poma.basic.consumer
+Service-Component: *

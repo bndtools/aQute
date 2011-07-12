@@ -1,0 +1,13 @@
+-runbundles: osgi.cmpn,\
+	org.apache.felix.scr,\
+	org.apache.felix.shell,\
+	org.apache.felix.shell.tui,\
+	org.apache.felix.http.jetty,\
+	org.apache.felix.log,\
+	org.apache.felix.webconsole
+-runfw: org.eclipse.osgi;version=3.6.1
+-buildpath: osgi.core,\
+	osgi.cmpn,\
+	biz.aQute.bnd.annotation,\
+	junit.osgi
+-sub: *.bnd

@@ -3,7 +3,7 @@
 # The following instruction will copy the contents of resources folder 
 # into the root of the JAR after the root has been renamed to 
 # WEB-INF/classes
--wab: resources
+-wab: resources/
 
 Web-ContextPath: /waboption/nolibs
 Private-Package: biz.aQute.waboption

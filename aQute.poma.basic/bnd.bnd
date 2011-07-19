@@ -1,14 +1,10 @@
 -runbundles: osgi.cmpn,\
 	org.apache.felix.scr,\
 	org.apache.felix.shell,\
-<<<<<<< HEAD
 	org.apache.felix.shell.tui,\
 	org.apache.felix.http.jetty,\
 	org.apache.felix.log,\
 	org.apache.felix.webconsole
-=======
-	org.apache.felix.shell.tui
->>>>>>> 084f6db7cbd6e889cbe6c372e736f44e15f241f8
 -runfw: org.eclipse.osgi;version=3.6.1
 -buildpath: osgi.core,\
 	osgi.cmpn,\

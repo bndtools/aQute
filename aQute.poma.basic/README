@@ -15,9 +15,5 @@ it will not be activated until someone actually uses it.
 The aQute.poma.basic.interface.jar just contains the interface. It is the only 
 jar with an exported package (notice it is correctly versioned with packageinfo).
 
-<<<<<<< HEAD
 You can run this example by selecting the bnd.bnd file and then run. Included
 is the webconsole so you can look at the details on http://localhost:8080/system/console/bundles
-=======
-You can run this example by selecting the bnd.bnd file and then run.
->>>>>>> 084f6db7cbd6e889cbe6c372e736f44e15f241f8

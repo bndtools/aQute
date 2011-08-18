@@ -1,0 +1,6 @@
+This project is a simple project to show how you can create a component
+that is a service factory.
+
+The ExampleComponent is instantiated for each bundle that gets the
+component. It registers an EventHandler. It prints out the different
+events and it prints out the bundle that has gotten it as a service.

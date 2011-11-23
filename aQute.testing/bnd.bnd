@@ -17,6 +17,8 @@ Private-Package: org.example.tests
 -runbundles: biz.aQute.junit
 
 # The properties to control the tester 
--runproperties: tester.trace=true,\
-	tester.continuous=true,\
+-runproperties: \
+    tester.continuous=true, \
+    tester.trace=true, \
 	tester.dir=testdir
+	

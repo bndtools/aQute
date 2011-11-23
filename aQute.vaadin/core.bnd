@@ -9,7 +9,7 @@ Bundle-Description: 	An OSGi'fied version of the Vaadin bundle. Its activator wi
 Bundle-License: 		http://www.opensource.org/licenses/apache2.0.php; \
 							description="${Bundle-Copyright}"
 Bundle-Copyright: 		Based on Vaadin and added activator.
-Bundle-Version: 		${version}
+Bundle-Version: 6.6.3
 
 Import-Package: com.google.*;resolution:=optional,\
 	org.osgi.framework;version=[1.3','2),\

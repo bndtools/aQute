@@ -19,6 +19,7 @@ public class HelloWorld extends Application {
 	public void init() {
 		Window window = new Window();
 		setMainWindow(window);
+		setTheme("aQute");
 		window.addComponent(new Label("Hello Worldx!"));
 	}
 

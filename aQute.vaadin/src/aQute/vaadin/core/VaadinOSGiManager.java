@@ -11,6 +11,7 @@ import javax.servlet.http.*;
 import org.osgi.framework.*;
 import org.osgi.service.component.*;
 import org.osgi.service.http.*;
+import org.osgi.util.tracker.*;
 
 import aQute.bnd.annotation.component.*;
 
@@ -41,6 +42,26 @@ public class VaadinOSGiManager {
 
 	final Map<HttpService, Map<String, ApplicationServlet>> https = new HashMap<HttpService, Map<String, ApplicationServlet>>();
 	final Map<String, ComponentFactory> apps = new IdentityHashMap<String, ComponentFactory>();
+	BundleTracker bundles;
+
+	@Activate
+	void activate(BundleContext context) {
+		bundles = new BundleTracker(context, Bundle.ACTIVE, null) {
+			@Override
+			public Object addingBundle(Bundle b, BundleEvent event) {
+				if (b.getHeaders().get("Vaadin-Theme") != null) {
+					return b;
+				} else
+					return null;
+			}
+		};
+		bundles.open();
+	}
+
+	@Deactivate
+	void deactivate() {
+		bundles.close();
+	}
 
 	/**
 	 * This is our dependency on the HttpService. There can be multiple HTTP
@@ -130,7 +151,7 @@ public class VaadinOSGiManager {
 	void setX(ServiceReference ref) {
 		System.out.println(ref + " " + ref.getProperty("component.factory"));
 		ComponentFactory factory = (ComponentFactory) context.getService(ref);
-		
+
 	}
 
 	/**
@@ -148,6 +169,7 @@ public class VaadinOSGiManager {
 		Set<ApplicationServlet> toBeDestroyed = new HashSet<ApplicationServlet>();
 
 		synchronized (this) {
+			// bundles.remove(ref.getBundle());
 			for (HttpService http : https.keySet()) {
 				http.unregister(alias);
 				Map<String, ApplicationServlet> map = https.get(http);
@@ -219,7 +241,22 @@ public class VaadinOSGiManager {
 
 			@Override
 			public URL getResource(String name) {
-				return context.getBundle().getResource(name);
+				Bundle bs[] = bundles.getBundles();
+				if (bs != null)
+					for (Bundle b : bs) {
+						URL url = b.getResource(name);
+						if (url != null) {
+							System.out.println(url);
+							return url;
+						}
+					}
+				URL url = context.getBundle().getResource(name);
+				if (url != null) {
+					System.out.println(url);
+					return url;
+				}
+				else
+					return null;
 			}
 
 			@Override

@@ -28,10 +28,10 @@ javac.debug:  on
 # Bnd Options
 -sources:       true
 -sourcepath:    ${project}/src 
--plugin:        aQute.lib.deployer.FileRepo;location=${repo}
+-plugin: aQute.lib.deployer.FileRepo;location=${repo},\
+	aQute.bnd.maven.support.MavenRemoteRepository;repositories='http://repo1.maven.org/maven2',\
+	org.osgi.impl.bundle.bindex.BundleIndexerImpl;path:=${repo}/org.osgi.impl.bundle.bindex/org.osgi.impl.bundle.bindex-2.2.0.jar
 
-#, \
-#				aQute.bnd.maven.support.MavenRemoteRepository; repositories="http://repo1.maven.org/maven2,http://tinkerpop.com/maven2"
 
 -versionpolicy: "[${version;==;${@}},${version;+;${@}})"
 

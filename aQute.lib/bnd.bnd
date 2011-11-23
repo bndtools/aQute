@@ -7,3 +7,7 @@
 	osgi.cmpn,\
 	biz.aQute.bnd.annotation,\
 	junit.osgi
+Export-Package: aQute.lib.configurable,\
+	aQute.lib.converter,\
+	aQute.lib.json,\
+	org.osgi.service.configurable

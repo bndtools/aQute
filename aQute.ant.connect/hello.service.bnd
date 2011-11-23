@@ -1,0 +1,2 @@
+Private-Package: aQute.ant.connect.hello.service
+Service-Component: *

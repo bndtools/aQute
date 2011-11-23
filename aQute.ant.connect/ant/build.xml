@@ -1,0 +1,21 @@
+<project name="master">
+
+	<path id="bundles">
+		<fileset dir="../generated">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="bundles">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+
+	<taskdef name="auto" classname="aQute.ant.connect.AutoTask" classpathref="bundles" />
+	<auto bundles="../generated" />
+
+	<helloActivator />
+	<helloExtender />
+	<helloService message="Hello Service" />
+
+
+</project>

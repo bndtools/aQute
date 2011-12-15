@@ -9,7 +9,7 @@ import org.osgi.service.log.*;
 import aQute.bnd.annotation.component.*;
 import aQute.bnd.annotation.metatype.*;
 
-@Component(designate = ServerSocketComponent.Config.class, configurationPolicy = ConfigurationPolicy.require)
+@Component(designateFactory = ServerSocketComponent.Config.class, configurationPolicy = ConfigurationPolicy.require)
 public class ServerSocketComponent extends Thread {
 	interface Config {
 		enum Performance {
@@ -37,7 +37,6 @@ public class ServerSocketComponent extends Thread {
 	@Activate
 	void activate(Map<String, Object> props) {
 		config = Configurable.createConfigurable(Config.class, props);
-		System.out.println("Hi: " + config.message());
 		start();
 	}
 
@@ -49,13 +48,14 @@ public class ServerSocketComponent extends Thread {
 		} catch (IOException e) {
 			// ignore
 		}
-		System.out.println("Bye: " + config.message());
 	}
 
 	public void run() {
 		try {
 			server = new ServerSocket(config.port());
-			server.setReceiveBufferSize(config.receiveBufferSize());
+			
+			if ( config.receiveBufferSize() != 0)
+				server.setReceiveBufferSize(config.receiveBufferSize());
 			server.setSoTimeout(config.soTimeout());
 			
 			switch (config.performance()) {

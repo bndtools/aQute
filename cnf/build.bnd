@@ -29,8 +29,9 @@ javac.debug:  on
 -sources:       true
 -sourcepath:    ${project}/src 
 -plugin: aQute.lib.deployer.FileRepo;location=${repo},\
-	aQute.bnd.maven.support.MavenRemoteRepository;repositories='http://repo1.maven.org/maven2',\
-	org.osgi.impl.bundle.bindex.BundleIndexerImpl;path:=${repo}/org.osgi.impl.bundle.bindex/org.osgi.impl.bundle.bindex-2.2.0.jar
+	aQute.bnd.maven.support.MavenRemoteRepository;repositories=http://repo1.maven.org/maven2,\
+	org.osgi.impl.bundle.bindex.BundleIndexerImpl;path:=${repo}/org.osgi.impl.bundle.bindex/org.osgi.impl.bundle.bindex-2.2.0.jar,\
+	aQute.lib.deployer.FileRepo;location=/Users/aqute/bnd/repo;name=User;readonly=false
 
 
 -versionpolicy: "[${version;==;${@}},${version;+;${@}})"

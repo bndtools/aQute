@@ -9,3 +9,4 @@
 	junit.osgi
 Private-Package: aQute.timer
 Service-Component: *
+Bundle-Version: 1.0.0

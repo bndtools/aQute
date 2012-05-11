@@ -5,6 +5,8 @@
 -runfw: org.apache.felix.framework
 -buildpath: osgi.core,\
 	osgi.cmpn,\
-	biz.aQute.bnd.annotation,\
-	junit.osgi
+	junit.osgi,\
+	biz.aQute.bnd.annotation;version=1.44.0,\
+	org.mockito.mockito-all;version=1.9.0
 Private-Package: aQute.executor
+Service-Component: *

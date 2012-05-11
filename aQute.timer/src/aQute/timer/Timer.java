@@ -20,6 +20,7 @@ public class Timer extends java.util.Timer {
 		TimerTask task;
 		
 		Wrapper(TimerTask t) {
+			task = t;
 		}
 
 		@Override

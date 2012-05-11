@@ -12,7 +12,6 @@ import javax.xml.xpath.*;
 
 import org.w3c.dom.*;
 
-import aQute.aws.*;
 import aQute.lib.base64.*;
 import aQute.lib.io.*;
 

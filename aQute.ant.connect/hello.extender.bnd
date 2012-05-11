@@ -1,2 +1,0 @@
-Ant-Task: helloExtender=aQute.ant.connect.hello.extender.HelloTask
-Private-Package: aQute.ant.connect.hello.extender

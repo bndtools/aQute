@@ -1,4 +1,0 @@
-Private-Package: aQute.ant.connect
-Include-Resource: @${repo;com.googlecode.pojosr+de.kalpatec.pojosr.framework;0.1.4}
-Service-Component: *
-Export-Package: aQute.service.ant

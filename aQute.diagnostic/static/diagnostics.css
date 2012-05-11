@@ -1,0 +1,44 @@
+
+.chart {
+  margin-left: 42px;
+  font: 10px sans-serif;
+  shape-rendering: crispEdges;
+}
+
+.chart div {
+  background-color: steelblue;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+}
+
+.chart text.bar {
+  fill: white;
+  
+}
+
+.chart rect.ACTIVE, .chart rect.STARTING {
+  	fill: green;
+}
+.chart rect.INSTALLED, .chart rect.UNINSTALLED {
+  	fill: red;
+}
+.chart rect.RESOLVED, .chart rect.STOPPING {
+  	fill: orange;
+}
+
+.LOG_UNKNOWN, .LOG_DEBUG, .LOG_INFO {
+	fill: green;
+	stroke: black;	
+}
+
+.LOG_WARNING {
+	fill: orange;
+	stroke: black;	
+}
+
+.LOG_ERROR {
+	fill: red;
+	stroke: black;	
+}

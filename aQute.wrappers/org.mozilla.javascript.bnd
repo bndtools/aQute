@@ -1,0 +1,5 @@
+-classpath: jar/js.jar
+
+Export-Package: !org.mozilla.javascript.xml.impl.xmlbeans,org.mozilla.classfile, org.mozilla.javascript.*
+
+Bundle-Version: 2.2.1

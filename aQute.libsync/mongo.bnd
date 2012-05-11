@@ -1,0 +1,4 @@
+Service-Component: *
+Conditional-Package: aQute.lib*
+Private-Package: aQute.impl.store.mongo
+Export-Package: aQute.service.store

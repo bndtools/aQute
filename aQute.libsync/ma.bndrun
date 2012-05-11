@@ -1,0 +1,45 @@
+-runfw: org.apache.felix.framework;version='[4.0.2,4.0.2]'
+
+-runbundles: org.apache.felix.shell,\
+	org.apache.felix.shell.tui,\
+	org.apache.felix.scr,\
+	org.apache.felix.http.jetty,\
+	org.apache.felix.configadmin,\
+	org.apache.felix.metatype,\
+	org.apache.felix.log,\
+	org.apache.felix.webconsole,\
+	osgi.cmpn,\
+	aQute.libsync.core;version=latest,\
+	com.mongodb;version=2.7.3,\
+	aQute.libsync.mongo;version=latest,\
+	biz.aQute.bnd.annotation;version=1.44.0,\
+	aQute.libsync.task;version=latest,\
+	com.hazelcast;version=2.0.1,\
+	aQute.timer;version=latest,\
+	aQute.libsync.github;version=latest,\
+	org.apache.felix.http.whiteboard,\
+	aQute.libsync.hazelcast;version=latest,\
+	aQute.executor;version=latest,\
+	aQute.libsync.githubposthook;version=latest
+
+## Uncomment if you need to change the HTTP port
+-runproperties: felix.cm.dir=/var/cm,\
+	org.osgi.framework.system.packages.extra=javax.management,\
+	name=,\
+	org.osgi.service.http.port=8080
+
+-runrequire:\
+	bundle:(symbolicname=org.apache.felix.shell),\
+	bundle:(symbolicname=org.apache.felix.shell.tui),\
+	bundle:(symbolicname=org.apache.felix.webconsole),\
+	bundle:(symbolicname=org.apache.felix.configadmin),\
+	bundle:(symbolicname=org.apache.felix.metatype),\
+	bundle:(symbolicname=org.apache.felix.log),\
+	bundle:(&(symbolicname=osgi.cmpn)(version>=4.2)),\
+	bundle:(&(symbolicname=org.apache.felix.scr)(version>=1.6.0))
+
+Bundle-SymbolicName: biz.aQute.ma.runtime
+Bundle-Version: 1.0.0
+JPM-Command: ma
+JPM-Service: ma;jvmargs="-Xmn100M -Xms500M -Xmx500M"
+-runee: JavaSE-1.6

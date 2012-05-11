@@ -1,0 +1,23 @@
+-runbundles: org.apache.felix.http.jetty,\
+	org.apache.felix.configadmin,\
+	org.apache.felix.metatype,\
+	org.apache.felix.webconsole,\
+	org.apache.felix.shell,\
+	org.apache.felix.shell.tui,\
+	org.apache.felix.http.whiteboard;version=2.2.0,\
+	org.apache.felix.scr;version=1.4.0,\
+	org.apache.felix.log;version=1.0.0,\
+	com.mongodb
+-runfw: org.apache.felix.framework
+-buildpath: osgi.cmpn,\
+	com.springsource.javax.servlet,\
+	aQute.libg;version=2.5,\
+	junit.osgi,\
+	org.mockito.mockito-all,\
+	com.mongodb,\
+	osgi.core;version=4.2.1,\
+	biz.aQute.bndlib;version=1.53.0,\
+	com.hazelcast;version=2.0.1,\
+	biz.aQute.bnd.annotation;version=1.52.3
+
+-sub: *.bnd

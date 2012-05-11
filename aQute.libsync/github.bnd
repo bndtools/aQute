@@ -1,0 +1,7 @@
+Private-Package: aQute.impl.github,\
+	aQute.bnd.annotation.metatype,\
+	aQute.lib.base64,\
+	aQute.lib.io,\
+	aQute.lib.json
+Export-Package: aQute.service.github
+Service-Component: *

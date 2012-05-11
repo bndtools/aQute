@@ -1,0 +1,6 @@
+Private-Package: aQute.libsync.gitposthook,\
+	aQute.lib.base64,\
+	aQute.data.common,\
+	aQute.lib.json,\
+	aQute.lib.hex
+Service-Component: *

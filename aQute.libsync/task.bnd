@@ -1,0 +1,5 @@
+Service-Component: *
+Conditional-Package: aQute.lib*
+Private-Package: aQute.impl.task,\
+	aQute.configurable
+Export-Package: aQute.service.task

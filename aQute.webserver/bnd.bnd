@@ -1,0 +1,13 @@
+Private-Package: aQute.webserver
+-runbundles: osgi.cmpn,\
+	org.apache.felix.scr,\
+	org.apache.felix.shell,\
+	org.apache.felix.shell.tui
+Service-Component: *
+-runfw: org.apache.felix.framework
+-buildpath: osgi.core,\
+	osgi.cmpn,\
+	junit.osgi,\
+	biz.aQute.bnd.annotation;version=1.44.0,\
+	com.springsource.javax.servlet
+Bundle-Version: 1.0.3

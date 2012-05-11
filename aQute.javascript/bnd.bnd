@@ -1,0 +1,26 @@
+Private-Package: aQute.javascript.servlet, org.mozilla.*
+Conditional-Package: aQute.lib.*
+-runbundles: org.apache.felix.scr,\
+	org.apache.felix.shell,\
+	org.apache.felix.shell.tui,\
+	org.apache.felix.webconsole;version=3.1.2,\
+	org.apache.felix.http.jetty;version=2.0.4,\
+	com.springsource.javax.servlet;version=2.5.0,\
+	biz.aQute.bnd.annotation;version=1.44.0,\
+	osgi.cmpn;version=4.2.1,\
+	org.apache.felix.log;version=1.0.0,\
+	org.apache.felix.configadmin;version=1.2.8,\
+	org.apache.felix.metatype;version=1.0.4
+Service-Component: *
+-runfw: org.apache.felix.framework
+-buildpath: osgi.core,\
+	osgi.cmpn,\
+	junit.osgi,\
+	biz.aQute.bnd;version=1.50.0,\
+	com.springsource.javax.servlet;version=2.5.0,\
+	aQute.wrappers.org.mozilla.javascript;version=2.2.1
+-runee: JavaSE-1.6
+-runproperties: felix.cm.dir =scripts/config
+
+# We're a script language so we need access to whatever is shared
+DynamicImport-Package: *

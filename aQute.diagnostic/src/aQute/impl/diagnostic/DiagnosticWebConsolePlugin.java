@@ -21,7 +21,9 @@ import aQute.lib.io.*;
 import aQute.lib.json.*;
 
 @Component(provide = {Servlet.class, ListenerHook.class}, properties = {"felix.webconsole.label=diagnostics"})
-public class DiagnosticWebConsolePlugin extends AbstractWebConsolePlugin implements ListenerHook {
+@SuppressWarnings("rawtypes")
+public class DiagnosticWebConsolePlugin extends AbstractWebConsolePlugin
+		implements ListenerHook {
 	private static final long	serialVersionUID	= 1L;
 	final static JSONCodec		codec				= new JSONCodec();
 	BundleContext				context;
@@ -46,18 +48,23 @@ public class DiagnosticWebConsolePlugin extends AbstractWebConsolePlugin impleme
 
 	public void doGet(HttpServletRequest rq, HttpServletResponse rsp)
 			throws ServletException, IOException {
+		if (rq.getPathInfo().endsWith("/stategraph.json")) {
 
-		if (rq.getPathInfo().endsWith("/state.json")) {
+		} else if (rq.getPathInfo().endsWith("/state.json")) {
 			try {
 				Data.DiagnosticState state = new DiagnosticState();
 				for (Bundle bundle : context.getBundles()) {
-					state.bundles.add(data(bundle, state.services));
+					state.bundles.add(data(bundle));
+				}
+				for (ServiceReference ref : context.getServiceReferences(null,
+						null)) {
+					state.services.add(data(ref));
 				}
 				rsp.setContentType("application/json");
 				String s = codec.enc().put(state).toString();
 				rsp.getWriter().append(s).flush();
-				
-//				log.log(LogService.LOG_ERROR, "testing");
+
+				// log.log(LogService.LOG_ERROR, "testing");
 			} catch (Exception e) {
 				log.log(LogService.LOG_ERROR, "creating state file", e);
 				e.printStackTrace();
@@ -73,7 +80,7 @@ public class DiagnosticWebConsolePlugin extends AbstractWebConsolePlugin impleme
 	}
 
 	@SuppressWarnings("unchecked")
-	private Data.Bundle data(Bundle bundle, List<Service> services) {
+	private Data.Bundle data(Bundle bundle) {
 		Data.Bundle bd = new Data.Bundle();
 		bd.id = bundle.getBundleId();
 		bd.bsn = bundle.getSymbolicName();
@@ -110,17 +117,17 @@ public class DiagnosticWebConsolePlugin extends AbstractWebConsolePlugin impleme
 			default :
 				bd.state = STATE.UNKNOWN;
 				break;
-
 		}
 
 		if (bundle.getServicesInUse() != null)
 			for (ServiceReference ref : bundle.getServicesInUse()) {
-				bd.inuse.addAll(data(ref, services));
+				bd.inuse.add((Long) ref.getProperty("service.id"));
 			}
 		if (bundle.getRegisteredServices() != null)
 			for (ServiceReference ref : bundle.getRegisteredServices()) {
-				bd.registered.addAll(data(ref, services));
+				bd.registered.add((Long) ref.getProperty("service.id"));
 			}
+
 		Enumeration<LogEntry> e = logreader.getLog();
 
 		while (e.hasMoreElements()) {
@@ -188,23 +195,18 @@ public class DiagnosticWebConsolePlugin extends AbstractWebConsolePlugin impleme
 		return bd;
 	}
 
-	private List<Service> data(ServiceReference ref, List<Service> services) {
-		List<Service> result = new ArrayList<Service>();
-		String[] objectClasses = (String[]) ref.getProperty("objectClass");
-		for (String objectClass : objectClasses) {
-			Data.Service sd = new Data.Service();
-			sd.id = (Long) ref.getProperty("service.id");
-			sd.objectClass = objectClass;
-
-			sd.registeredBy = ref.getBundle().getBundleId();
-			if (ref.getUsingBundles() != null)
-				for (Bundle b : ref.getUsingBundles()) {
-					sd.usedBy.add(b.getBundleId());
-				}
-			services.add(sd);
-			result.add(sd);
+	private Service data(ServiceReference ref) {
+		Data.Service sd = new Data.Service();
+		sd.objectClasses = (String[]) ref.getProperty("objectClass");
+		sd.id = (Long) ref.getProperty("service.id");
+		sd.name = sd.objectClasses[0];
+		sd.registeredBy = ref.getBundle().getBundleId();
+		if (ref.getUsingBundles() != null) {
+			for (Bundle b : ref.getUsingBundles()) {
+				sd.usedBy.add(b.getBundleId());
+			}
 		}
-		return result;
+		return sd;
 	}
 
 	@Override
@@ -232,22 +234,22 @@ public class DiagnosticWebConsolePlugin extends AbstractWebConsolePlugin impleme
 	}
 
 	public synchronized void added(Collection listeners) {
-		for ( Object o : listeners) {
-			addListenerInfo( (ListenerInfo) o);
+		for (Object o : listeners) {
+			addListenerInfo((ListenerInfo) o);
 		}
 	}
 
 	private void addListenerInfo(ListenerInfo o) {
-		System.out.println("added " + o.getFilter());		
+		System.out.println("added " + o.getFilter());
 	}
 
 	public synchronized void removed(Collection listeners) {
-		for ( Object o : listeners) {
-			removeListenerInfo( (ListenerInfo) o);
+		for (Object o : listeners) {
+			removeListenerInfo((ListenerInfo) o);
 		}
 	}
 
 	private void removeListenerInfo(ListenerInfo o) {
-		System.out.println("removed " + o.getFilter());		
+		System.out.println("removed " + o.getFilter());
 	}
 }

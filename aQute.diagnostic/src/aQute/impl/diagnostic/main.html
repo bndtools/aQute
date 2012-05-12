@@ -1,97 +1,152 @@
 <html>
 <body>
 	<br />
-	<div id="b">
-	</div>
-	
-	<svg id="a" style="width:1500px;height:1500px" class="chart">
+	<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+		xmlns:xl="http://www.w3.org/1999/xlink" id="state" width="1000"
+		height="1000">
+		<defs>
+	        <circle id="service" cx="0" cy="0" r="5" fill="yellow"
+				stroke="black" stroke-width="1" />
+	        <rect id="bundle" x="-20" y="-10" width="40" height="20"
+				fill="orange" stroke="black" stroke-width="1" />
+	    </defs>
+	    <use xlink:href="#s2" x="100" y="100"/>
 	</svg>
 	<script src="http://d3js.org/d3.v2.js"></script>
 	<script type="text/javascript">
-		var locations = {}
-		var x = 0;
-		var y = 0;
+		function log(log) {
+			if (!log)
+				return "Empty";
 
-		function loc(d) {
-			var p = locations[d.id];
-			if (!p) {
-				if (x > 10) {
-					x = 0;
-					y++;
-				} else
-					x++
+			log = log.reverse();
+			var n = 5;
+			var l = []
+			for ( var i = 0; i < 5; i++)
+				if (log[i])
+					l[i] = log[i].message;
 
-				p = {}
-				p.x = x;
-				p.y = y;
-				locations[d.id] = p;
-			}
-			return p;
+			return l.join("\n");
 		}
-		
-	   function log(log) {
-		   if (!log)
-			   return "Empty";
-		   
-		  log = log.reverse();
-		  var n =5;
-		  var l = []
-		  for ( var i=0; i<5; i++)
-			  if ( log[i])
-				  l[i]=log[i].message;
-		  
-		  return l.join("\n");
-	   }
-	   
-	   
-		function timer() {
-			d3.json("diagnostics/state.json", function(state) {
-				if ( state) {
-					var bundles = d3.select("#a").selectAll("g")
-						.data(state.bundles, function(d) { return d.id; });
-						
-					var newbundles =
-						bundles.enter()
-							.append("g")
-				    		.attr("transform", function(d, i) { return "translate(" + 10 + "," + (i*30) + ")"; });
-					
-							
-					newbundles.append("rect")
-					    .attr("width", 120)
-					    .attr("height", 25);
+
+		var color = d3.scale.category20();
+		var force = d3.layout.force().charge(-120).linkDistance(30).size(
+				[ 1000, 1000 ]);
+
+		var svg = d3.select("#state");
+
+		d3.json("diagnostics/state.json", function(json) {
+			var nodes = json.bundles
+			var links = []
+			var services = {}
+
+			/*
+			* Index the services to their object class name.
+			*/
+			for ( var i in json.services ) {
+				var s = json.services[i];
+				if ( !s.sdefs )
+					s.sdefs = [];
 				
-					newbundles
-						.append("a")
-					    .attr("xlink:href", "logs")				
-						.append("circle")
-						    .attr("cx", 100)
-						    .attr("cy", 12)
-						    .attr("r", 5)
-						    .append("title");
-					
-				
-					newbundles.append("text")
-						.attr("class","bar")
-						.attr("dy", 10)
-						.attr("dx", 4)
-					    .text(function(d) {return d.handle});
-	
-					bundles.exit().remove();
-					    
-					bundles.select("rect")
-						.attr("class", function(d) {return d.state})
-				
-					bundles.select("circle")
-						.attr("class", function(d) { return d.alert ? d.alert : "LOG_UNKNOWN"; })
-						.select("title").text(function(d) { return log(d.log); });
-					
+				for ( var oci in s.objectClasses) {
+					var objectClass = s.objectClasses[oci];
+					var sdef = services[objectClass];
+					if ( !sdef ) {
+						sdef = { services:[], name:objectClass};
+						services[objectClass]=sdef;
+						nodes.push(sdef);
+					}
+					sdef.services.push(s);
+					s.sdefs.push(sdef);
 				}
-				setTimeout(timer,5000)
-			})
-		}
-		
-		timer();
+			}
 			
+
+			for ( var i in nodes) {
+				nodes[i].index = parseInt(i);
+				nodes[i].group = "1";
+			}
+
+			function service(serviceid) {
+				for ( var i in json.services) {
+					if (json.services[i].id == serviceid) {
+						return json.services[i];
+					}
+				}
+				alert("Cant find " + serviceid)
+				return null;
+			}
+
+			function addLinks(serviceids, type, value) {
+				if (serviceids) {
+					for (var j in serviceids) {
+						var id = serviceids[j];
+						var s = service(id);
+						for ( var k in s.sdefs ) {
+							var sdef = s.sdefs[k];
+							links.push({
+								source : b.index,
+								target : sdef.index,
+								type : type,
+								value : value,
+								group : "2",
+								sdef : sdef,
+								service: s
+							});
+						}
+					}
+				}
+			}
+			
+			
+			for (i in json.bundles) {
+				var b = json.bundles[i];
+				addLinks(b.registered, "registered", 1);
+				addLinks(b.inuse, "inuse", 2);
+			}
+
+			force.nodes(nodes).links(links).linkStrength( function(link) { return link.type=="registered"? 1 : 0.1; }).start();
+
+			var link = svg.selectAll("line.link").data(links).enter().append(
+					"line").attr("class", function(d) { return d.type; })
+					
+			link.append("title").text(function(d) { return d; });
+
+			
+			var node = svg.selectAll(".node").data(nodes).enter().append("g").attr("class", "node").call(force.drag);
+			
+			node.append("use")
+					.attr("x", 20)
+					.attr("y", 20)
+					.attr("xlink:href", function (d) { return d.bsn ? "#bundle" : "#service"; });
+			
+			
+			node.append("text")
+				.attr("class", "title")
+				.attr("x", 10)
+				.attr("y", 10)
+				.text("Hello world")
+				
+			node.append("title").text(function(d) {
+				return d.name;
+			});
+
+			force.on("tick", function() {
+				link.attr("x1", function(d) {
+					return d.source.x;
+				}).attr("y1", function(d) {
+					return d.source.y;
+				}).attr("x2", function(d) {
+					return d.target.x;
+				}).attr("y2", function(d) {
+					return d.target.y;
+				});
+
+				node.attr("transform", function(d) {
+					return "translate("+(d.x-20)+","+(d.y-20)+")";
+				});
+			});
+
+		});
 	</script>
 </body>
 </html>

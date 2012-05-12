@@ -7,6 +7,7 @@ import aQute.impl.diagnostic.Data.LogEntry.LEVEL;
 public interface Data {
 
 	public class DiagnosticState {
+
 		public List<Bundle>		bundles		= new ArrayList<Data.Bundle>();
 		public List<Service>	services	= new ArrayList<Data.Service>();
 	}
@@ -20,16 +21,18 @@ public interface Data {
 		public String			bsn;
 		public String			name;
 		public STATE			state;
-		public LEVEL			alert = LEVEL.LOG_OTHER;
-		public List<Service>	registered	= new ArrayList<Data.Service>();
-		public List<Service>	inuse		= new ArrayList<Data.Service>();
+		public LEVEL			alert		= LEVEL.LOG_OTHER;
+		public List<Long>		registered	= new ArrayList<Long>();
+		public List<Long>		inuse		= new ArrayList<Long>();
 		public List<LogEntry>	log			= new ArrayList<Data.LogEntry>();
-		public String	handle;
+		public String			handle;
 	}
 
 	public class Service {
 		public long			id;
-		public String		objectClass;
+		public String		name;
+		public String[]		objectClasses;
+		public String		pid;
 		public long			registeredBy;
 		public List<Long>	usedBy	= new ArrayList<Long>();
 	}

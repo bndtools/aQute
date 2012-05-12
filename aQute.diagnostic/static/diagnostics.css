@@ -42,3 +42,17 @@
 	fill: red;
 	stroke: black;	
 }
+
+.registered {
+	stroke: black;
+	stroke-width: 2px
+}
+.inuse {
+	stroke: black;
+	stroke-width: 1px
+}
+.title {
+	stroke: black;
+	font: 10px sans-serif;
+
+}

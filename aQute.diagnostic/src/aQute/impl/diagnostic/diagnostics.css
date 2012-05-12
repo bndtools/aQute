@@ -52,7 +52,24 @@
 	stroke-width: 1px
 }
 .title {
-	stroke: black;
-	font: 10px sans-serif;
+	stroke: node;
+	font: 10px Arial,sans-serif;
+	font-weight: normal;
+	text-align: left;
+}
 
+.link {
+	stroke: black;
+	stroke-width: 1px;
+}
+
+.ACTIVE {
+	stroke: black;
+	stroke-width: 1px;
+	fill: orange;
+}
+.RESOLVED {
+	stroke: black;
+	stroke-width: 1px;
+	fill: lightgrey;
 }

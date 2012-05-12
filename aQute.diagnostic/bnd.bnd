@@ -22,5 +22,3 @@
 	
 -runproperties: org.osgi.service.http.port=8090
 -sub: *.bnd
-
-Include-Resource: static=static

@@ -5,148 +5,84 @@
 		xmlns:xl="http://www.w3.org/1999/xlink" id="state" width="1000"
 		height="1000">
 		<defs>
-	        <circle id="service" cx="0" cy="0" r="5" fill="yellow"
+	        <circle id="get" cx="0" cy="0" r="5" fill="yellow"
 				stroke="black" stroke-width="1" />
-	        <rect id="bundle" x="-20" y="-10" width="40" height="20"
-				fill="orange" stroke="black" stroke-width="1" />
+	        <rect id="bundle" x="-50" y="-20" ry="10" rx="10" width="60" height="40" />
 	    </defs>
-	    <use xlink:href="#s2" x="100" y="100"/>
 	</svg>
+	
 	<script src="http://d3js.org/d3.v2.js"></script>
 	<script type="text/javascript">
-		function log(log) {
-			if (!log)
-				return "Empty";
-
-			log = log.reverse();
-			var n = 5;
-			var l = []
-			for ( var i = 0; i < 5; i++)
-				if (log[i])
-					l[i] = log[i].message;
-
-			return l.join("\n");
-		}
 
 		var color = d3.scale.category20();
-		var force = d3.layout.force().charge(-120).linkDistance(30).size(
+		var force = d3.layout.force().gravity(0).charge(-500).linkDistance(30).size(
 				[ 1000, 1000 ]);
 
 		var svg = d3.select("#state");
 
-		d3.json("diagnostics/state.json", function(json) {
-			var nodes = json.bundles
-			var links = []
-			var services = {}
-
-			/*
-			* Index the services to their object class name.
-			*/
-			for ( var i in json.services ) {
-				var s = json.services[i];
-				if ( !s.sdefs )
-					s.sdefs = [];
+		function timer() {
+			d3.json("diagnostics/stategraph.json", function(json) {
 				
-				for ( var oci in s.objectClasses) {
-					var objectClass = s.objectClasses[oci];
-					var sdef = services[objectClass];
-					if ( !sdef ) {
-						sdef = { services:[], name:objectClass};
-						services[objectClass]=sdef;
-						nodes.push(sdef);
-					}
-					sdef.services.push(s);
-					s.sdefs.push(sdef);
-				}
-			}
-			
-
-			for ( var i in nodes) {
-				nodes[i].index = parseInt(i);
-				nodes[i].group = "1";
-			}
-
-			function service(serviceid) {
-				for ( var i in json.services) {
-					if (json.services[i].id == serviceid) {
-						return json.services[i];
-					}
-				}
-				alert("Cant find " + serviceid)
-				return null;
-			}
-
-			function addLinks(serviceids, type, value) {
-				if (serviceids) {
-					for (var j in serviceids) {
-						var id = serviceids[j];
-						var s = service(id);
-						for ( var k in s.sdefs ) {
-							var sdef = s.sdefs[k];
-							links.push({
-								source : b.index,
-								target : sdef.index,
-								type : type,
-								value : value,
-								group : "2",
-								sdef : sdef,
-								service: s
-							});
-						}
-					}
-				}
-			}
-			
-			
-			for (i in json.bundles) {
-				var b = json.bundles[i];
-				addLinks(b.registered, "registered", 1);
-				addLinks(b.inuse, "inuse", 2);
-			}
-
-			force.nodes(nodes).links(links).linkStrength( function(link) { return link.type=="registered"? 1 : 0.1; }).start();
-
-			var link = svg.selectAll("line.link").data(links).enter().append(
-					"line").attr("class", function(d) { return d.type; })
+				var nodes = json.nodes;
+				var links = json.links;
+				
+	/* 			links = [{"id":"b0->org.osgi.service.packageadmin.PackageAdmin","source":0,"target":1}, {"id":"b0->org.osgi.service.packageadmin.PackageAdmin","source":1,"target":2}]
+				nodes = [	{"id":"org.apache.felix.shell.Command","index":0,"name":"Command","title":"org.apache.felix.shell.Command","type":"get"},
+				         	{"id":"org.osgi.service.packageadmin.PackageAdmin","index":1,"name":"PackageAdmin","title":"org.osgi.service.packageadmin.PackageAdmin","type":"get"}, 
+				         	{"id":"b4","index":2,"name":"? Shell TUI","title":"org.apache.felix.shell.tui","type":"bundle"}]
+	 */			
+				force.nodes(nodes).links(links).theta(2).charge(-300).linkDistance(50).start();
+	
+				var link = svg.selectAll(".link").data(links, function(d) { return d.id;})
+				
+				link.enter()
+					.append("line")
+						.attr("class", "link")
+		
+				link.exit().remove()
+	
+				
+				var node = svg.selectAll(".node")
+					.data(nodes, function(d) { return d.id;})
+					.enter()
+					.append("g")
+						.attr("class", "node")
+						.call(force.drag)
+						
+				node.append("use")
+					.attr("xlink:href", function (d) { return "#"+d.type; })
+				
+				node.append("text")
+					.attr("class", "title")
+					.attr("x", 0)
+					.attr("y", 0)
+					.text(function(d) { return d.name; })
 					
-			link.append("title").text(function(d) { return d; });
-
-			
-			var node = svg.selectAll(".node").data(nodes).enter().append("g").attr("class", "node").call(force.drag);
-			
-			node.append("use")
-					.attr("x", 20)
-					.attr("y", 20)
-					.attr("xlink:href", function (d) { return d.bsn ? "#bundle" : "#service"; });
-			
-			
-			node.append("text")
-				.attr("class", "title")
-				.attr("x", 10)
-				.attr("y", 10)
-				.text("Hello world")
+				node.append("title").text(function(d) {
+					return d.title;
+				});
 				
-			node.append("title").text(function(d) {
-				return d.name;
-			});
-
-			force.on("tick", function() {
-				link.attr("x1", function(d) {
-					return d.source.x;
-				}).attr("y1", function(d) {
-					return d.source.y;
-				}).attr("x2", function(d) {
-					return d.target.x;
-				}).attr("y2", function(d) {
-					return d.target.y;
+				svg.selectAll("use").attr("class", function (d) { return d.state; })
+				
+				force.on("tick", function() {
+					link.attr("x1", function(d) {
+						return d.source.x;
+					}).attr("y1", function(d) {
+						return d.source.y;
+					}).attr("x2", function(d) {
+						return d.target.x;
+					}).attr("y2", function(d) {
+						return d.target.y;
+					});
+	
+					node.attr("transform", function(d) {
+						return "translate("+(d.x)+","+(d.y)+")";
+					});
 				});
-
-				node.attr("transform", function(d) {
-					return "translate("+(d.x-20)+","+(d.y-20)+")";
-				});
+	
 			});
-
-		});
+		}
+		setInterval("timer()", 2000);
 	</script>
 </body>
 </html>

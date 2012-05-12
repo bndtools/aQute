@@ -9,7 +9,7 @@ public interface Data {
 	public class DiagnosticState {
 
 		public List<Bundle>		bundles		= new ArrayList<Data.Bundle>();
-		public List<Service>	services	= new ArrayList<Data.Service>();
+		public List<Registration>	services	= new ArrayList<Data.Registration>();
 	}
 
 	public class Bundle {
@@ -28,7 +28,7 @@ public interface Data {
 		public String			handle;
 	}
 
-	public class Service {
+	public class Registration {
 		public long			id;
 		public String		name;
 		public String[]		objectClasses;

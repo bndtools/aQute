@@ -1,0 +1,10 @@
+Service-Component: *
+Private-Package: aQute.impl.xray,\
+	aQute.lib.io,\
+	aQute.lib.json,\
+	aQute.lib.base64,\
+	aQute.lib.collections
+Bundle-Version: 1.0.0
+Import-Package: org.apache.felix.scr;resolution:=optional,\
+	org.osgi.service.log;resolution:=optional,\
+	*

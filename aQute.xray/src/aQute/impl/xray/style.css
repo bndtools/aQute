@@ -1,0 +1,74 @@
+.xray {
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 10px;
+}
+
+.ACTIVE {
+	stroke: grey;
+	stroke-width: 1px;
+	fill: #FFE070;
+}
+
+.RESOLVED {
+	stroke: black;
+	stroke-width: 1px;
+	fill: lightgrey;
+}
+
+.INSTALLED {
+	stroke: black;
+	stroke-width: 1px;
+	fill: white;
+}
+
+/*
+ * Display for services 
+ */
+.orphan {
+	fill: white;
+	stroke: black;
+	stroke-width: 1px;
+}
+
+.absent {
+	fill: white;
+	stroke: black;
+	stroke-dasharray: 2;
+	stroke-width: 1px;
+}
+
+.normal {
+	fill: yellow;
+	stroke: black;
+	stroke-width: 1px;
+}
+
+/**
+ * The wires
+ */
+.wire {
+	fill: none;
+	stroke-width: 1px;
+	stroke: lightgrey;
+}
+
+/**
+  * LEDs
+  */
+.ledred {
+	fill: red;
+	stroke: black;
+	strok-width: 1px;
+}
+
+.ledgreen {
+	fill: #00FF00;
+	stroke: black;
+	strok-width: 1px;
+}
+
+.ledorange {
+	fill: orange;
+	stroke: black;
+	strok-width: 1px;
+}

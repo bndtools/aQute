@@ -1,6 +1,0 @@
-Service-Component: *
-Private-Package: aQute.impl.diagnostic,\
-	aQute.lib.io,\
-	aQute.lib.json,\
-	aQute.lib.base64,\
-	aQute.lib.collections

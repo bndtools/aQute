@@ -12,12 +12,12 @@ public interface Data {
 	 */
 	class ComponentDef {
 		public long			id;
-		public int			index;
 		public boolean		unsatisfied;
 		public boolean		enabled;
 		public String		name;
 		public Set<String>	references	= new HashSet<String>();
 		public String[]		services;
+		public int	index;
 	}
 
 	/**
@@ -27,10 +27,22 @@ public interface Data {
 		public String			name;
 		public int				row			= Integer.MAX_VALUE;
 		public int				column;
-		public TreeSet<Integer>	registering	= new TreeSet<Integer>();
-		public TreeSet<Integer>	getting		= new TreeSet<Integer>();
-		public TreeSet<Integer>	listening	= new TreeSet<Integer>();
 		public String			shortName;
+		public Integer[] registering;
+		public Integer[] listening;
+		public Integer[] getting;
+
+		/*
+		 * Transient helpers to build up registering, listening and
+		 * getting.
+		 */
+		transient List<BundleDef>	r	= new ArrayList<BundleDef>();
+		transient List<BundleDef>	g	= new ArrayList<BundleDef>();
+		transient List<BundleDef>	l	= new ArrayList<BundleDef>();
+		
+		boolean isOrphan() {
+			return r.size()<=1 && g.isEmpty() && l.size() <= 1;
+		}
 	}
 
 	/**
@@ -49,7 +61,10 @@ public interface Data {
 		public List<ComponentDef>	components	= new ArrayList<ComponentDef>();
 		public String				log;
 		public boolean				errors;
-	}
+
+		transient int					index;
+		transient int					orphans;
+}
 
 	/**
 	 * Holds the Result information

@@ -1,0 +1,37 @@
+<div>
+	<center>
+	<svg version="1.1" xmlns:svg="http://www.w3.org/2000/svg"
+		xmlns:xl="http://www.w3.org/1999/xlink" id="state"
+		width="400px" height="400px">
+		
+	</svg>
+    <input id="input" type="text" onchange="data()"/>
+	</center>		
+	<script src="http://d3js.org/d3.v2.js">
+		<defs>
+			<circle id=""
+		</defs>
+	</script>
+	<script type="text/javascript">
+		var svg = d3.select("#state")
+		var input = document.getElementById("input");
+		
+		function data() {
+			var data = input.value.split(" ")
+			
+			var sel = svg.selectAll("circle").data(data)
+			sel.enter()
+				.append("circle").attr("stroke-width",2).attr("stroke","black").attr("fill","none")
+					
+			sel.exit().transition().attr("cx",700).remove();
+			
+			var step = 400/data.length;
+			var n = 0;
+			sel.transition()
+				.attr("r", function(d) { return d*10; })
+				.attr("cy", function(d) { return 100; })
+				.attr("cx", function(d) { return step/2 + n++ * step })
+		} 	
+    </script>
+    --
+</div>

@@ -18,6 +18,8 @@ import org.osgi.service.log.*;
 import aQute.bnd.annotation.component.*;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import aQute.impl.xray.Data.BundleDef;
+import aQute.impl.xray.Data.ServiceDef;
 import aQute.impl.xray.Data.*;
 import aQute.impl.xray.Data.BundleDef.*;
 import aQute.lib.collections.*;
@@ -131,6 +133,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 			codec.enc().to(rsp.getWriter()).writeDefaults().put(result);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.log(LogService.LOG_ERROR, "Failed to create state file", e);
 		}
 	}
@@ -151,7 +154,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 	 */
 	@Override
 	public String[] getCssReferences() {
-		return new String[] {"/"+PLUGIN_NAME+"/style.css"};
+		return new String[] {"/" + PLUGIN_NAME + "/style.css"};
 	}
 
 	/**
@@ -161,7 +164,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 		if (resource.equals("/" + PLUGIN_NAME))
 			return null;
 
-		resource = resource.replaceAll("/"+PLUGIN_NAME+"/", "");
+		resource = resource.replaceAll("/" + PLUGIN_NAME + "/", "");
 		URL url = getClass().getResource(resource);
 		return url;
 	}
@@ -174,22 +177,22 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 	 * @throws InvalidSyntaxException
 	 */
 	Result build(String[] ignoredServices) throws InvalidSyntaxException {
-		Map<String, ServiceDef> icons = new TreeMap<String, ServiceDef>();
+		Map<String, ServiceDef> services = new TreeMap<String, ServiceDef>();
 		Map<Bundle, BundleDef> bundles = new LinkedHashMap<Bundle, BundleDef>();
 
 		Bundle[] bs = context.getBundles();
-		int row = 0;
+		int index = 0;
 		for (Bundle bundle : bs) {
 			BundleDef data = data(bundle);
-			data.row = row++;
+			data.index = index++;
 			bundles.put(bundle, data);
 		}
 
 		for (String name : listeners.keySet()) {
-			ServiceDef icon = icons.get(name);
+			ServiceDef icon = services.get(name);
 			if (icon == null) {
 				icon = new ServiceDef();
-				icons.put(name, icon);
+				services.put(name, icon);
 				icon.name = name;
 				icon.shortName = from(TITLE_LENGTH, name);
 			}
@@ -200,7 +203,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 				if (bdef == null)
 					i.remove();
 				else
-					icon.listening.add(bdef.row);
+					icon.l.add(bdef);
 			}
 		}
 
@@ -208,50 +211,162 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 				null)) {
 
 			for (String name : (String[]) reference.getProperty("objectClass")) {
-				ServiceDef icon = icons.get(name);
-				if (icon == null) {
-					icon = new ServiceDef();
-					icons.put(name, icon);
-					icon.name = name;
-					icon.shortName = from(TITLE_LENGTH, name);
+				ServiceDef service = services.get(name);
+				if (service == null) {
+					service = new ServiceDef();
+					services.put(name, service);
+					service.name = name;
+					service.shortName = from(TITLE_LENGTH, name);
 				}
 				if (reference.getUsingBundles() != null)
 					for (Bundle b : reference.getUsingBundles()) {
-						int r = bundles.get(b).row;
-						icon.getting.add(r);
+						service.g.add(bundles.get(b));
 					}
 
-				int r = bundles.get(reference.getBundle()).row;
-				icon.registering.add(r);
+				service.r.add(bundles.get(reference.getBundle()));
 			}
 		}
 
 		if (ignoredServices != null)
 			for (String s : ignoredServices)
-				icons.remove(s);
+				services.remove(s);
 
-		int column = 0;
-		ServiceDef previous = null;
-		for (String key : icons.keySet()) {
-			ServiceDef icon = icons.get(key);
-			if (icon.registering.size() > 0)
-				icon.row = icon.registering.first();
-			else if (icon.listening.size() > 0)
-				icon.row = icon.listening.first();
-			else
-				icon.row = 0;
+		layoutBundleFirst(bundles.values(), services.values());
 
-			if (previous != null && previous.row == icon.row)
-				icon.row++;
-			icon.column = column++;
-			previous = icon;
+		boolean[][] occupied = new boolean[bundles.size()+1][services.size()];
+		for ( ServiceDef service : services.values()){
+			if ( service.column>0 ) {
+				while ( occupied[service.row][service.column])
+					service.row++;
+			}
+			occupied[service.row][service.column]=true;
+		}
+
+		// Convert references to indexes
+		for (ServiceDef sd : services.values()) {
+			sd.registering = toIndexArray(sd.r);
+			sd.listening = toIndexArray(sd.l);
+			sd.getting = toIndexArray(sd.g);
 		}
 
 		Result result = new Result();
 		result.bundles = new ArrayList<BundleDef>(bundles.values());
-		result.services = new ArrayList<ServiceDef>(icons.values());
+		result.services = new ArrayList<ServiceDef>(services.values());
 
 		return result;
+	}
+
+	private Integer[] toIndexArray(List<BundleDef> bs) {
+		Integer[] result = new Integer[bs.size()];
+		for (int i = 0; i < result.length; i++)
+			result[i] = bs.get(i).index;
+		return result;
+	}
+
+	private void layoutBundleFirst(Collection<BundleDef> bundles,
+			Collection<ServiceDef> services) {
+		LinkedList<BundleDef> bs = new LinkedList<BundleDef>(bundles);
+		LinkedList<ServiceDef> ss = new LinkedList<ServiceDef>(services);
+
+		int orphanStart = services.size();
+		int column = 0;
+		for (ServiceDef sd : services)
+			if (sd.isOrphan())
+				orphanStart--;
+				
+		int row = 0;
+
+		while (!bs.isEmpty()) {
+			BundleDef bd = bs.remove(0);
+			bd.row = row++;
+			LinkedHashSet<BundleDef> related = new LinkedHashSet<Data.BundleDef>();
+
+			for (Iterator<ServiceDef> i = ss.iterator(); i.hasNext();) {
+				ServiceDef sd = i.next();
+				if (sd.r.contains(bd)) {
+					sd.row = bd.row;
+					sd.column = sd.isOrphan() ? orphanStart + bd.orphans++ : column++;
+					related.addAll(sd.l);
+					related.addAll(sd.g);
+					related.addAll(sd.r);
+					i.remove();
+				} else if (sd.l.contains(bd)) {
+					sd.row = bd.row;
+					sd.column = sd.isOrphan() ? orphanStart + bd.orphans++ : column++;
+					i.remove();
+				}
+			}
+			for (BundleDef b : related) {
+				if (bs.remove(b)) {
+					bs.add(0, b);
+				}
+			}
+		}
+		for (BundleDef bd : bs) {
+			bd.row = row++;
+		}
+		
+		for ( ServiceDef sd : services) {
+			int max = findMaxRow(sd.r, sd.row);
+			max = findMaxRow(sd.l, max);
+			max = findMaxRow(sd.g, max);
+			sd.row = sd.row + (max-sd.row+1)/2;
+		}
+	}
+
+	private int findMaxRow(List<BundleDef> bs, int row) {
+		for(BundleDef bd : bs) {
+			row = Math.max(bd.row, row);
+		}
+		return row;
+	}
+
+	private void layoutServiceFirst(Collection<BundleDef> bundles,
+			Collection<ServiceDef> services) {
+		LinkedList<BundleDef> bs = new LinkedList<BundleDef>(bundles);
+		int column = 0;
+		int row = 0;
+
+		for (ServiceDef sd : services) {
+			sd.column = column++;
+			if (!sd.r.isEmpty()) {
+				// layout to middle of registering services.
+				sd.row = Integer.MAX_VALUE;
+
+				for (BundleDef bd : sd.r) {
+					if (bs.remove(bd)) {
+						bd.row = row++;
+					}
+					sd.row = Math.min(bd.row, sd.row);
+				}
+				continue;
+			}
+
+			int first = Integer.MAX_VALUE;
+			for (BundleDef bd : sd.l) {
+				if (bs.remove(bd)) {
+					bd.row = row++;
+				}
+				first = Math.min(first, bd.row);
+			}
+			for (BundleDef bd : sd.g) {
+				if (bs.remove(bd)) {
+					bd.row = row++;
+				}
+				first = Math.min(first, bd.row);
+			}
+			sd.row = first;
+		}
+		for (BundleDef bd : bs) {
+			bd.row = row++;
+		}
+		ServiceDef previous = null;
+		for (ServiceDef sd : services) {
+			if (previous != null && sd.row == previous.row)
+				sd.row++;
+
+			previous = sd;
+		}
 	}
 
 	/**

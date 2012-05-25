@@ -9,6 +9,12 @@
 	fill: #FFE070;
 }
 
+.STARTING {
+	stroke: grey;
+	stroke-width: 1px;
+	fill: #FFF080;
+}
+
 .RESOLVED {
 	stroke: black;
 	stroke-width: 1px;

@@ -1,0 +1,13 @@
+
+Bundle-SymbolicName: org.websocket
+
+Include-Resource: @jar/WebSocket.jar, OSGI-OPT/=@jar/WebSocket-src.zip
+Bundle-Description: This repository contains a barebones WebSocket server and client implementation written \
+ in 100% Java. The underlying classes are implemented using the Java ServerSocketChannel and SocketChannel \
+ classes, which allows for a non-blocking event-driven model (similar to the WebSocket API for web browsers). \
+ Implemented WebSocket protocol versions are: Hixie 75, Hixie 76, Hybi 10, and Hybi 17
+
+-exportcontents: org.java_websocket
+-sources: true
+
+Bundle-Version: 1.0.2

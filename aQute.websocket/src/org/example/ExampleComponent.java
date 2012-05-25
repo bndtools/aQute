@@ -15,7 +15,6 @@ public class ExampleComponent extends WebSocketServer {
 		super(new InetSocketAddress(9910));
 		System.out.println("Constructor WebSocket " + getAddress().getPort());
 		start();
-		this.getWebSocketFactory()
 	}
 
 	@Override

@@ -1,0 +1,15 @@
+
+Bundle-SymbolicName: com.github.rjeschke.txtmark
+Bundle-DocURL: https://github.com/rjeschke/txtmark/
+Bundle-License: http://opensource.org/licenses/apache2.0.php
+Bundle-Description: Txtmark is yet another markdown processor for the JVM.
+Bundle-Version: 0.6.0.notdefined
+
+Include-Resource: @jar/txtmark-0.6.jar, OSGI-OPT/=@jar/txtmark-0.6-sources.jar
+
+
+-exportcontents: com.github.rjeschke.txtmark.*;version=1.0.0
+-sources: true
+
+Bundle-Version: 0.6.0
+

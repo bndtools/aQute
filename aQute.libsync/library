@@ -1,7 +1,0 @@
-Service-Component: *
-Private-Package: aQute.library.impl
-Export-Package: aQute.data,\
-	aQute.data.libsyncps,\
-	aQute.service.library,\
-	aQute.data.libsync
-Conditional-Package: aQute.lib*

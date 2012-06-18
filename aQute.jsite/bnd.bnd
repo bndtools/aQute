@@ -1,0 +1,15 @@
+-buildpath: com.github.rjeschke.txtmark;version=0.6.0,\
+	aQute.libg;version=2.7.2
+
+	
+Main-Class: aQute.jsite.main.JSite
+JPM-Command: jsite
+
+Private-Package: \
+	aQute.jsite.*, \
+	com.github.rjeschke.txtmark.*, \
+	aQute.configurable
+
+Conditional-Package: aQute.lib*
+
+-digests: true

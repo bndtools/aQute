@@ -1,0 +1,21 @@
+<content> Hello World <script
+	src="http://code.angularjs.org/1.0.0rc10/angular-1.0.0rc10.js" /> <script
+	type="text/javascript" src="js/jpm4j.js" />
+<div ng-app="">
+	<h2>Registry</h2>
+	<div ng-controller="JPMCtrl">
+		<p>
+			Search: <input ng-model="query"/>
+		</p>
+		<table>
+			<tr ng-repeat="b in bundles | filter:query">
+				<td><a href="{{b.url}}">{{b.bsn}}</a></td>
+				<td>{{b.version}}</td>
+				<td>{{b.cmd}}</td>
+				<td>{{b.service}}</td>
+				<td>{{b.text}}</td>
+			</tr>
+		</table>
+	</div>
+</div>
+</content>

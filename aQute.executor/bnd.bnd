@@ -8,5 +8,6 @@
 	junit.osgi,\
 	biz.aQute.bnd.annotation;version=1.44.0,\
 	org.mockito.mockito-all;version=1.9.0
-Private-Package: aQute.executor
+Private-Package: aQute.executor,\
+	aQute.bnd.annotation.metatype
 Service-Component: *

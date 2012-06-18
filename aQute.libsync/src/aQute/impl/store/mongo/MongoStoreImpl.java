@@ -6,12 +6,8 @@ import java.util.*;
 import java.util.regex.*;
 
 import org.bson.types.*;
-import org.osgi.service.log.*;
 
-import aQute.lib.converter.*;
-import aQute.lib.hex.*;
-import aQute.lib.io.*;
-import aQute.libg.cryptography.*;
+import aQute.lib.data.*;
 import aQute.service.store.*;
 
 import com.mongodb.*;
@@ -20,21 +16,20 @@ import com.mongodb.gridfs.*;
 public class MongoStoreImpl<T> implements Store<T> {
 	final static Pattern		SIMPLE_EXPR	= Pattern
 													.compile("([^=><~*]+)\\s*(=|<=|>=|>|<|~=)\\s*([^\\s]+)");
-	static Converter			converter	= new Converter();
 	final MongoDBImpl			handler;
 	final Class<T>				type;
 	final DBCollection			db;
-	final GridFS				gridfs;
+	GridFS						gridfs;
 	final Field					_id;
 	final Map<String, Field>	unique		= new HashMap<String, Field>();
 	final Field					fields[];
+	final MongoCodec			mcnv		= new MongoCodec(this);
 
 	public MongoStoreImpl(MongoDBImpl handler, Class<T> type, DBCollection db)
 			throws Exception {
 		this.handler = handler;
 		this.db = db;
 		this.type = type;
-		this.gridfs = new GridFS(db.getDB(), db.getName());
 		fields = type.getFields();
 		Field tmp = null;
 		for (Field f : fields) {
@@ -70,7 +65,7 @@ public class MongoStoreImpl<T> implements Store<T> {
 				throw new IllegalArgumentException(
 						"Has no _id set and id cann not be created because it is not a byte[] or a String");
 		}
-		DBObject o = to(document);
+		DBObject o = (DBObject) mcnv.toMongo(document);
 		WriteResult result = db.insert(o);
 		error(result);
 		DBObject dbo = result.getLastError();
@@ -78,13 +73,13 @@ public class MongoStoreImpl<T> implements Store<T> {
 	}
 
 	public void update(T document) throws Exception {
-		DBObject o = to(document);
+		DBObject o = (DBObject) mcnv.toMongo(document);
 		DBObject filter = filter(document);
 		error(db.update(filter, o));
 	}
 
 	public void upsert(T document) throws Exception {
-		DBObject o = to(document);
+		DBObject o = (DBObject) mcnv.toMongo(document);
 		DBObject filter = filter(document);
 		error(db.update(filter, o, true, false));
 	}
@@ -108,67 +103,6 @@ public class MongoStoreImpl<T> implements Store<T> {
 		if (result.getLastError() != null && result.getError() != null)
 			throw new RuntimeException(result.getError());
 
-	}
-
-	private DBObject to(Object a) throws Exception {
-		BasicDBObject bdo = new BasicDBObject();
-		for (Field f : fields) {
-			Object o = f.get(a);
-			if (o != null) {
-				bdo.put(f.getName(), toBSON(o));
-			}
-		}
-
-		return bdo;
-	}
-
-	Object toBSON(Object o) throws Exception {
-		if (o instanceof File)
-			return storeFile((File) o);
-
-		if (o == null || o instanceof Number || o instanceof Boolean
-				|| o instanceof Date || o instanceof String
-				|| o instanceof ObjectId)
-			return o;
-
-		if (o.getClass().isArray()) {
-			Class< ? > cctype = o.getClass().getComponentType();
-			if (cctype.isPrimitive()) {
-				if (cctype != char.class)
-					return o;
-
-				return new String((char[]) o);
-			}
-			return o;
-		}
-		if (o instanceof Collection || o instanceof Map)
-			return o;
-
-		return o.toString();
-	}
-
-	/**
-	 * Take a bdo object and make it a data object
-	 * 
-	 * @param a
-	 * @return
-	 * @throws Exception
-	 */
-	T from(DBObject dbo) throws Exception {
-		T instance = type.newInstance();
-		for (Field f : fields) {
-			Object object;
-
-			if (f.getType() == File.class)
-				object = retrieveFile((String)dbo.get(f.getName()));
-			else
-				object = converter.convert(f.getGenericType(),
-						dbo.get(f.getName()));
-			if (object != null)
-				f.set(instance, object);
-		}
-
-		return instance;
 	}
 
 	/**
@@ -293,24 +227,23 @@ public class MongoStoreImpl<T> implements Store<T> {
 	}
 
 	private Object fromBson(String key, String value) throws Exception {
-		Field f = type.getField(key);
-		if (f.getType() == File.class)
-			return retrieveFile(key);
-
-		Object o = converter.convert(f.getGenericType(), value);
-
-		// Enums are not properly handled by mongo
-		if (o instanceof Enum)
-			o = value;
-
-		if (o instanceof Collection) {
-			Collection< ? > c = (Collection< ? >) o;
-			return c.iterator().next();
+		Object result = value;
+		Field field = data.getField(type, key);
+		if (field != null) {
+			result = mcnv.converter.convert(field.getGenericType(),
+					result);
 		}
-		if (o.getClass().isArray()) {
-			return Array.get(o, 0);
-		}
-		return o;
+
+		result = mcnv.toMongo(result);
+
+		// In a query, we do not specify the
+		// collection/array levels
+		if (result instanceof Iterable) {
+			return ((Iterable< ? >) result).iterator().next();
+		} else if (result.getClass().isArray())
+			return Array.get(result, 0);
+		else
+			return result;
 	}
 
 	private List<DBObject> exprs(Reader ldap) throws Exception {
@@ -346,10 +279,7 @@ public class MongoStoreImpl<T> implements Store<T> {
 
 	boolean checkField(String field, Object value) throws Exception {
 		Field f = type.getField(field);
-		if (value == null)
-			return true;
-
-		return converter.convert(f.getGenericType(), value) != null;
+		return f != null;
 	}
 
 	public MongoCursorImpl<T> select(String... keys) {
@@ -360,54 +290,19 @@ public class MongoStoreImpl<T> implements Store<T> {
 		return new ObjectId().toByteArray();
 	}
 
-	/**
-	 * File objects are stored in the GridFS store under their hex SHA1.
-	 * 
-	 * @param file
-	 * @return
-	 * @throws Exception
-	 */
-	private String storeFile(File file) throws Exception {
-		if ( file == null)
-			return null;
-		
-		Digester<SHA1> digester = SHA1.getDigester();
-		FileInputStream fin = new FileInputStream(file);
-		IO.copy(fin, digester);
-		String name = Hex.toHexString(digester.digest().toByteArray());
-		if (gridfs.findOne(name) != null)
-			return name;
+	GridFS getGridFs() {
+		if (gridfs == null) {
+			this.gridfs = new GridFS(db.getDB(), db.getName());
 
-		GridFSInputFile gf = gridfs.createFile(file);
-		gf.setFilename(name);
-		gf.save();
-		return gf.getFilename();
-	}
-
-	private Object retrieveFile(String name) throws Exception {
-		if ( name == null)
-			return null;
-		
-		GridFSDBFile file = gridfs.findOne(name);
-		File out = File.createTempFile("mongostore", "sha");
-		FileOutputStream fout = new FileOutputStream(out);
-		try {
-			Digester<SHA1> digester = SHA1.getDigester(fout);
-			IO.copy(file.getInputStream(), digester);
-			String calculated = Hex.toHexString(digester.digest().toByteArray());
-			if (!calculated.equals(name)) {
-				handler.log.log(LogService.LOG_ERROR,
-						"Received invalid file from gridfs, sha does not match. Got "
-								+ calculated + " expected " + name);
-				return null;
-			}
-			return out;
-		} finally {
-			fout.close();
 		}
+		return gridfs;
 	}
 
 	public void drop() {
 		db.drop();
+	}
+
+	public Cursor<T> optimistic(T p) {
+		return new MongoCursorImpl<T>(this).optimistic(p);
 	}
 }

@@ -89,10 +89,11 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 				return cursor.hasNext();
 			}
 
+			@SuppressWarnings("unchecked")
 			public T next() {
 				try {
 					DBObject object = cursor.next();
-					return store.from(object);
+					return (T) store.mcnv.fromMongo(store.type, object);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
@@ -178,7 +179,7 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 	}
 
 	public MongoCursorImpl<T> set(String field, Object value) throws Exception {
-		combineUpdate(field, "$set", value);
+		combineUpdate(field, "$set", store.mcnv.toMongo(value));
 		return this;
 	}
 
@@ -189,18 +190,18 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 
 	public MongoCursorImpl<T> append(String field, Object... value)
 			throws Exception {
-		combineUpdate(field, "$pushAll", Arrays.asList(value));
+		combineUpdate(field, "$pushAll", store.mcnv.toMongo(value));
 		return this;
 	}
 
 	public MongoCursorImpl<T> remove(String field, Object... value)
 			throws Exception {
-		combineUpdate(field, "$pullAll", Arrays.asList(value));
+		combineUpdate(field, "$pullAll", store.mcnv.toMongo(value));
 		return this;
 	}
 
 	public MongoCursorImpl<T> inc(String field, Object value) throws Exception {
-		combineUpdate(field, "$inc", value);
+		combineUpdate(field, "$inc", store.mcnv.toMongo(value));
 		return this;
 	}
 
@@ -252,4 +253,10 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 		where.put(field, in);
 		return this;
 	}
+	
+	public MongoCursorImpl<T> optimistic(T value) {
+		// TODO 
+		return this;
+	}
+
 }

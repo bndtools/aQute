@@ -1,0 +1,24 @@
+<content> Hello World <script
+	src="http://code.angularjs.org/1.0.0rc10/angular-1.0.0rc10.js" /> <script
+	src="http://code.angularjs.org/angular-resource-1.0.0rc10.js"></script>
+<script src="js/jpm4j.js" type="text/javascript" />
+
+<div ng-app="jpm" ng-controller="JPMCtrl">
+	<h2>Registry</h2>
+	<p />
+	<div >
+		<p>
+			Search: <input ng-model="query" />
+		</p>
+		<table>
+			<tbody>
+				<tr ng-repeat="p in programs">
+					<td><a href="{{p.url}}">{{p.bsn}}</a></td>
+					<td>{{p.version}}</td>
+					<td>{{p.description}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+</content>

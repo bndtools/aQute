@@ -1,0 +1,1 @@
+lessc ../_less/jpm4j.less --compress

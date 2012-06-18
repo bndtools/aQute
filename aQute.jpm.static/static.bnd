@@ -1,0 +1,17 @@
+Bundle-SymbolicName: static
+Bundle-Version: 1.0.0
+
+w = static
+
+Include-Resource: static = ${w}
+
+-PATH=${@},/usr/local/bin
+
+
+
+-before: \
+	lessc less/bootstrap.less ${w}/css/style.css; \
+	jsite md ${w}; \
+	coffee -cpjbo ${w}/js/jpm4j.js coffee/main.coffee coffee/util.coffee >${w}/js/
+	
+ 

@@ -1,0 +1,13 @@
+-include: META-INF/MANIFEST.MF
+Bundle-ClassPath: .
+Private-Package: aqute.eclipse.coffee,\
+	aqute.eclipse.coffee.editor,\
+	aqute.eclipse.coffee.preferences,\
+	aqute.eclipse.coffee.wizards
+Conditional-Package: aQute.lib.io, aQute.libg.*
+Include-Resource: plugin.xml,icons=icons
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+#Bundle-Version: In manifest!
+Import-Package: !org.eclipse.*,*
+
+-buildpath: aQute.libg;version=2.6.1

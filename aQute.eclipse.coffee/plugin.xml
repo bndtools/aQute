@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="CoffeeScript"
+            extensions="coffee"
+            icon="icons/coffee.png"
+            contributorClass="aqute.eclipse.coffee.CoffeeContributor"
+            class="aqute.eclipse.coffee.CoffeeEditor"
+            id="aqute.eclipse.coffee.CoffeeEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="CoffeeScript Wizard"
+            id="aQute.eclipse.coffee">
+      </category>
+      <wizard
+            name="Coffee Script Wizard"
+            icon="icons/sample.gif"
+            category="aQute.eclipse.coffee"
+            class="aqute.eclipse.coffee.wizards.CoffeeWizard"
+            id="aqute.eclipse.coffee.wizards.CoffeeWizard">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="aqute.eclipse.coffee.preferences.CoffeePreferencePage"
+            id="aqute.eclipse.coffee.preferences.CoffeePreferencePage"
+            name="CoffeeScript">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="aqute.eclipse.coffee.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>

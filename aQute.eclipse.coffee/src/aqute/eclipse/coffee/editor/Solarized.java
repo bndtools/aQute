@@ -1,0 +1,22 @@
+package aqute.eclipse.coffee.editor;
+
+import org.eclipse.swt.graphics.*;
+
+public class Solarized {
+	final static RGB	base03	= new RGB(0x00, 0x2b, 0x36);
+	final static RGB	base02	= new RGB(0x07, 0x36, 0x42);
+	final static RGB	base01	= new RGB(0x58, 0x6e, 0x75);
+	final static RGB	base00	= new RGB(0x65, 0x7b, 0x83);
+	final static RGB	base0	= new RGB(0x83, 0x94, 0x96);
+	final static RGB	base1	= new RGB(0x93, 0xa1, 0xa1);
+	final static RGB	base2	= new RGB(0xee, 0xe8, 0xd5);
+	final static RGB	base3	= new RGB(0xfd, 0xf6, 0xe3);
+	final static RGB	yellow	= new RGB(0xb5, 0x89, 0x00);
+	final static RGB	orange	= new RGB(0xcb, 0x4b, 0x16);
+	final static RGB	red		= new RGB(0xdc, 0x32, 0x2f);
+	final static RGB	magenta	= new RGB(0xd3, 0x36, 0x82);
+	final static RGB	violet	= new RGB(0x6c, 0x71, 0xc4);
+	final static RGB	blue	= new RGB(0x26, 0x8b, 0xd2);
+	final static RGB	cyan	= new RGB(0x2a, 0xa1, 0x98);
+	final static RGB	green	= new RGB(0x85, 0x99, 0x00);
+}

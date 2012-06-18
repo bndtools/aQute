@@ -1,0 +1,16 @@
+
+Include-Resource: 
+	static=static, \
+	\
+	static/${ext;${@};html}; \
+		for="${wc;markdown/*.md}"; \
+		uses=template/default.template,
+		cmd='markdown -st default.template ${@}'; \
+	\
+	static/css/style.css; \
+		for="css/a.less, css/b.less"; \
+		cmd='lessc -x ${@}', \
+	\
+	static/js/jpm4j.js; \
+		cmd='coffee -jbpc coffee/x.coffee coffee/y.coffee'
+ 

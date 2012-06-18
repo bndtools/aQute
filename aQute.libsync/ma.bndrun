@@ -1,5 +1,5 @@
 -runfw: org.apache.felix.framework;version='[4.0.2,4.0.2]'
-
+-runtrace: true
 -runbundles: org.apache.felix.shell,\
 	org.apache.felix.shell.tui,\
 	org.apache.felix.scr,\
@@ -12,21 +12,24 @@
 	aQute.libsync.core;version=latest,\
 	com.mongodb;version=2.7.3,\
 	aQute.libsync.mongo;version=latest,\
-	biz.aQute.bnd.annotation;version=1.44.0,\
-	aQute.libsync.task;version=latest,\
-	com.hazelcast;version=2.0.1,\
 	aQute.timer;version=latest,\
 	aQute.libsync.github;version=latest,\
 	org.apache.felix.http.whiteboard,\
-	aQute.libsync.hazelcast;version=latest,\
 	aQute.executor;version=latest,\
-	aQute.libsync.githubposthook;version=latest
+	aQute.xray.plugin;version=latest,\
+	aQute.libsync.githubposthook;version=latest,\
+	aQute.libsync.library;version=latest,\
+	biz.aQute.bndlib;version=1.53.2,\
+	aQute.webserver;version=latest,\
+	aQute.freedns;version=latest,\
+	aQute.libsync.rest;version=latest
 
 ## Uncomment if you need to change the HTTP port
 -runproperties: felix.cm.dir=/var/cm,\
 	org.osgi.framework.system.packages.extra=javax.management,\
-	name=,\
-	org.osgi.service.http.port=8080
+	org.osgi.service.http.port=8080,\
+-runtrace=true,\
+	org.osgi.framework.storage=xyz
 
 -runrequire:\
 	bundle:(symbolicname=org.apache.felix.shell),\

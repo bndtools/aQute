@@ -5,3 +5,4 @@ Private-Package: aQute.impl.github,\
 	aQute.lib.json
 Export-Package: aQute.service.github
 Service-Component: *
+Conditional-Package: aQute.lib*

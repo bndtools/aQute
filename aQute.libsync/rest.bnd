@@ -1,0 +1,9 @@
+Private-Package: aQute.impl.rest,\
+	aQute.bnd.annotation.metatype
+
+Conditional-Package: aQute.lib*
+
+Export-Package: aQute.service.rest
+Service-Component: *
+
+Import-Package: *

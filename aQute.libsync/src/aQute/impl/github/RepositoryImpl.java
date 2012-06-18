@@ -2,8 +2,10 @@ package aQute.impl.github;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 import aQute.lib.base64.*;
+import aQute.lib.collections.*;
 import aQute.lib.io.*;
 import aQute.lib.json.*;
 import aQute.service.github.*;
@@ -22,7 +24,7 @@ public class RepositoryImpl implements Repository {
 			String user, String secret) {
 		this.owner = owner;
 		this.repo = name;
-		this.baseurl = BASE_URL + owner + "/" + repo + "/git/";
+		this.baseurl = BASE_URL + owner + "/" + repo + "/";
 		this.github = github;
 		this.user = user;
 		this.secret=secret;
@@ -30,15 +32,15 @@ public class RepositoryImpl implements Repository {
 
 	public Commit getCommit(String sha) throws Exception {
 
-		return read(Commit.class, "commits/" + sha);
+		return read(Commit.class, "git/commits/" + sha);
 	}
 
 	public Tree getTree(String sha) throws Exception {
-		return read(Tree.class, "trees/" + sha);
+		return read(Tree.class, "git/trees/" + sha);
 	}
 
-	public URL getBlob(String sha) throws Exception {
-		return new URL("https://github.com/api/v2/json/blob/show/" + owner
+	public URI getBlob(String sha) throws Exception {
+		return new URI("https://github.com/api/v2/json/blob/show/" + owner
 				+ "/" + repo + "/" + sha);
 	}
 
@@ -59,14 +61,13 @@ public class RepositoryImpl implements Repository {
 		InputStream in = conn.getInputStream();
 		try {
 			String s = IO.collect(in);
-			System.out.println(s);
 			return codec.dec().from(s).get(clazz);
 		} finally {
 			in.close();
 		}
 	}
 
-	public URL getBlob(Tree root, String path) throws Exception {
+	public URI getBlob(Tree root, String path) throws Exception {
 		String parts[] = path.split("/");
 		Entry e = find(root, parts, 0);
 		if (e == null)
@@ -109,5 +110,13 @@ public class RepositoryImpl implements Repository {
 	public Entry getEntry(Tree root, String path) throws Exception {
 		String parts[] = path.split("/");
 		return find(root, parts, 0);
+	}
+
+	public List<Branch> getBranches() throws Exception {
+		Branch[] read = read(Branch[].class, "branches");
+		if ( read == null)
+			return null;
+		
+		return new SortedList<Branch>(read);
 	}
 }

@@ -1,3 +1,0 @@
--buildpath: biz.aQute.bndlib
-Export-Package: com.libsync.domain.repository,\
-	com.libsync.service.cafs

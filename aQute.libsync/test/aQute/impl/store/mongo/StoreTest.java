@@ -26,6 +26,15 @@ public class StoreTest extends TestCase {
 		ds.wire();
 	}
 	
+	MongoCodec mc = new MongoCodec(null);
+	
+	public void testConverter() throws Exception {
+		assertEquals( "A", mc.toMongo('A'));
+	}
+	public static class Complex {
+		public int a = 1;
+		public String b= "x";
+	}
 	public static class TestData {
 		public String		_id;
 		public Version		version;
@@ -43,6 +52,7 @@ public class StoreTest extends TestCase {
 		public double[]		doubles;
 		public long[]		longs;
 		public short[]		shorts;
+		public List<Complex> complex = new ArrayList<Complex>();
 	}
 
 
@@ -65,7 +75,7 @@ public class StoreTest extends TestCase {
 		a1.longs = new long[] {1, 2};
 		a1.floats = new float[] {1, 2};
 		a1.doubles = new double[] {1, 2};
-
+		a1.complex.add( new Complex());
 		store.upsert(a1);
 
 		boolean further = false;

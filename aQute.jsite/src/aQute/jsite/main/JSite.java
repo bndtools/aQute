@@ -20,6 +20,8 @@ public class JSite extends ReporterAdapter {
 	interface options extends Options {
 		boolean minify();
 
+		boolean trace();
+
 		String output();
 
 		boolean exceptions();
@@ -38,12 +40,20 @@ public class JSite extends ReporterAdapter {
 		String s = cl.execute(md, "jsite", Arrays.asList(args));
 		if (s != null)
 			System.err.println(s);
+
+		if (md.isOk())
+			return;
+
+		System.exit(1);
 	}
 
 	public void _jsite(options options) throws Exception {
 		db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
 		this.options = options;
+		setTrace(options.trace());
+		trace("begin %s %s", options._properties(), options._());
+
 		List<String> arguments = options._();
 		try {
 			if (arguments.isEmpty()) {
@@ -63,6 +73,8 @@ public class JSite extends ReporterAdapter {
 			if (options.exceptions())
 				e.printStackTrace();
 		}
+		report(System.out);
+		trace("done");
 	}
 
 	@Arguments(arg = {

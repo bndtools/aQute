@@ -118,6 +118,10 @@ public class Site {
 						return null;
 					}
 				});
+				if (!template.isFile()) {
+					reporter.error("Template not found %s", template);
+					return;
+				}
 				defaultTemplate = tf.newTransformer(new StreamSource(template));
 				unity = tf.newTransformer();
 			}
@@ -310,9 +314,6 @@ public class Site {
 			siteSpec.root = siteSpec.root + "/";
 
 		this.template = IO.getFile(source, siteSpec.template);
-		if (!this.template.isFile()) {
-			reporter.error("Template not found %s", template);
-		}
 	}
 
 	public boolean prepare() throws IOException {

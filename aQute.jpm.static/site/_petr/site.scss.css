@@ -1,0 +1,426 @@
+/*--------------------------------------------------------------------------------
+BLOG THEME DESCRIPTION
+Theme Name: PetrBlog
+Theme URI: http://xierpa.com
+Author: Xierpa Team
+Author URI: http://xierpa.com
+Version: 1.0
+License URI: license.txt
+Tags: blog
+--------------------------------------------------------------------------------*/
+
+/* ! VARIABLES */
+
+$unit: 8px;
+$unit2: 2*$unit;
+$unit05: $unit/2;
+$unit025: $unit/4;
+$gutter: 14px;
+
+$c1: 20%;
+$c2: 40%;
+$c3: 60%;
+$c4: 80%;
+$c50: 50%;
+$c98: 98%;
+$c100: 100%;
+
+$gray1: #101010;
+$gray4: #606060;
+$gray6: #808080;
+$gray7: #A0A0A0;
+$gray8: #C0C0C0;
+$gray9: #E0E0E0;
+$gray10: #F0F0F0;
+
+$colGrid: 12;
+$screenColGrid: $colGrid + 4;
+$col: $c100 / $colGrid;
+$screenCol: $c100 / $screenColGrid;
+
+$baseFontSize: 10px;
+$fontSize0: $baseFontSize * 1.2;
+$fontSize1: $baseFontSize * 1.4;
+$fontSize2: $baseFontSize * 1.8;
+$fontSize3: $baseFontSize * 2.1;
+$fontSize4: $baseFontSize * 2.4;
+$fontSize5: $baseFontSize * 3.6;
+$fontSize6: $baseFontSize * 4.8;
+$fontSize7: $baseFontSize * 5.5;
+$fontSize8: $baseFontSize * 7.2;
+
+$speed1: 200ms;
+$speed2: 400ms;
+
+$black: black;
+$white: white;
+$gray: gray;
+
+$border0: 1px dotted $black;
+$border1: 1px solid $black;
+$border2: 2px solid $black;
+
+/* Design parameters */
+$navTopColor: $gray8;
+
+.FL { float:left}
+.FR { float:right}
+.clear {clear:both}
+.inline {display:inline}
+
+.c1 {width:$c1;}
+.c2 {width:$c2;}
+.c3 {width:$c3;}
+.c4 {width:$c4;}
+.c5, .c100 {width:$c100;}
+
+@mixin clearall {
+	/* Clears are enabled depending on @media width, to align excerpt components */
+	.clear1, .clear2, .clear3, .clear4, .clear5, .clear6, .clear7, .clear8, .clear9, .clear10, .clear11, .clear12 {clear:none;
+	}
+}
+
+$headLeading: 1.1em;
+$subheadLeading: 1.3em;
+$navLeading: 1.4em;
+$bodyLeading: 1.5em;
+
+$articleSize: $fontSize0;
+$articleLeading: $bodyLeading;
+$captionSize: $baseFontSize;
+
+/* ! MEDIA QUERIES */
+
+@mixin respond-to($media) {
+  @if $media == break0 {
+    @media only screen and (max-width: 1400px) { @content; }
+  }
+  @if $media == break1 {
+    @media only screen and (max-width: 1000px) { @content; }
+  }
+  @else if $media == break2 {
+    @media only screen and (max-width: 800px) { @content; }
+  }
+  @else if $media == break3 {
+    @media only screen and (max-width: 600px) { @content; }
+  }
+   @else if $media == break4 {
+    @media only screen and (max-width: 400px) { @content; }
+  }
+   @else if $media == tablet {
+	@media only screen and (min-device-width : 600px) and (max-device-width : 1280px) { @content; }
+  }
+}
+
+/* ! HELPER MIX-INS */
+
+@mixin containFloats {
+	display: inline-block;
+	width: $c100;
+}
+
+@mixin borderBox {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}	
+
+@mixin contentBox {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-o-box-sizing: content-box;
+	box-sizing: content-box;
+}
+
+@mixin borderRadius($radius) {
+	-webkit-border-radius: $radius;
+	-moz-border-radius: $radius;
+	-o-border-radius: $radius;
+	border-radius: $radius;
+}
+
+@mixin shadow($size, $transparentize) {
+	-webkit-box-shadow: 0 0 $size transparentize(black, $transparentize); 
+	-moz-box-shadow: 0 0 $size transparentize(black, $transparentize); 
+	-o-box-shadow: 0 0 $size transparentize(black, $transparentize); 
+	box-shadow: 0 0 $size transparentize(black, $transparentize); 
+}
+
+@mixin hyphenate {
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	-o-hyphens: auto;
+	hyphens: auto;
+}
+
+@mixin transition ($property, $time) {
+	-webkit-transition: $property linear $time;
+	-moz-transition: $property linear $time;
+	-ms-transition: $property linear $time;
+	-o-transition: $property linear $time;
+	transition: $property linear $time;
+}
+
+@mixin clearList {
+	ul, li {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	li {
+		display: inline-block;
+	}
+}
+
+@mixin addBorder1 {
+	border-top: $border1;
+	padding-top: $gutter;
+	margin-top: $gutter;
+}
+
+@mixin addBorder0 {
+	border-top: $border0;
+	padding-top: .5em;
+	margin-top: .5em;
+}
+
+@mixin clearBorder {
+	border-top: none;
+	padding-top: 0;
+	margin-top: 0;
+}
+
+/* ! HELPER CLASSES */
+
+.bold {
+	font-weight: bold;
+}
+
+.italic {
+	font-style: italic;
+}
+
+/* ! LAYOUT */
+
+/* ! global styles */
+
+body {
+	padding: 0;
+	margin: 0;
+	font-size: $fontSize1;
+	@include respond-to(break0) {
+		background: url('../images/0.png');
+	}
+	@include respond-to(break1) {
+		background: url('../images/1.png');
+	}
+	@include respond-to(break2) {
+		background: url('../images/2.png');
+	}
+	@include respond-to(break3) {
+		background: url('../images/3.png');
+	}
+	@include respond-to(break4) {
+		background: url('../images/4.png');
+	}
+}
+
+nav, section, div, article, p, h1, h2, h3, h4, blockquote, ul, li {
+	padding: 0;
+	margin: 0;
+	float: left;
+	width: $c100;
+	line-height: $bodyLeading;
+}
+
+section, div, article, nav {
+	@include borderBox;
+}
+
+a {
+	text-decoration: none;
+}
+
+img {
+	width: $c100;
+	height: auto;
+}
+
+input {
+	margin: 0;
+	padding: 0;
+	border: $border1;
+}
+
+/* ! Blog */
+
+$iconHeight: 24px;
+$thumbHeight: 24px;
+
+$bodyFont: 'BentonSansRE, Verdana, sans';
+$headFont1: 'MillerDisplay Roman, Georgia, serif';
+$headFont2: 'MillerDisplay Light Italic, Georgia, serif';
+$tagCloudFont: 'AmplitudeComp Medium, Impact, sans';
+
+body {
+	margin:0;padding:0;font-family:$bodyFont;font-size:$articleSize;line-height:$articleLeading;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family:$headFont1;font-weight:normal;line-height:$headLeading;
+}
+h2 {font-family:$headFont2;font-style:italic;}
+
+p {@include hyphenate();}
+
+div.fill {
+	width:$c100;padding-left:$unit2;padding-top:$unit;
+}
+div.tagcloud {
+	margin-top:$unit2;font-family:$tagCloudFont;line-height:22px;font-size:18px;color:$gray7;
+	a {color:$gray8;}
+	a:hover {color:$gray7;}
+}
+#navtop {
+	float:left;width:$c100;height:24px;background-color:$navTopColor;margin:0;border:0;
+	div.navigation { margin-top:2px;margin-left:$unit2;width:$c4;}
+	a {padding-left:$unit025;color:$gray4;font-size:$fontSize0;}
+	a:hover {color:$gray6;}
+}
+
+/* Page */
+
+#container {float:left;width:$c100;}
+#content {float:left;width:$c98;}
+
+/* Page Header */
+
+#pageheader {
+	width:$c100;padding:0;margin:0;
+}
+div.logo {
+	font-size:$fontSize0;
+}
+div.pagetitle {
+	h1 {font-size:$fontSize4;}
+	h2 {font-size:$fontSize3;}
+}
+div.hotnavigation {
+	ul {list-style-type: none;padding: 0px;margin: 0px;display:inline-block;line-height:$navLeading;}
+	ul li {line-height:$navLeading;}
+	ul li a {color:$gray6;font-size:$fontSize0;}
+	ul li a:hover {color:$gray4;}
+}
+
+/* Page Lede */
+
+#pagelede {
+	width:$c100;
+}
+div.reference {
+	img.icon {width:$iconHeight;}
+}
+div.thumbnails {
+	.image-container {display:inline;float:none;margin-left:2px;width:$c4;}
+	img.thumbnail { height:$thumbHeight; width:auto;} /* Height of the line of thumbnails */
+}
+
+/* Page Content */
+
+#maincontent {
+	width:$c100;
+}
+div.disclaimer {
+	p {font-size:$baseFontSize;color:$gray6;}
+	p a {color:$gray6;}
+	p a:hover {color:$gray4;}
+	
+}
+div.decks {
+	.c1 {width:25%;}
+	.c2 {width:50%;}
+	.c3 {width:75%;}
+	.c4 {width:100%;}
+	@include clearall;
+	.clear5, .clear9 {clear:both;}
+	h3.title {font-size:$fontSize1;margin-top:4px;line-height:$subheadLeading;}
+	div.excerpt {margin-top:2px;font-size:$baseFontSize;color:$gray1;}
+}
+div.article {
+	.post {color:$gray1;
+		p {text-indent:0;float:none; }
+		p + p {text-indent:$unit2;} /* How to make this work when there is an image in "p a img" */
+		h2.entry-title {display:none}
+		div.entry-meta {color:$gray6;font-size:$baseFontSize;
+			a {color:$gray6;}
+			a:hover {color:$gray4;}
+		}
+		div.entry-content {margin-top:$unit;
+			div.entry-imagecontainer, p img {margin-top:$unit;margin-bottom:$unit;}
+			div.wp-caption {font-size:$captionSize;color:$gray6;}
+			div.alignnone {width:$c100;}
+			div.alignleft {float:left;width:$c50;margin-right:$unit;margin-bottom:0;}
+			div.alignright {float:right;width:$c50;margin-left:$unit;margin-bottom:0;}
+			img {width:$c100;margin-bottom:$unit05;}
+		}
+		div.entry-utility {
+			background-color:$gray9;width:$c100;margin-top:$unit;margin-bottom:$unit;
+			padding:$unit;color:$gray6;font-size:$baseFontSize;
+			a {color:$gray6;}
+			a:hover {color:$gray4;}
+		}
+	}
+}
+#comments {width:$c100;background-color:$gray10;
+
+}
+div.related {
+
+}
+
+@media all and (max-width: 1000px) { 
+	body {background-color:white; }
+	/* Main has 5 columns */
+	/* Decks has 4 columns */
+	@include clearall;
+}
+@media all and (max-width: 700px) { 
+	body {background-color:white; }
+	/* Main has 4 columns */
+	.c1, c2  {width:25%}
+	.c3 {width:50%}
+	.c4 {width:75%}
+	div.article {float:right;width:75%;}
+	div.decks {
+		/* Decks has 3 columns */
+		.c1, .c2 {width:33%}
+		.c3, .c4 {width:66%}
+		.c4 {width:100%}
+		@include clearall;
+		.clear4, .clear7, .clear10 {clear:both;}
+	}
+
+}
+@media all and (max-width: 600px) { 
+	body {background-color:white; }
+	/* Main has 3 columns */
+	.c1, c2  {width:33%}
+	.c3, .c4 {width:66%}
+	div.article {float:left;width:100%;}
+	div.decks {
+		/* Decks has 2 columns */
+		.c1, .c2 {width:50%;} 
+		.c3, .c4 {width:100%;}
+		@include clearall;
+		.clear3, .clear5, .clear7, .clear9, .clear11 {clear:both;}
+	}
+}
+@media all and (max-width: 500px) { 
+	body {background-color:white; }
+	.c1, .c2, .c3, .c4 {width:100%}
+	div.decks {
+		.c1, .c2, .c3, .c4 {width:100%}
+		@include clearall;
+	}
+}

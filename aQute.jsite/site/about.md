@@ -1,3 +1,4 @@
+<HEAD/>
 JPM4j
 ====
 ### Just another Package Manager for Java
@@ -12,10 +13,14 @@ and available as the "java" command:
 
 > `(curl http://www.jpm4j.org/jpm4j.sh | sh)`
 
+<DISCLAIMER/>
+
 ### Disclaimer
 JPM does not provide any security guarantees, it is your responsibility to verify that the program
 does not do harm.  For maximum security, make sure to thoroughly inspect every program that you run 
 on your computer!
+
+<LINKS/>
 
 I get 10 times more traffic from [Google][1] than from
 [Yahoo][2] or [MSN][3].

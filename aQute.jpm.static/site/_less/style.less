@@ -1,0 +1,189 @@
+
+@gutter:		20px;
+@cwidth:		60px;
+@columns:		12;
+
+@page:			12* (@gutter + @cwidth);
+
+
+
+.debug {
+  xoutline:			1px solid #F0F0F0;
+}
+
+body {
+	width: @page;
+	margin-right: auto;
+	margin-left: auto;
+	background-color: white;
+	font-family: 'Verdana', serif;
+    font-size: 12px;
+}
+
+p, pre, h1, h2, h3, h4, h5 {
+	padding: 0px 0px 4px 0px;
+	margin: 0px;
+}
+h1, h2, h3, h4 {
+	padding: 0 0px 4px 0px;
+	margin:  0;
+	font-family: 'Verdana', serif;
+}
+
+.w(@columns,@left:10px,@right:10px) {
+  display: 			inline;
+  float: 			left;
+  margin:			10px @left 10px @right;
+  width: 			@columns*(@gutter + @cwidth)-@gutter;
+  .debug;
+}
+
+.push(@columns) {
+	position: 		relative;
+	left: 			@columns*(@gutter + @cwidth)px;
+}
+.pull(@columns) {
+	position: 		relative;
+	left: 			-(@columns*(@gutter + @cwidth)px);
+}
+.prefix(@columns) {
+	padding-left: @columns*(@gutter + @cwidth);
+}
+
+.suffix(@columns) {
+	padding-right: @columns*(@gutter + @cwidth);
+}
+
+.rounded(@radius:5px) {
+	border-radius: @radius;	
+}
+
+.fill(@c, @radius:5px) {
+	.rounded(@radius);
+	background-color: @c;
+background-color:#fefefe; background-image: -moz-linear-gradient(top , #fefefe, #f8f8f8 89.0%); background-image: -webkit-linear-gradient(top , #fefefe, #f8f8f8 89.0%); background-image: -o-linear-gradient(top , #fefefe, #f8f8f8 89.0%); background-image: -ms-linear-gradient(top , #fefefe, #f8f8f8 89.0%); background-image: linear-gradient(top , #fefefe, #f8f8f8 89.0%);	border: 1px solid #F0F0F0;
+}
+
+.clear {
+  content: '.';
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  font-size: 0;
+  line-height: 0;
+  width: 0;
+  height: 0;
+}
+
+.container(@columns:12) {
+	width: @columns*(@gutter + @cwidth);
+	margin-left: 0px;
+	margin-right: 0px;
+	float:left;
+  	.debug;
+}
+
+#nav {
+	.container;
+	position: fixed;
+	top: 10px;
+	
+	background-color:#02010f; 
+	background-image: -moz-linear-gradient(90deg, #02010f, #727373 20px,#000000 100px); 
+    background-image: -webkit-linear-gradient(90deg, #02010f, #727373 20px,#000000 100px); 
+	background-image: -o-linear-gradient(90deg, #02010f, #727373 20px,#000000 100px); 
+	background-image: -ms-linear-gradient(90deg, #02010f, #727373 20px,#000000 100px); 
+	background-image: linear-gradient(90deg, #02010f, #727373 20px,#000000 100px);
+	
+	.rounded;
+	
+
+	ul {
+		padding: 6px 0px 20px 0px;
+		margin: 0px;
+		li {
+			.w(1);
+			color: white;
+			list-style: none;
+     		border-left: 1px ridge black;
+     		font-weight: bold;
+			padding-left: 5px;
+			text-shadow: 0px 1px 1px #800;
+			a {
+				display: block;
+				text-decoration: none;
+				color: inherit;
+			}
+		}
+		
+		// First button is a logo
+		li:first-child {
+     		border-left: 0px none;
+			background-image: url(../img/logo-60.png);
+			a {
+				color:red;
+			}
+		}
+		// Last button is search box
+		li:last-child {
+			.w(4);
+			float: right;
+			input {
+				position: relative; top: -2px;
+				height: 14px;
+				float: right;
+				background-color: gray;
+				border: 1px solid darkgray;
+				.rounded(2px);
+				color: white;
+			}
+		}
+	}
+}
+
+#navreserve {
+	margin-top: 80px;
+}
+
+// Specific for our pages.
+#page {
+	.container(12);
+}
+
+
+
+#external {
+	clear: both;
+	.container(9);
+	> div {		// Default
+		.w(4);
+	}
+	#main {
+		.w(9);
+	}
+	#illustration {
+		.w(9);
+		img {
+			width: 100%;
+		}
+	}
+	#why, #how, #what {
+		.w(3)
+	}
+}
+
+
+#side {
+	.w(3);
+}
+
+#footer {
+	clear: both;
+	.container(12);
+	> div {
+		.w(3);
+	}
+	.fill(red,5);
+}
+
+

@@ -12,14 +12,16 @@ licensed under CC0 <http://creativecommons.org/publicdomain/zero/1.0/>
 @font-size: 16; // Your base font-size in pixels
 @em: @font-size*1em; // Shorthand for outputting ems, e.g. "12/@em"
 
-@column: 48; // The column-width of your grid in pixels
-@gutter: 16; // The gutter-width of your grid in pixels
+@cwidth:   56px;
+@cmargin:  3px;
+@cborder:  1px;
+@cpadding: 4px;
+@cfill:    @cmargin + @cborder + @cpadding;
+@cgutter:  @cfill * 2;
 
 
-//
-// Column-widths in variables, in ems
-//
 
+@c0:	
  @1cols: ( 1 * (@column + @gutter) - @gutter) / @em; @1col: @1cols;
  @2cols: ( 2 * (@column + @gutter) - @gutter) / @em;
  @3cols: ( 3 * (@column + @gutter) - @gutter) / @em;

@@ -40,7 +40,7 @@ public class DummyLog implements LogService {
 	Config	config;
 
 	@Activate
-	void activate(Map<String, Object> props) {
+	void activate(Map<String,Object> props) {
 		config = Configurable.createConfigurable(Config.class, props);
 		if (config.stacktrace())
 			stacktrace();
@@ -68,8 +68,8 @@ public class DummyLog implements LogService {
 		log(sr, level, message, null);
 	}
 
-	public synchronized void log(final ServiceReference sr, final int level,
-			final String message, final Throwable exception) {
+	public synchronized void log(final ServiceReference sr, final int level, final String message,
+			final Throwable exception) {
 
 		if (exception != null && stacktrace)
 			exception.printStackTrace();
@@ -113,8 +113,7 @@ public class DummyLog implements LogService {
 				StringBuilder sb = new StringBuilder();
 				Formatter f = new Formatter(sb);
 				f.format("%6s %-4s %s %s", (now - start + 500) / 1000,
-						(sr == null ? "" : sr.getProperty("service.id")),
-						message,
+						(sr == null ? "" : sr.getProperty("service.id")), message,
 						(exception == null ? "" : exception.getMessage()));
 				return sb.toString();
 			}
@@ -171,15 +170,15 @@ public class DummyLog implements LogService {
 		return this;
 	}
 
-	public boolean check(String ... patterns) {
+	public boolean check(String... patterns) {
 		if (entries.isEmpty())
 			return true;
 
 		int n = entries.size();
-		
+
 		for (LogEntry le : entries) {
-			for ( String pattern : patterns ) {
-				if ( le.getMessage().contains(pattern))
+			for (String pattern : patterns) {
+				if (le.getMessage().contains(pattern))
 					n--;
 				else
 					System.out.println(le);
@@ -189,5 +188,5 @@ public class DummyLog implements LogService {
 		entries.clear();
 		return n != 0;
 	}
-	
+
 }

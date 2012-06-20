@@ -1,6 +1,6 @@
 package com.extensiblejava.impl.calculator;
 
-import java.math.BigDecimal;
+import java.math.*;
 
 class MonthlyPaymentCalculator {
 

@@ -1,7 +1,5 @@
 package aQute.service.store;
 
-
-
 public interface Store<T> {
 	public void insert(T document) throws Exception;
 
@@ -20,5 +18,5 @@ public interface Store<T> {
 	public byte[] uniqueId();
 
 	public Cursor<T> optimistic(T p);
-	
+
 }

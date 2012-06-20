@@ -20,29 +20,26 @@ import com.vaadin.terminal.gwt.server.*;
 
 /**
  * This is an activator bundles with the Vaadin code to simplify the use of
- * Vaadin in OSGi.
- * 
- * This component tracks one or more Http Services. For each Application
- * component factory that is available, it will register an Application Servlet
- * (local class) with that Http Service. The Application Servlet will create
- * instances on demand. If Componennt Factory services or Http Services are
- * unregistered, the data structures are cleaned up. For this reason we have to
- * maintain a shadow registry of the OSGi Http Service registrations as well as
- * all registered component factories.
- * 
- * This class uses 'this' as the lock object.
+ * Vaadin in OSGi. This component tracks one or more Http Services. For each
+ * Application component factory that is available, it will register an
+ * Application Servlet (local class) with that Http Service. The Application
+ * Servlet will create instances on demand. If Componennt Factory services or
+ * Http Services are unregistered, the data structures are cleaned up. For this
+ * reason we have to maintain a shadow registry of the OSGi Http Service
+ * registrations as well as all registered component factories. This class uses
+ * 'this' as the lock object.
  * 
  * @author Peter Kriens
  */
 
 @aQute.bnd.annotation.component.Component
 public class VaadinOSGiManager {
-	final BundleContext context = FrameworkUtil.getBundle(
-			VaadinOSGiManager.class).getBundleContext();
+	final BundleContext										context	= FrameworkUtil.getBundle(VaadinOSGiManager.class)
+																			.getBundleContext();
 
-	final Map<HttpService, Map<String, ApplicationServlet>> https = new HashMap<HttpService, Map<String, ApplicationServlet>>();
-	final Map<String, ComponentFactory> apps = new IdentityHashMap<String, ComponentFactory>();
-	BundleTracker bundles;
+	final Map<HttpService,Map<String,ApplicationServlet>>	https	= new HashMap<HttpService,Map<String,ApplicationServlet>>();
+	final Map<String,ComponentFactory>						apps	= new IdentityHashMap<String,ComponentFactory>();
+	BundleTracker											bundles;
 
 	@Activate
 	void activate(BundleContext context) {
@@ -88,20 +85,19 @@ public class VaadinOSGiManager {
 
 			// Create new entry for this http service with an empty registration
 			// map
-			https.put(http, new HashMap<String, ApplicationServlet>());
+			https.put(http, new HashMap<String,ApplicationServlet>());
 
 			// Ensure all current apps are registered with this http service.
-			for (Map.Entry<String, ComponentFactory> entry : apps.entrySet()) {
+			for (Map.Entry<String,ComponentFactory> entry : apps.entrySet()) {
 				register(http, entry.getKey(), entry.getValue());
 			}
 		}
 	}
 
 	/**
-	 * An Http Service is unregistered.
-	 * 
-	 * We remove the http service from our map and close all registered
-	 * Application Servlets. The close is done outside the lock.
+	 * An Http Service is unregistered. We remove the http service from our map
+	 * and close all registered Application Servlets. The close is done outside
+	 * the lock.
 	 * 
 	 * @param http
 	 *            The http service.
@@ -118,11 +114,9 @@ public class VaadinOSGiManager {
 	}
 
 	/**
-	 * Add a new application.
-	 * 
-	 * Each application is a DS component that is a factory. The factory id must
-	 * be com.vaadin.Application/&lt;alias&gt;, where &lt;alias&gt; is the the
-	 * URI of the application.
+	 * Add a new application. Each application is a DS component that is a
+	 * factory. The factory id must be com.vaadin.Application/&lt;alias&gt;,
+	 * where &lt;alias&gt; is the the URI of the application.
 	 * 
 	 * @param factory
 	 *            The service, which must be a Component Factory
@@ -133,8 +127,7 @@ public class VaadinOSGiManager {
 	 */
 
 	@Reference(type = '*', target = "(component.factory=com.vaadin.Application/*)")
-	protected void addApplication(ComponentFactory factory,
-			Map<String, String> properties) throws ServletException,
+	protected void addApplication(ComponentFactory factory, Map<String,String> properties) throws ServletException,
 			NamespaceException {
 		String alias = getAlias(properties);
 		synchronized (this) {
@@ -163,8 +156,7 @@ public class VaadinOSGiManager {
 	 * @param properties
 	 *            The component factory service properties
 	 */
-	protected void removeApplication(ComponentFactory factory,
-			Map<String, String> properties) {
+	protected void removeApplication(ComponentFactory factory, Map<String,String> properties) {
 		String alias = getAlias(properties);
 		Set<ApplicationServlet> toBeDestroyed = new HashSet<ApplicationServlet>();
 
@@ -172,7 +164,7 @@ public class VaadinOSGiManager {
 			// bundles.remove(ref.getBundle());
 			for (HttpService http : https.keySet()) {
 				http.unregister(alias);
-				Map<String, ApplicationServlet> map = https.get(http);
+				Map<String,ApplicationServlet> map = https.get(http);
 				toBeDestroyed.add(map.remove(alias));
 			}
 		}
@@ -183,16 +175,12 @@ public class VaadinOSGiManager {
 
 	/*
 	 * Calculate the alias. No check is done because these properties must come
-	 * from a component factory.
-	 * 
-	 * The component.name is expected to be of the form:
-	 * <code>com.vaadin.Application/&lt;alias&gt;</code>
-	 * 
+	 * from a component factory. The component.name is expected to be of the
+	 * form: <code>com.vaadin.Application/&lt;alias&gt;</code>
 	 * @param properties The properties from the component factory service
-	 * 
 	 * @return the alias part.
 	 */
-	private String getAlias(Map<String, String> properties) {
+	private String getAlias(Map<String,String> properties) {
 		String alias = properties.get("component.factory");
 		int n = alias.indexOf('/');
 		alias = alias.substring(n);
@@ -211,9 +199,8 @@ public class VaadinOSGiManager {
 	 * @throws ServletException
 	 * @throws NamespaceException
 	 */
-	private void register(final HttpService http, String alias,
-			final ComponentFactory factory) throws ServletException,
-			NamespaceException {
+	private void register(final HttpService http, String alias, final ComponentFactory factory)
+			throws ServletException, NamespaceException {
 		ApplicationServlet s = new ApplicationServlet(factory);
 		synchronized (this) {
 			https.get(http).put(alias, s);
@@ -234,8 +221,7 @@ public class VaadinOSGiManager {
 		http.registerResources("/VAADIN", "VAADIN", new HttpContext() {
 
 			@Override
-			public boolean handleSecurity(HttpServletRequest request,
-					HttpServletResponse response) throws IOException {
+			public boolean handleSecurity(HttpServletRequest request, HttpServletResponse response) throws IOException {
 				return true;
 			}
 
@@ -254,8 +240,7 @@ public class VaadinOSGiManager {
 				if (url != null) {
 					System.out.println(url);
 					return url;
-				}
-				else
+				} else
 					return null;
 			}
 
@@ -267,38 +252,33 @@ public class VaadinOSGiManager {
 	}
 
 	/**
-	 * A servlet that acts as the factory for new instances for Vaadin.
-	 * 
-	 * The servlet extends AbstractApplicationServlet as defined by Vaadin. For
-	 * each application, it will request a new instance. If this servlet is
-	 * closed, all created instances will be disposed.
-	 * 
+	 * A servlet that acts as the factory for new instances for Vaadin. The
+	 * servlet extends AbstractApplicationServlet as defined by Vaadin. For each
+	 * application, it will request a new instance. If this servlet is closed,
+	 * all created instances will be disposed.
 	 */
 	class ApplicationServlet extends AbstractApplicationServlet {
-		private static final long serialVersionUID = 1L;
+		private static final long					serialVersionUID	= 1L;
 
-		final ComponentFactory factory;
-		final Map<ComponentInstance, Application> instances = new HashMap<ComponentInstance, Application>();
-		final AtomicBoolean open = new AtomicBoolean(true);
+		final ComponentFactory						factory;
+		final Map<ComponentInstance,Application>	instances			= new HashMap<ComponentInstance,Application>();
+		final AtomicBoolean							open				= new AtomicBoolean(true);
 
 		ApplicationServlet(ComponentFactory factory) {
 			this.factory = factory;
 		}
 
 		@Override
-		protected Class<? extends Application> getApplicationClass()
-				throws ClassNotFoundException {
+		protected Class< ? extends Application> getApplicationClass() throws ClassNotFoundException {
 			return Application.class;
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		protected Application getNewApplication(HttpServletRequest request)
-				throws ServletException {
+		protected Application getNewApplication(HttpServletRequest request) throws ServletException {
 			if (open.get()) {
-				Hashtable<String, Object> ht = new Hashtable<String, Object>();
-				for (Enumeration<String> e = request.getAttributeNames(); e
-						.hasMoreElements();) {
+				Hashtable<String,Object> ht = new Hashtable<String,Object>();
+				for (Enumeration<String> e = request.getAttributeNames(); e.hasMoreElements();) {
 					String key = e.nextElement();
 					ht.put(key, request.getAttribute(key));
 				}
@@ -310,14 +290,12 @@ public class VaadinOSGiManager {
 					return app;
 				}
 			} else
-				throw new IllegalStateException(
-						"Application Servlet is closed! " + factory);
+				throw new IllegalStateException("Application Servlet is closed! " + factory);
 		}
 
 		public void close() {
 			if (open.getAndSet(false)) {
-				for (Map.Entry<ComponentInstance, Application> instance : instances
-						.entrySet()) {
+				for (Map.Entry<ComponentInstance,Application> instance : instances.entrySet()) {
 					instance.getValue().close();
 					instance.getKey().dispose();
 				}

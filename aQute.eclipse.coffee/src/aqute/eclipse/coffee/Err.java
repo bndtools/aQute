@@ -3,8 +3,7 @@ package aqute.eclipse.coffee;
 import java.util.regex.*;
 
 public class Err {
-	final static Pattern	LINE	= Pattern.compile(".*line ([0-9]+).*$",
-											Pattern.MULTILINE);
+	final static Pattern	LINE	= Pattern.compile(".*line ([0-9]+).*$", Pattern.MULTILINE);
 	int						line;
 	String					message;
 

@@ -12,7 +12,7 @@ import aQute.bnd.annotation.component.*;
 import aQute.bnd.annotation.metatype.*;
 import aQute.webserver.WebServer.Config;
 
-@Component(provide = {}, configurationPolicy = ConfigurationPolicy.require, immediate = true, designateFactory=Config.class)
+@Component(provide = {}, configurationPolicy = ConfigurationPolicy.require, immediate = true, designateFactory = Config.class)
 public class WebServer implements HttpContext {
 
 	interface Config {
@@ -21,11 +21,11 @@ public class WebServer implements HttpContext {
 		File[] directories();
 	}
 
-	Config	config;
-	HttpService http;
-	
+	Config		config;
+	HttpService	http;
+
 	@Activate
-	void activate(Map<String, Object> props) throws NamespaceException {
+	void activate(Map<String,Object> props) throws NamespaceException {
 		this.config = Configurable.createConfigurable(Config.class, props);
 		http.registerResources(config.alias(), "", this);
 	}
@@ -35,8 +35,7 @@ public class WebServer implements HttpContext {
 		this.http = http;
 	}
 
-	public boolean handleSecurity(HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
+	public boolean handleSecurity(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		return true;
 	}
 

@@ -42,40 +42,64 @@ public interface Domain<T> {
 
 	public interface SelectRequest<T> extends Iterable<T> {
 		int count();
-		Collection<?> itemNames();
+
+		Collection< ? > itemNames();
+
 		Collection<T> select(String... attrs);
-		
+
 		SelectRequest<T> consistentRead();
+
 		SelectRequest<T> descending();
+
 		SelectRequest<T> orderBy(String attribute);
+
 		SelectRequest<T> limit(int limit);
+
 		SelectRequest<T> orderByItemName();
-		
+
 	}
 
 	public interface Op<T> {
 		WhereRequest<T> notEquals(Object value);
+
 		WhereRequest<T> equal(Object value);
+
 		WhereRequest<T> like(Object value);
+
 		WhereRequest<T> notLike(Object value);
+
 		WhereRequest<T> greater(Object value);
+
 		WhereRequest<T> greaterOrEqual(Object value);
+
 		WhereRequest<T> less(Object value);
+
 		WhereRequest<T> lessOrEqual(Object value);
-		WhereRequest<T> in(Object ... value);
+
+		WhereRequest<T> in(Object... value);
+
 		WhereRequest<T> isNull();
+
 		WhereRequest<T> isNotNull();
+
 		WhereRequest<T> every();
+
 		WhereRequest<T> between(Object low, Object high);
 	}
+
 	public interface WhereRequest<T> extends SelectRequest<T> {
-		WhereRequest<T> intersection( WhereRequest<T> rq );
-		WhereRequest<T> and( WhereRequest<T> rq );
-		WhereRequest<T> or( WhereRequest<T> rq );
-		WhereRequest<T> not( WhereRequest<T> rq );
+		WhereRequest<T> intersection(WhereRequest<T> rq);
+
+		WhereRequest<T> and(WhereRequest<T> rq);
+
+		WhereRequest<T> or(WhereRequest<T> rq);
+
+		WhereRequest<T> not(WhereRequest<T> rq);
+
 		Op<T> itemName();
-		
+
 	}
+
 	public interface ConditionalRequest<T> {
 		ConditionalRequest<T> and(T item);
 

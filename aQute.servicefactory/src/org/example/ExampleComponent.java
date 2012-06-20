@@ -5,7 +5,7 @@ import org.osgi.service.event.*;
 
 import aQute.bnd.annotation.component.*;
 
-@Component(servicefactory=true, properties= EventConstants.EVENT_TOPIC +"=*")
+@Component(servicefactory = true, properties = EventConstants.EVENT_TOPIC + "=*")
 public class ExampleComponent implements EventHandler {
 
 	@Activate
@@ -18,4 +18,3 @@ public class ExampleComponent implements EventHandler {
 		System.out.println(event.getTopic());
 	}
 }
-

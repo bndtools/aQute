@@ -20,14 +20,13 @@ public class RepositoryImpl implements Repository {
 	final String			secret;
 	final String			user;
 
-	public RepositoryImpl(GithubImpl github, String owner, String name,
-			String user, String secret) {
+	public RepositoryImpl(GithubImpl github, String owner, String name, String user, String secret) {
 		this.owner = owner;
 		this.repo = name;
 		this.baseurl = BASE_URL + owner + "/" + repo + "/";
 		this.github = github;
 		this.user = user;
-		this.secret=secret;
+		this.secret = secret;
 	}
 
 	public Commit getCommit(String sha) throws Exception {
@@ -40,8 +39,7 @@ public class RepositoryImpl implements Repository {
 	}
 
 	public URI getBlob(String sha) throws Exception {
-		return new URI("https://github.com/api/v2/json/blob/show/" + owner
-				+ "/" + repo + "/" + sha);
+		return new URI("https://github.com/api/v2/json/blob/show/" + owner + "/" + repo + "/" + sha);
 	}
 
 	private <T> T read(Class<T> clazz, String string) throws Exception {
@@ -51,8 +49,7 @@ public class RepositoryImpl implements Repository {
 		// Do we need to authenticate?
 		if (github.config._secret() != null && github.config.user() != null) {
 			String auth = github.config.user() + ":" + github.config._secret();
-			conn.setRequestProperty("Authorization",
-					"Basic " + Base64.encodeBase64(auth.getBytes("UTF-8")));
+			conn.setRequestProperty("Authorization", "Basic " + Base64.encodeBase64(auth.getBytes("UTF-8")));
 		}
 		int code = conn.getResponseCode();
 		if (code != 200) {
@@ -62,7 +59,8 @@ public class RepositoryImpl implements Repository {
 		try {
 			String s = IO.collect(in);
 			return codec.dec().from(s).get(clazz);
-		} finally {
+		}
+		finally {
 			in.close();
 		}
 	}
@@ -114,9 +112,9 @@ public class RepositoryImpl implements Repository {
 
 	public List<Branch> getBranches() throws Exception {
 		Branch[] read = read(Branch[].class, "branches");
-		if ( read == null)
+		if (read == null)
 			return null;
-		
+
 		return new SortedList<Branch>(read);
 	}
 }

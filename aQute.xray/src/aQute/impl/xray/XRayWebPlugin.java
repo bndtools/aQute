@@ -19,9 +19,10 @@ import aQute.bnd.annotation.component.*;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import aQute.impl.xray.Data.BundleDef;
+import aQute.impl.xray.Data.BundleDef.STATE;
+import aQute.impl.xray.Data.ComponentDef;
+import aQute.impl.xray.Data.Result;
 import aQute.impl.xray.Data.ServiceDef;
-import aQute.impl.xray.Data.*;
-import aQute.impl.xray.Data.BundleDef.*;
 import aQute.lib.collections.*;
 import aQute.lib.io.*;
 import aQute.lib.json.*;
@@ -29,29 +30,31 @@ import aQute.lib.json.*;
 /**
  * This is a servlet that provides the stat of the OSGi framework in a JSON
  * file. The state is represented as a {@link Result} data object. The servlet
- * is designed to work inside the Felix Web Console plugin model.
- * 
- * This is a final class because we assume resources are in the package so
- * subclassing might kill this.
+ * is designed to work inside the Felix Web Console plugin model. This is a
+ * final class because we assume resources are in the package so subclassing
+ * might kill this.
  */
 
-@Component(provide = {Servlet.class}, properties = {"felix.webconsole.label=xray"})
+@Component(provide = {
+	Servlet.class
+}, properties = {
+	"felix.webconsole.label=xray"
+})
 @SuppressWarnings("rawtypes")
 public final class XRayWebPlugin extends AbstractWebConsolePlugin {
-	private static final long			serialVersionUID		= 1L;
-	private static String				PLUGIN_NAME				= "xray";
+	private static final long		serialVersionUID		= 1L;
+	private static String			PLUGIN_NAME				= "xray";
 
-	final static int					TITLE_LENGTH			= 14;
-	final static Pattern				LISTENER_INFO_PATTERN	= Pattern
-																		.compile("\\(objectClass=([^)]+)\\)");
-	final static JSONCodec				codec					= new JSONCodec();
+	final static int				TITLE_LENGTH			= 14;
+	final static Pattern			LISTENER_INFO_PATTERN	= Pattern.compile("\\(objectClass=([^)]+)\\)");
+	final static JSONCodec			codec					= new JSONCodec();
 
-	private BundleContext				context;
-	private LogReaderService			logReader;
-	private LogService					log;
-	private ScrService					scr;
-	private MultiMap<String, Bundle>	listeners				= new MultiMap<String, Bundle>();
-	private ServiceRegistration			lhook;
+	private BundleContext			context;
+	private LogReaderService		logReader;
+	private LogService				log;
+	private ScrService				scr;
+	private MultiMap<String,Bundle>	listeners				= new MultiMap<String,Bundle>();
+	private ServiceRegistration		lhook;
 
 	/*
 	 * Called at startup
@@ -65,21 +68,20 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 		 * Register a ListenerHook to find out about any services that are
 		 * searched for.
 		 */
-		lhook = context.registerService(ListenerHook.class.getName(),
-				new ListenerHook() {
+		lhook = context.registerService(ListenerHook.class.getName(), new ListenerHook() {
 
-					public synchronized void added(Collection listeners) {
-						for (Object o : listeners) {
-							addListenerInfo((ListenerInfo) o);
-						}
-					}
+			public synchronized void added(Collection listeners) {
+				for (Object o : listeners) {
+					addListenerInfo((ListenerInfo) o);
+				}
+			}
 
-					public synchronized void removed(Collection listeners) {
-						for (Object o : listeners) {
-							removeListenerInfo((ListenerInfo) o);
-						}
-					}
-				}, null);
+			public synchronized void removed(Collection listeners) {
+				for (Object o : listeners) {
+					removeListenerInfo((ListenerInfo) o);
+				}
+			}
+		}, null);
 	}
 
 	/*
@@ -111,8 +113,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 	 * We need to be able to serve the state easily. So we implement the doGet
 	 * and let the superclass handle anything but the state data.
 	 */
-	public void doGet(HttpServletRequest rq, HttpServletResponse rsp)
-			throws ServletException, IOException {
+	public void doGet(HttpServletRequest rq, HttpServletResponse rsp) throws ServletException, IOException {
 		if (rq.getPathInfo().endsWith("/state.json"))
 			getState(rq, rsp);
 		else
@@ -132,7 +133,8 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 
 			codec.enc().to(rsp.getWriter()).writeDefaults().put(result);
 
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			log.log(LogService.LOG_ERROR, "Failed to create state file", e);
 		}
@@ -144,8 +146,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 	 * Console is adding headers etc.
 	 */
 	@Override
-	protected void renderContent(HttpServletRequest rq, HttpServletResponse rsp)
-			throws ServletException, IOException {
+	protected void renderContent(HttpServletRequest rq, HttpServletResponse rsp) throws ServletException, IOException {
 		IO.copy(getClass().getResourceAsStream("index.html"), rsp.getWriter());
 	}
 
@@ -154,7 +155,9 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 	 */
 	@Override
 	public String[] getCssReferences() {
-		return new String[] {"/" + PLUGIN_NAME + "/style.css"};
+		return new String[] {
+			"/" + PLUGIN_NAME + "/style.css"
+		};
 	}
 
 	/**
@@ -173,12 +176,11 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 	 * Build up the graph
 	 * 
 	 * @param ignoredServices
-	 * 
 	 * @throws InvalidSyntaxException
 	 */
 	Result build(String[] ignoredServices) throws InvalidSyntaxException {
-		Map<String, ServiceDef> services = new TreeMap<String, ServiceDef>();
-		Map<Bundle, BundleDef> bundles = new LinkedHashMap<Bundle, BundleDef>();
+		Map<String,ServiceDef> services = new TreeMap<String,ServiceDef>();
+		Map<Bundle,BundleDef> bundles = new LinkedHashMap<Bundle,BundleDef>();
 
 		Bundle[] bs = context.getBundles();
 		int index = 0;
@@ -196,8 +198,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 				icon.name = name;
 				icon.shortName = from(TITLE_LENGTH, name);
 			}
-			for (Iterator<Bundle> i = listeners.get(name).iterator(); i
-					.hasNext();) {
+			for (Iterator<Bundle> i = listeners.get(name).iterator(); i.hasNext();) {
 				Bundle b = i.next();
 				BundleDef bdef = bundles.get(b);
 				if (bdef == null)
@@ -207,8 +208,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 			}
 		}
 
-		for (ServiceReference reference : context.getServiceReferences(null,
-				null)) {
+		for (ServiceReference reference : context.getServiceReferences(null, null)) {
 
 			for (String name : (String[]) reference.getProperty("objectClass")) {
 				ServiceDef service = services.get(name);
@@ -233,13 +233,13 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 
 		layoutBundleFirst(bundles.values(), services.values());
 
-		boolean[][] occupied = new boolean[bundles.size()+1][services.size()];
-		for ( ServiceDef service : services.values()){
-			if ( service.column>0 ) {
-				while ( occupied[service.row][service.column])
+		boolean[][] occupied = new boolean[bundles.size() + 1][services.size()];
+		for (ServiceDef service : services.values()) {
+			if (service.column > 0) {
+				while (occupied[service.row][service.column])
 					service.row++;
 			}
-			occupied[service.row][service.column]=true;
+			occupied[service.row][service.column] = true;
 		}
 
 		// Convert references to indexes
@@ -263,8 +263,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 		return result;
 	}
 
-	private void layoutBundleFirst(Collection<BundleDef> bundles,
-			Collection<ServiceDef> services) {
+	private void layoutBundleFirst(Collection<BundleDef> bundles, Collection<ServiceDef> services) {
 		LinkedList<BundleDef> bs = new LinkedList<BundleDef>(bundles);
 		LinkedList<ServiceDef> ss = new LinkedList<ServiceDef>(services);
 
@@ -273,7 +272,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 		for (ServiceDef sd : services)
 			if (sd.isOrphan())
 				orphanStart--;
-				
+
 		int row = 0;
 
 		while (!bs.isEmpty()) {
@@ -305,24 +304,23 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 		for (BundleDef bd : bs) {
 			bd.row = row++;
 		}
-		
-		for ( ServiceDef sd : services) {
+
+		for (ServiceDef sd : services) {
 			int max = findMaxRow(sd.r, sd.row);
 			max = findMaxRow(sd.l, max);
 			max = findMaxRow(sd.g, max);
-			sd.row = sd.row + (max-sd.row+1)/2;
+			sd.row = sd.row + (max - sd.row + 1) / 2;
 		}
 	}
 
 	private int findMaxRow(List<BundleDef> bs, int row) {
-		for(BundleDef bd : bs) {
+		for (BundleDef bd : bs) {
 			row = Math.max(bd.row, row);
 		}
 		return row;
 	}
 
-	private void layoutServiceFirst(Collection<BundleDef> bundles,
-			Collection<ServiceDef> services) {
+	private void layoutServiceFirst(Collection<BundleDef> bundles, Collection<ServiceDef> services) {
 		LinkedList<BundleDef> bs = new LinkedList<BundleDef>(bundles);
 		int column = 0;
 		int row = 0;
@@ -381,17 +379,12 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 						s = s.substring(s.lastIndexOf('.') + 1);
 						if (s.length() > n) {
 							if (s.endsWith("Listener"))
-								s = s.substring(0,
-										s.length() - "istener".length())
-										+ ".";
+								s = s.substring(0, s.length() - "istener".length()) + ".";
 							else if (s.endsWith("Service"))
-								s = s.substring(0,
-										s.length() - "ervice".length())
-										+ ".";
+								s = s.substring(0, s.length() - "ervice".length()) + ".";
 							if (s.length() > n) {
 								StringBuilder sb = new StringBuilder();
-								for (int i = 0; i < s.length()
-										&& sb.length() < n; i++) {
+								for (int i = 0; i < s.length() && sb.length() < n; i++) {
 									if ("aeiouy".indexOf(s.charAt(i)) < 0)
 										sb.append(s.charAt(i));
 								}
@@ -416,8 +409,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 		BundleDef bd = new BundleDef();
 		bd.id = bundle.getBundleId();
 		bd.bsn = bundle.getSymbolicName();
-		bd.name = from(15, bd.bsn,
-				(String) bundle.getHeaders().get("Bundle-Name"), bd.id + "");
+		bd.name = from(15, bd.bsn, (String) bundle.getHeaders().get("Bundle-Name"), bd.id + "");
 
 		switch (bundle.getState()) {
 			case Bundle.INSTALLED :
@@ -444,8 +436,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 				break;
 		}
 
-		if (bundle.getState() == Bundle.STARTING
-				|| bundle.getState() == Bundle.ACTIVE) {
+		if (bundle.getState() == Bundle.STARTING || bundle.getState() == Bundle.ACTIVE) {
 			if (scr != null)
 				doComponents(bundle, bd);
 		}
@@ -470,8 +461,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 				cdef.index = bd.components.size();
 				cdef.id = component.getId();
 				if (component.getReferences() != null) {
-					for (org.apache.felix.scr.Reference ref : component
-							.getReferences()) {
+					for (org.apache.felix.scr.Reference ref : component.getReferences()) {
 						cdef.references.add(ref.getServiceName());
 					}
 				}
@@ -492,15 +482,10 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 		while (e.hasMoreElements()) {
 			LogEntry entry = e.nextElement();
 			if (entry.getBundle() == bundle) {
-				if (entry.getTime() + 2 * 60 * 1000 > System
-						.currentTimeMillis()) {
+				if (entry.getTime() + 2 * 60 * 1000 > System.currentTimeMillis()) {
 					if (entry.getLevel() <= LogService.LOG_WARNING) {
-						f.format(
-								"%s:%s %s\n",
-								entry.getLevel() == LogService.LOG_WARNING ? "W"
-										: "E", entry.getMessage(), (entry
-										.getException() == null ? "" : entry
-										.getException().getMessage()));
+						f.format("%s:%s %s\n", entry.getLevel() == LogService.LOG_WARNING ? "W" : "E", entry
+								.getMessage(), (entry.getException() == null ? "" : entry.getException().getMessage()));
 						if (entry.getLevel() == LogService.LOG_WARNING)
 							bd.errors |= true;
 					}

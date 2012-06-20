@@ -5,10 +5,10 @@ import java.math.*;
 import aQute.poma.domain.*;
 
 public class BillImpl implements Bill {
-	BigDecimal amount;
-	Payment paid = Payment.UNPAID;
-	final String id;
-	final Customer customer;
+	BigDecimal		amount;
+	Payment			paid	= Payment.UNPAID;
+	final String	id;
+	final Customer	customer;
 
 	public BillImpl(Customer customer, String id, BigDecimal amount) {
 		this.amount = amount;

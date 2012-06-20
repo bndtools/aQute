@@ -18,8 +18,7 @@ public class JavascriptServlet extends HttpServlet {
 
 	Pattern	PATH	= Pattern.compile("/([\\d\\w]+)");
 
-	public void doGet(HttpServletRequest rq, HttpServletResponse rsp)
-			throws IOException {
+	public void doGet(HttpServletRequest rq, HttpServletResponse rsp) throws IOException {
 		try {
 
 			String path = rq.getPathInfo();
@@ -32,14 +31,12 @@ public class JavascriptServlet extends HttpServlet {
 				else
 					path = path.substring(1);
 
-				File f = new File(parent.config.resourceDir(), path.replace(
-						'/', File.separatorChar));
+				File f = new File(parent.config.resourceDir(), path.replace('/', File.separatorChar));
 
 				if (f.exists()) {
 					rsp.setContentLength((int) f.length());
 					IO.copy(f, rsp.getOutputStream());
-				}
-				else
+				} else
 					rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
 		}

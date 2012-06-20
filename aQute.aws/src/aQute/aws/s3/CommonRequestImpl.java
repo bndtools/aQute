@@ -2,14 +2,13 @@ package aQute.aws.s3;
 
 import java.util.*;
 
-import aQute.aws.s3.Bucket.*;
-
+import aQute.aws.s3.Bucket.CommonRequest;
 
 @SuppressWarnings("unchecked")
 public class CommonRequestImpl<T> implements CommonRequest<T> {
-	final SortedMap<String, String>	headers	= new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
-	final SortedMap<String, String>	arguments	= new TreeMap<String, String>();
-	final S3					parent;
+	final SortedMap<String,String>	headers		= new TreeMap<String,String>(String.CASE_INSENSITIVE_ORDER);
+	final SortedMap<String,String>	arguments	= new TreeMap<String,String>();
+	final S3						parent;
 
 	CommonRequestImpl(S3 parent) {
 		this.parent = parent;
@@ -31,7 +30,7 @@ public class CommonRequestImpl<T> implements CommonRequest<T> {
 		headers.put(header, value);
 		return (T) this;
 	}
-	
+
 	T header(String header, Date value) {
 		headers.put(header, parent.httpDate(value));
 		return (T) this;

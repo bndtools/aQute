@@ -16,31 +16,32 @@ import org.eclipse.ui.texteditor.*;
 
 public class CoffeeConfiguration extends SourceViewerConfiguration {
 
-	final String[]		KEYWORD				= {"true", "false", "null", "this",
-			"new", "delete", "typeof", "in", "instanceof", "return", "throw",
-			"break", "continue", "debugger", "if", "else", "switch", "for",
-			"while", "do", "try", "catch", "finally", "class", "extends",
-			"super", "undefined", "then", "unless", "until", "loop", "of",
-			"by", "when", "and", "or", "is", "isnt", "not", "yes", "no", "on",
-			"off", "false"					};
+	final String[]		KEYWORD				= {
+			"true", "false", "null", "this", "new", "delete", "typeof", "in", "instanceof", "return", "throw", "break",
+			"continue", "debugger", "if", "else", "switch", "for", "while", "do", "try", "catch", "finally", "class",
+			"extends", "super", "undefined", "then", "unless", "until", "loop", "of", "by", "when", "and", "or", "is",
+			"isnt", "not", "yes", "no", "on", "off", "false"
+											};
 
 	// The list of keywords that are reserved by JavaScript, but not used, or
 	// are used by CoffeeScript internally. We throw an error when these are
 	// encountered, to avoid having a JavaScript error at runtime.
 
-	final String[]		RESERVED			= {"case", "default", "function",
-			"var", "void", "with", "const", "let", "enum", "export", "import",
-			"native", "__hasProp", "__extends", "__slice", "__bind",
-			"__indexOf", "implements", "interface", "let", "package",
-			"private", "protected", "public", "static", "yield"};
+	final String[]		RESERVED			= {
+			"case", "default", "function", "var", "void", "with", "const", "let", "enum", "export", "import", "native",
+			"__hasProp", "__extends", "__slice", "__bind", "__indexOf", "implements", "interface", "let", "package",
+			"private", "protected", "public", "static", "yield"
+											};
 
-	final String[]		STRICT_PROSCRIBED	= {"arguments", "eval"};
+	final String[]		STRICT_PROSCRIBED	= {
+			"arguments", "eval"
+											};
 
-	final String[]		OPERATORS			= {"->", "+=", "++", "-=", "=",
-			"?", "...", "..", "&&", "||", "!", "-", "+", "/=", "*=", "%=",
-			"||=", "&&=", "?=", "<<=", ">>=", ">>>=", "&=", "^=", "|=", "&",
-			"|", "^", "<<", ">>", ">>>", "==", "!=", "<", ">", "<=", ">=", "*",
-			"=>", ".", "?.", ":", "%"			};
+	final String[]		OPERATORS			= {
+			"->", "+=", "++", "-=", "=", "?", "...", "..", "&&", "||", "!", "-", "+", "/=", "*=", "%=", "||=", "&&=",
+			"?=", "<<=", ">>=", ">>>=", "&=", "^=", "|=", "&", "|", "^", "<<", ">>", ">>>", "==", "!=", "<", ">", "<=",
+			">=", "*", "=>", ".", "?.", ":", "%"
+											};
 
 	final String		CT_COMMENT			= "__coffee_comment";
 	final String		CT_STRING			= "__coffee_string";
@@ -48,8 +49,8 @@ public class CoffeeConfiguration extends SourceViewerConfiguration {
 	final String		CT_REGEXP			= "__coffee_regexp";
 	final String		CT_JAVASCRIPT		= "__coffee_javascript";
 	final String[]		CTS					= new String[] {
-			IDocument.DEFAULT_CONTENT_TYPE, CT_COMMENT, CT_STRING, CT_REGEXP,
-			CT_STRING_LITERAL, CT_JAVASCRIPT};
+			IDocument.DEFAULT_CONTENT_TYPE, CT_COMMENT, CT_STRING, CT_REGEXP, CT_STRING_LITERAL, CT_JAVASCRIPT
+											};
 
 	final Token			CTT_COMMENT			= new Token(CT_COMMENT);
 	final Token			CTT_STRING			= new Token(CT_STRING);
@@ -83,7 +84,8 @@ public class CoffeeConfiguration extends SourceViewerConfiguration {
 		T_RESERVED = token(base3, red, TextAttribute.STRIKETHROUGH);
 		T_PROSCRIBED = token(yellow, null, SWT.BOLD);
 		T_OPERATOR = token(magenta, null, 0);
-		T_FALSE_OPERATOR = token(base3, red, SWT.BOLD);;
+		T_FALSE_OPERATOR = token(base3, red, SWT.BOLD);
+		;
 		T_COMMENT = token(green, null, 0);
 		T_STRING = token(violet, null, 0);
 		T_STRING_LITERAL = token(violet, null, 0);
@@ -96,29 +98,21 @@ public class CoffeeConfiguration extends SourceViewerConfiguration {
 	}
 
 	private Token token(RGB fore, RGB back, int style) {
-		return new Token(new TextAttribute(colors.getColor(fore),
-				back == null ? null : colors.getColor(back), style));
+		return new Token(new TextAttribute(colors.getColor(fore), back == null ? null : colors.getColor(back), style));
 	}
 
-	public IPresentationReconciler getPresentationReconciler(
-			ISourceViewer sourceViewer) {
+	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
-		configureReconciler(reconciler, IDocument.DEFAULT_CONTENT_TYPE,
-				new SyntaxScanner());
-		configureReconciler(reconciler, CT_COMMENT,
-				new SimpleScanner(T_COMMENT));
+		configureReconciler(reconciler, IDocument.DEFAULT_CONTENT_TYPE, new SyntaxScanner());
+		configureReconciler(reconciler, CT_COMMENT, new SimpleScanner(T_COMMENT));
 		configureReconciler(reconciler, CT_STRING, new StringScanner());
-		configureReconciler(reconciler, CT_STRING_LITERAL, new SimpleScanner(
-				T_STRING_LITERAL));
-		configureReconciler(reconciler, CT_REGEXP, new SimpleScanner(T_REGEXP,
-				new EndOfLineRule("#", T_COMMENT)));
-		configureReconciler(reconciler, CT_JAVASCRIPT, new SimpleScanner(
-				T_JAVASCRIPT));
+		configureReconciler(reconciler, CT_STRING_LITERAL, new SimpleScanner(T_STRING_LITERAL));
+		configureReconciler(reconciler, CT_REGEXP, new SimpleScanner(T_REGEXP, new EndOfLineRule("#", T_COMMENT)));
+		configureReconciler(reconciler, CT_JAVASCRIPT, new SimpleScanner(T_JAVASCRIPT));
 		return reconciler;
 	}
 
-	private void configureReconciler(PresentationReconciler reconciler,
-			String partitionType, ITokenScanner scanner) {
+	private void configureReconciler(PresentationReconciler reconciler, String partitionType, ITokenScanner scanner) {
 		DefaultDamagerRepairer dr;
 		dr = new DefaultDamagerRepairer(scanner);
 		reconciler.setDamager(dr, partitionType);
@@ -136,7 +130,7 @@ public class CoffeeConfiguration extends SourceViewerConfiguration {
 			OperatorRule operator = new OperatorRule();
 			operator.addWords(OPERATORS, T_OPERATOR);
 			IRule[] rules = new IRule[] {//
-			new EndOfLineRule("#", T_COMMENT), words,//
+					new EndOfLineRule("#", T_COMMENT), words,//
 					operator,//
 			};
 			setRules(rules);
@@ -147,8 +141,8 @@ public class CoffeeConfiguration extends SourceViewerConfiguration {
 
 		public StringScanner() {
 			setDefaultReturnToken(T_STRING);
-			IPredicateRule[] rules = new IPredicateRule[] {new PatternRule(
-					"#{", "}", T_STRING_REF, '\\', true),//
+			IPredicateRule[] rules = new IPredicateRule[] {
+				new PatternRule("#{", "}", T_STRING_REF, '\\', true),//
 			};
 			setRules(rules);
 		}
@@ -167,8 +161,7 @@ public class CoffeeConfiguration extends SourceViewerConfiguration {
 
 	public IDocumentProvider getDocumentProvider() {
 		FileDocumentProvider fdp = new FileDocumentProvider() {
-			protected IDocument createDocument(Object element)
-					throws CoreException {
+			protected IDocument createDocument(Object element) throws CoreException {
 				IDocument document = super.createDocument(element);
 				if (document != null) {
 					RuleBasedPartitionScanner scanner = new RuleBasedPartitionScanner();
@@ -176,10 +169,9 @@ public class CoffeeConfiguration extends SourceViewerConfiguration {
 							new MultiLineRule("///", "///", CTT_REGEXP),
 							new MultiLineRule("\"\"\"", "\"\"\"", CTT_STRING),
 							new PatternRule("\"", "\"", CTT_STRING, '\\', false),//
-							new PatternRule("'", "'", CTT_STRING_LITERAL, '\\',
-									false),//
-							new MultiLineRule("`", "`", CTT_JAVASCRIPT),
-							new MultiLineRule("###", "###", CTT_COMMENT),};
+							new PatternRule("'", "'", CTT_STRING_LITERAL, '\\', false),//
+							new MultiLineRule("`", "`", CTT_JAVASCRIPT), new MultiLineRule("###", "###", CTT_COMMENT),
+					};
 					scanner.setPredicateRules(rules);
 					FastPartitioner cp = new FastPartitioner(scanner, CTS);
 					cp.connect(document);
@@ -194,7 +186,7 @@ public class CoffeeConfiguration extends SourceViewerConfiguration {
 
 	class KeyWordRule implements IRule {
 
-		Map<String, IToken>	keyWords	= new HashMap<String, IToken>();
+		Map<String,IToken>	keyWords	= new HashMap<String,IToken>();
 
 		private boolean isWordStart(char c) {
 			return Character.isJavaIdentifierStart(c) || c == '@';
@@ -222,8 +214,7 @@ public class CoffeeConfiguration extends SourceViewerConfiguration {
 					return token;
 
 				if (sb.length() > 2) {
-					if (Character.isUpperCase(sb.charAt(0))
-							&& Character.isLowerCase(sb.charAt(1)))
+					if (Character.isUpperCase(sb.charAt(0)) && Character.isLowerCase(sb.charAt(1)))
 						return T_CLASSNAME;
 
 				}

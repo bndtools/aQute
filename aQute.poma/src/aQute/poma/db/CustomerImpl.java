@@ -6,9 +6,9 @@ import java.util.*;
 import aQute.poma.domain.*;
 
 public class CustomerImpl implements Customer {
-	final String id;
-	BigDecimal discount = new BigDecimal("0");
-	final ArrayList<BillImpl> bills = new ArrayList<BillImpl>();
+	final String				id;
+	BigDecimal					discount	= new BigDecimal("0");
+	final ArrayList<BillImpl>	bills		= new ArrayList<BillImpl>();
 
 	public CustomerImpl(String id) {
 		this.id = id;
@@ -20,7 +20,7 @@ public class CustomerImpl implements Customer {
 	}
 
 	@Override
-	public Collection<? extends Bill> getBills() {
+	public Collection< ? extends Bill> getBills() {
 		return bills;
 	}
 
@@ -40,7 +40,7 @@ public class CustomerImpl implements Customer {
 	public void setDiscount(BigDecimal discount) {
 		this.discount = discount;
 	}
-	
+
 	public String toString() {
 		return id;
 	}

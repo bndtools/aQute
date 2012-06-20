@@ -8,9 +8,8 @@ import org.w3c.dom.*;
 import aQute.aws.*;
 
 /**
- * A Simple Queue service Message Queue.
- * 
- * Provides access to the SQ service queues.
+ * A Simple Queue service Message Queue. Provides access to the SQ service
+ * queues.
  */
 public class MessageQueue {
 	final String	name;
@@ -45,10 +44,8 @@ public class MessageQueue {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Message> receive(int maximumNumberOfMessages,
-			int visibilityTimeout) throws Exception {
-		Request request = parent.client.action("ReceiveMessage")
-				.endpoint(endpoint).arg("AttributeName.1", "All");
+	public List<Message> receive(int maximumNumberOfMessages, int visibilityTimeout) throws Exception {
+		Request request = parent.client.action("ReceiveMessage").endpoint(endpoint).arg("AttributeName.1", "All");
 		if (maximumNumberOfMessages >= 2)
 			request.arg("MaximumNumberOfMessages", maximumNumberOfMessages);
 		if (visibilityTimeout > 0)
@@ -57,32 +54,25 @@ public class MessageQueue {
 		request.check();
 
 		List<Message> result = new ArrayList<Message>();
-		for (Node node : request
-				.nodes("ReceiveMessageResponse/ReceiveMessageResult/Message")) {
+		for (Node node : request.nodes("ReceiveMessageResponse/ReceiveMessageResult/Message")) {
 
 			String receiptHandle = request.string(node, "ReceiptHandle");
 			String messageId = request.string(node, "MessageId");
 			String md5OfBody = request.string(node, "MD5OfBody");
 			String body = request.string(node, "Body");
 			if (request.checkmd5(md5OfBody, body)) {
-				long sentTimestamp = Long.parseLong(request.string(node,
-						"Attribute[Name='SentTimestamp']/Value"));
+				long sentTimestamp = Long.parseLong(request.string(node, "Attribute[Name='SentTimestamp']/Value"));
 				int receiveCount = Integer.parseInt(request.string(node,
 						"Attribute[Name='ApproximateReceiveCount']/Value"));
-				long receiveTimestamp = Long
-						.parseLong(request
-								.string(node,
-										"Attribute[Name='ApproximateFirstReceiveTimestamp']/Value"));
-				String senderId = request.string(node,
-						"Attribute[Name='SenderId']/Value");
-				Message msg = new Message(this, messageId, body, receiptHandle,
-						sentTimestamp, receiveTimestamp, receiveCount, senderId);
+				long receiveTimestamp = Long.parseLong(request.string(node,
+						"Attribute[Name='ApproximateFirstReceiveTimestamp']/Value"));
+				String senderId = request.string(node, "Attribute[Name='SenderId']/Value");
+				Message msg = new Message(this, messageId, body, receiptHandle, sentTimestamp, receiveTimestamp,
+						receiveCount, senderId);
 				result.add(msg);
-			}
-			else
-				parent.log.log(LogService.LOG_WARNING,
-						"Received false md5, ignored " + receiptHandle + " "
-								+ messageId);
+			} else
+				parent.log
+						.log(LogService.LOG_WARNING, "Received false md5, ignored " + receiptHandle + " " + messageId);
 		}
 		return result;
 	}
@@ -90,9 +80,11 @@ public class MessageQueue {
 	/**
 	 * Send a message to the queue.
 	 * 
-	 * @param delay Number of seconds before it becomes active in the queue
-	 * @param messages Messages, will be translated to string with the
-	 *        toString() method
+	 * @param delay
+	 *            Number of seconds before it becomes active in the queue
+	 * @param messages
+	 *            Messages, will be translated to string with the toString()
+	 *            method
 	 * @return The message objects with the message ids.
 	 * @throws Exception
 	 */
@@ -102,27 +94,22 @@ public class MessageQueue {
 		for (int i = 0; i < messages.length; i++) {
 			messages[i] = messages[i].toString();
 			request.arg("SendMessageBatchRequestEntry." + (i + 1) + ".Id", i);
-			request.arg("SendMessageBatchRequestEntry." + (i + 1)
-					+ ".MessageBody", messages[i]);
+			request.arg("SendMessageBatchRequestEntry." + (i + 1) + ".MessageBody", messages[i]);
 			if (delay != 0)
-				request.arg("SendMessageBatchRequestEntry." + i + 1
-						+ ".DelaySeconds", delay);
+				request.arg("SendMessageBatchRequestEntry." + i + 1 + ".DelaySeconds", delay);
 		}
 
 		int i = 0;
 		List<Message> result = new ArrayList<Message>();
 
-		for (Node node : request
-				.nodes("SendMessageBatchResponse/SendMessageBatchResult/SendMessageBatchResultEntry")) {
+		for (Node node : request.nodes("SendMessageBatchResponse/SendMessageBatchResult/SendMessageBatchResultEntry")) {
 			int id = Integer.parseInt(request.string(node, "Id"));
 			String messageId = request.string(node, "MessageId");
 			String md5OfBody = request.string(node, "MD5OfMessageBody");
 			if (request.checkmd5(md5OfBody, (String) messages[i])) {
 				result.add(new Message(this, messageId, (String) messages[id]));
-			}
-			else
-				parent.log.log(LogService.LOG_WARNING,
-						"Invalid md5 after sending message " + messageId);
+			} else
+				parent.log.log(LogService.LOG_WARNING, "Invalid md5 after sending message " + messageId);
 
 			i++;
 		}
@@ -132,15 +119,15 @@ public class MessageQueue {
 	/**
 	 * Delete the messages from the queue.
 	 * 
-	 * @param messages the list of messages
+	 * @param messages
+	 *            the list of messages
 	 * @throws Exception
 	 */
 	public void delete(Message... messages) throws Exception {
 		Request request = parent.client.action("DeleteMessageBatch").endpoint(endpoint);
 		for (int i = 0; i < messages.length; i++) {
 			request.arg("DeleteMessageBatchRequestEntry." + (i + 1) + ".Id", i);
-			request.arg("DeleteMessageBatchRequestEntry." + (i + 1)
-					+ ".ReceiptHandle", ((Message) messages[i]).receipt);
+			request.arg("DeleteMessageBatchRequestEntry." + (i + 1) + ".ReceiptHandle", ((Message) messages[i]).receipt);
 		}
 		request.check();
 	}
@@ -153,7 +140,9 @@ public class MessageQueue {
 	 * @throws Exception
 	 */
 	public Message send(Object message) throws Exception {
-		List<Message> send = send(0, new Object[] {message});
+		List<Message> send = send(0, new Object[] {
+			message
+		});
 		return send.get(0);
 	}
 
@@ -162,8 +151,7 @@ public class MessageQueue {
 	 * of they have the same endpoint.
 	 */
 	public boolean equals(Object o) {
-		return o instanceof MessageQueue
-				&& ((MessageQueue) o).endpoint.equals(endpoint);
+		return o instanceof MessageQueue && ((MessageQueue) o).endpoint.equals(endpoint);
 	}
 
 	/**

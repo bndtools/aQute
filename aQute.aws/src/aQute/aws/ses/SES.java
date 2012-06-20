@@ -11,16 +11,16 @@ public class SES {
 
 	public SESRequest subject(String subject) throws Exception {
 		Request request = aws.action("SendEmail");
-		if ( subject != null)
+		if (subject != null)
 			request.arg("Message.Subject.Data", subject);
 		return new SESRequest(request);
 	}
 
 	public static class SESRequest {
 		final Request	request;
-		int				to	= 1;
-		int				cc	= 1;
-		int				bcc	= 1;
+		int				to		= 1;
+		int				cc		= 1;
+		int				bcc		= 1;
 		int				reply	= 1;
 
 		SESRequest(Request request) {
@@ -40,13 +40,13 @@ public class SES {
 		}
 
 		public SESRequest to(String address) {
-			request.arg("Destination.ToAddresses.member."+to++, address);
+			request.arg("Destination.ToAddresses.member." + to++, address);
 			return this;
 
 		}
 
 		public SESRequest cc(String address) {
-			request.arg("Destination.CcAddresses.member."+cc++, address);
+			request.arg("Destination.CcAddresses.member." + cc++, address);
 			return this;
 
 		}
@@ -58,12 +58,12 @@ public class SES {
 		}
 
 		public SESRequest replyTo(String address) {
-			request.arg("ReplyToAddresses.member."+reply++, address);
+			request.arg("ReplyToAddresses.member." + reply++, address);
 			return this;
 		}
 
 		public SESRequest bcc(String address) {
-			request.arg("Destination.CcAddresses.member."+bcc++, address);
+			request.arg("Destination.CcAddresses.member." + bcc++, address);
 			return this;
 		}
 

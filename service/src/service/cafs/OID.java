@@ -8,8 +8,7 @@ import java.util.regex.*;
 public class OID implements Comparable<OID> {
 	final byte[]	digest;
 
-	public static StoreOutputStream calculate(final OutputStream... out)
-			throws Exception {
+	public static StoreOutputStream calculate(final OutputStream... out) throws Exception {
 		final MessageDigest instance = MessageDigest.getInstance("SHA1");
 		return new StoreOutputStream() {
 			OID	oid;
@@ -23,8 +22,7 @@ public class OID implements Comparable<OID> {
 			}
 
 			@Override
-			public void write(byte[] b, int offset, int length)
-					throws IOException {
+			public void write(byte[] b, int offset, int length) throws IOException {
 				instance.update(b, offset, length);
 				for (OutputStream o : out) {
 					o.write(b, offset, length);
@@ -35,8 +33,7 @@ public class OID implements Comparable<OID> {
 			public synchronized OID getOid() throws Exception {
 				if (oid == null) {
 					return new OID(instance.digest());
-				}
-				else
+				} else
 					return oid;
 			}
 		};
@@ -44,13 +41,12 @@ public class OID implements Comparable<OID> {
 
 	public OID(byte[] digest) {
 		if (digest == null || digest.length != 20)
-			throw new IllegalArgumentException(
-					"Invalid digest, must be byte[] of 20 bytes for a SHA-1, got " + Arrays.toString(digest));
+			throw new IllegalArgumentException("Invalid digest, must be byte[] of 20 bytes for a SHA-1, got "
+					+ Arrays.toString(digest));
 		this.digest = digest;
 	}
 
-	public OID(InputStream in, OutputStream... out)
-			throws NoSuchAlgorithmException, IOException {
+	public OID(InputStream in, OutputStream... out) throws NoSuchAlgorithmException, IOException {
 
 		MessageDigest instance = MessageDigest.getInstance("SHA1");
 
@@ -72,13 +68,11 @@ public class OID implements Comparable<OID> {
 
 	public OID(CharSequence digest) {
 		if (!DIGEST.matcher(digest).matches())
-			throw new IllegalArgumentException(
-					"Invalid length for digest, got " + digest + " pattern: "
-							+ DIGEST.toString());
+			throw new IllegalArgumentException("Invalid length for digest, got " + digest + " pattern: "
+					+ DIGEST.toString());
 		this.digest = new byte[20];
 		for (int i = 0; i < 20; i++) {
-			this.digest[i] = (byte) (nibble(digest.charAt(i * 2)) << 4 + nibble(digest
-					.charAt(i * 2 + 1)));
+			this.digest[i] = (byte) (nibble(digest.charAt(i * 2)) << 4 + nibble(digest.charAt(i * 2 + 1)));
 		}
 	}
 
@@ -92,8 +86,9 @@ public class OID implements Comparable<OID> {
 		return c - '0';
 	}
 
-	static char[]	NIBBLES	= new char[] {'0', '1', '2', '3', '4', '5', '6', '7',
-			'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	static char[]	NIBBLES	= new char[] {
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+							};
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -124,9 +119,8 @@ public class OID implements Comparable<OID> {
 		for (int i = 0; i < digest.length; i++) {
 			if (digest[i] > o.digest[i])
 				return 1;
-			else
-				if (digest[i] < o.digest[i])
-					return -1;
+			else if (digest[i] < o.digest[i])
+				return -1;
 		}
 		return 0;
 	}

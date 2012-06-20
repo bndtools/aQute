@@ -1,7 +1,6 @@
 package aQute.aws.sdb;
 
 import java.net.*;
-import java.security.*;
 import java.util.*;
 
 import javax.xml.xpath.*;
@@ -30,18 +29,17 @@ public class SDBImpl {
 	 * Create a new domain
 	 */
 	public void createDomain(String name) throws Exception {
-//		client.ac(endpoint, "CreateDomain", null).arg("DomainName", name)
-//				.check();
+		// client.ac(endpoint, "CreateDomain", null).arg("DomainName", name)
+		// .check();
 	}
 
 	/**
-	 * Delete attributes.
-	 * 
-	 * tuple map MUST contain an 'id' key, otherwise nothing will be deleted
+	 * Delete attributes. tuple map MUST contain an 'id' key, otherwise nothing
+	 * will be deleted
 	 */
-	public void deleteAttributes(final String domain,
-			final Map<String, String>... tuples) throws Exception {
-//		Request request = client.request(endpoint, "BatchDeleteAttributes", null);
+	public void deleteAttributes(final String domain, final Map<String,String>... tuples) throws Exception {
+		// Request request = client.request(endpoint, "BatchDeleteAttributes",
+		// null);
 
 		// .arg("", name)
 		// .check();
@@ -82,8 +80,7 @@ public class SDBImpl {
 		// execute(parameters);
 	}
 
-	public Map<String, String> getAttributes(final String domain,
-			final String item) throws Exception {
+	public Map<String,String> getAttributes(final String domain, final String item) throws Exception {
 		// SortedMap<String, String> parameters = getStandardParameters(
 		// "GetAttributes", domain);
 		// parameters.put("ItemName", item);
@@ -108,7 +105,6 @@ public class SDBImpl {
 
 	/**
 	 * List domains.
-	 * 
 	 */
 	public Collection<String> listDomains() throws Exception {
 		// SortedMap<String, String> parameters = getStandardParameters(
@@ -130,8 +126,7 @@ public class SDBImpl {
 	}
 
 	// if tuple does not contain an 'id' key a unique id will be generated
-	public void putAttributes(final String domain,
-			Map<String, String>... tuples) throws Exception {
+	public void putAttributes(final String domain, Map<String,String>... tuples) throws Exception {
 		// SortedMap<String, String> parameters = getStandardParameters(
 		// "BatchPutAttributes", domain);
 		//
@@ -164,7 +159,7 @@ public class SDBImpl {
 		// in.close();
 	}
 
-	public Collection<Map<String, String>> select(String q) throws Exception {
+	public Collection<Map<String,String>> select(String q) throws Exception {
 		// List<Map<String, String>> tuples = new ArrayList<Map<String,
 		// String>>();
 		// String token = null;
@@ -206,9 +201,8 @@ public class SDBImpl {
 		return null;
 	}
 
-	public void putAttributesConditional(String domain,
-			Map<String, String> tuple, String expectedKey, String expectedValue)
-			throws Exception {
+	public void putAttributesConditional(String domain, Map<String,String> tuple, String expectedKey,
+			String expectedValue) throws Exception {
 		// SortedMap<String, String> parameters = getStandardParameters(
 		// "PutAttributes", domain);
 		//

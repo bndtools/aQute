@@ -26,12 +26,10 @@ public class JavascriptComponent {
 	Config	config;
 
 	@Activate
-	void activate(BundleContext context, Map<String, Object> props)
-			throws Exception {
+	void activate(BundleContext context, Map<String,Object> props) throws Exception {
 		this.context = context;
 		config = Configurable.createConfigurable(Config.class, props);
-		http.registerServlet(config.alias(), new JavascriptServlet(this), null,
-				null);
+		http.registerServlet(config.alias(), new JavascriptServlet(this), null, null);
 	}
 
 	@Reference

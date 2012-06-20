@@ -12,18 +12,13 @@ import aQute.bnd.annotation.component.*;
 import aQute.service.flow.*;
 
 /**
- * A sample flow command parser for the Felix shell.
- * 
- * The command format is:
- * 
- * -> flow producer ( pipe )* sink
- * 
+ * A sample flow command parser for the Felix shell. The command format is: ->
+ * flow producer ( pipe )* sink
  */
 @Component
 public class Flow implements Command {
-	final static Pattern MATCH = Pattern
-			.compile("([a-zA-Z0-9-_.]+)(\\((.+(,.+)*)\\))?");
-	BundleContext context;
+	final static Pattern	MATCH	= Pattern.compile("([a-zA-Z0-9-_.]+)(\\((.+(,.+)*)\\))?");
+	BundleContext			context;
 
 	@Activate
 	void activate(BundleContext context) {
@@ -38,7 +33,8 @@ public class Flow implements Command {
 		try {
 			String tokens[] = line.split("\\s+");
 			parse(tokens, 1);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace(err);
 		}
 	}
@@ -66,15 +62,16 @@ public class Flow implements Command {
 			Source<A> rover = start;
 
 			for (int i = n + 1; i < tokens.length - 1; i++) {
-				Pipe<A, B> pipe = find(tokens[i], Pipe.class, instances);
+				Pipe<A,B> pipe = find(tokens[i], Pipe.class, instances);
 				rover.setSink((Sink<A>) pipe);
 				rover = pipe;
 			}
-			Sink<?> end = find(tokens[tokens.length - 1], Sink.class, instances);
+			Sink< ? > end = find(tokens[tokens.length - 1], Sink.class, instances);
 			rover.setSink((Sink<A>) end);
 
 			start.produce();
-		} finally {
+		}
+		finally {
 			for (ComponentInstance instance : instances)
 				instance.dispose();
 		}
@@ -83,24 +80,25 @@ public class Flow implements Command {
 	/**
 	 * Find and checkout a service.
 	 * 
-	 * @param funct function name
-	 * @param type the desired type
-	 * @param list of instances in use 
+	 * @param funct
+	 *            function name
+	 * @param type
+	 *            the desired type
+	 * @param list
+	 *            of instances in use
 	 * @return The service object
 	 * @throws InvalidSyntaxException
 	 */
 
-	private <T> T find(String funct, Class<T> type,
-			List<ComponentInstance> instances) throws InvalidSyntaxException {
+	private <T> T find(String funct, Class<T> type, List<ComponentInstance> instances) throws InvalidSyntaxException {
 
 		Matcher m = MATCH.matcher(funct);
 		if (!m.matches())
-			throw new IllegalArgumentException("Not a proper element def: "
-					+ funct);
+			throw new IllegalArgumentException("Not a proper element def: " + funct);
 
 		String name = m.group(1);
 		String parms = m.group(3);
-		Hashtable<String, Object> map = new Hashtable<String, Object>();
+		Hashtable<String,Object> map = new Hashtable<String,Object>();
 		if (parms != null) {
 			String p[] = parms.split(",");
 			for (int i = 0; i < p.length; i++) {
@@ -108,14 +106,11 @@ public class Flow implements Command {
 			}
 		}
 
-		String filter = "(component.factory=" + type.getName() + "/" + name
-				+ ")";
+		String filter = "(component.factory=" + type.getName() + "/" + name + ")";
 
-		ServiceReference refs[] = context.getServiceReferences(
-				ComponentFactory.class.getName(), filter);
+		ServiceReference refs[] = context.getServiceReferences(ComponentFactory.class.getName(), filter);
 		if (refs == null || refs.length == 0)
-			throw new IllegalStateException("Cannot find the component "
-					+ filter);
+			throw new IllegalStateException("Cannot find the component " + filter);
 
 		ComponentFactory cf = (ComponentFactory) context.getService(refs[0]);
 

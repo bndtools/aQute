@@ -8,7 +8,7 @@ import org.java_websocket.handshake.*;
 
 import aQute.bnd.annotation.component.*;
 
-@Component(immediate=true)
+@Component(immediate = true)
 public class ExampleComponent extends WebSocketServer {
 
 	public ExampleComponent() throws UnknownHostException {
@@ -20,20 +20,19 @@ public class ExampleComponent extends WebSocketServer {
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
 		System.out.println("Open WebSocket " + conn);
-		System.out.println( conn + " entered the room!" );
+		System.out.println(conn + " entered the room!");
 	}
 
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-		System.out.println("Close WebSocket " + conn + " " + code + " "
-				+ reason);
+		System.out.println("Close WebSocket " + conn + " " + code + " " + reason);
 		this.sendToAll(conn + " has left the room!");
 	}
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
 		System.out.println("Message WebSocket " + conn + " " + message);
-		this.sendToAll( message );
+		this.sendToAll(message);
 	}
 
 	@Override
@@ -42,13 +41,14 @@ public class ExampleComponent extends WebSocketServer {
 		ex.printStackTrace();
 	}
 
-	public void sendToAll(String text){
+	public void sendToAll(String text) {
 		Set<WebSocket> con = connections();
 		synchronized (con) {
 			for (WebSocket c : con) {
 				try {
 					c.send(text);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

@@ -9,7 +9,7 @@ public class HelloComponent {
 	void activate() {
 		System.out.println("Hello World");
 	}
-	
+
 	@Deactivate
 	void deactivate() {
 		System.out.println("Goodbye World");

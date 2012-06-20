@@ -6,24 +6,25 @@ import java.util.*;
 
 import com.vaadin.*;
 import com.vaadin.data.*;
-import com.vaadin.data.Property.*;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.*;
 import com.vaadin.terminal.*;
 import com.vaadin.ui.*;
 
 @aQute.bnd.annotation.component.Component(factory = "com.vaadin.Application/trials")
 public class Trials extends Application {
-	private static final long serialVersionUID = 1L;
+	private static final long	serialVersionUID	= 1L;
 
-	Label hello = new Label("Hello World");
-	final Button button = new Button("Fail Me");
+	Label						hello				= new Label("Hello World");
+	final Button				button				= new Button("Fail Me");
 
 	public class BundleDesc {
-		String bsn;
-		String version;
-		int size;
-		Date date = new Date();
-		List<String> list = new ArrayList<String>();
+		String			bsn;
+		String			version;
+		int				size;
+		Date			date	= new Date();
+		List<String>	list	= new ArrayList<String>();
 
 		public List<String> getList() {
 			return list;
@@ -74,8 +75,7 @@ public class Trials extends Application {
 
 		final Form form = new Form();
 		form.setCaption("Contact Information");
-		form
-				.setDescription("Please specify name of the person and the city where the person lives in.");
+		form.setDescription("Please specify name of the person and the city where the person lives in.");
 
 		BundleDesc bd = new BundleDesc();
 		bd.bsn = "biz.aQute.bnd";
@@ -91,11 +91,10 @@ public class Trials extends Application {
 		mainWindow.addComponent(hello);
 		mainWindow.addComponent(button);
 		button.addListener(new Button.ClickListener() {
-			private static final long serialVersionUID = 1L;
+			private static final long	serialVersionUID	= 1L;
 
 			public void buttonClick(Button.ClickEvent event) {
-				mainWindow.showNotification("This is the caption",
-						"This is the description",
+				mainWindow.showNotification("This is the caption", "This is the description",
 						Window.Notification.TYPE_ERROR_MESSAGE);
 
 			}
@@ -107,26 +106,25 @@ public class Trials extends Application {
 
 		ExternalResource flashResource;
 		try {
-			flashResource = new ExternalResource(new URL(
-					"http://www.netsketch.com/ccc2.swf"));
+			flashResource = new ExternalResource(new URL("http://www.netsketch.com/ccc2.swf"));
 			Embedded embedded = new Embedded("Embedded Caption", flashResource);
 			embedded.setType(Embedded.TYPE_OBJECT);
 			embedded.setMimeType("application/x-shockwave-flash");
 			embedded.setWidth(400, Sizeable.UNITS_PIXELS);
 			embedded.setHeight(400, Sizeable.UNITS_PIXELS);
 			mainWindow.addComponent(embedded);
-		} catch (MalformedURLException e) {
+		}
+		catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		tf.addListener(new ValueChangeListener() {
-			private static final long serialVersionUID = 1L;
+			private static final long	serialVersionUID	= 1L;
 
 			@Override
 			public void valueChange(ValueChangeEvent event) {
-				System.out.println("Changed value "
-						+ event.getProperty().getValue());
+				System.out.println("Changed value " + event.getProperty().getValue());
 			}
 		});
 		tf.setColumns(100);
@@ -138,8 +136,7 @@ public class Trials extends Application {
 		mainWindow.addComponent(date);
 		date.addListener(ValueChangeEvent.class, this, "dateChanged");
 
-		Link link = new Link("link to a resource", new ExternalResource(
-				"http://www.vaadin.com/"), "_", 500, 500, 10);
+		Link link = new Link("link to a resource", new ExternalResource("http://www.vaadin.com/"), "_", 500, 500, 10);
 		mainWindow.addComponent(link);
 
 		RichTextArea rta = new RichTextArea();

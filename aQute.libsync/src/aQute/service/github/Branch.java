@@ -1,6 +1,5 @@
 package aQute.service.github;
 
-
 /*
  * <pre>
  * {
@@ -11,10 +10,10 @@ package aQute.service.github;
  *   }
  * }</pre>
  */
-public class Branch implements Comparable<Branch>{
+public class Branch implements Comparable<Branch> {
 	public String		name;
 	public Reference	commit;
-	
+
 	public int compareTo(Branch o) {
 		return name.compareTo(o.name);
 	}

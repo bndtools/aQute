@@ -6,9 +6,9 @@ import aQute.data.common.*;
 
 public class Data {
 	public static class Import {
-		public String			ip;
-		public String			user;
-		public long				time;
+		public String	ip;
+		public String	user;
+		public long		time;
 		public Posthook	posthook;
 	}
 
@@ -45,7 +45,7 @@ public class Data {
 		public String			homepage;
 		public int				watchers;
 		public int				forks;
-		public EmailStruct			owner;
+		public EmailStruct		owner;
 		public Map<String, ? >	__extra;
 	}
 

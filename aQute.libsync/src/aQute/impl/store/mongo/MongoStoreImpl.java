@@ -14,19 +14,17 @@ import com.mongodb.*;
 import com.mongodb.gridfs.*;
 
 public class MongoStoreImpl<T> implements Store<T> {
-	final static Pattern		SIMPLE_EXPR	= Pattern
-													.compile("([^=><~*]+)\\s*(=|<=|>=|>|<|~=)\\s*([^\\s]+)");
-	final MongoDBImpl			handler;
-	final Class<T>				type;
-	final DBCollection			db;
-	GridFS						gridfs;
-	final Field					_id;
-	final Map<String, Field>	unique		= new HashMap<String, Field>();
-	final Field					fields[];
-	final MongoCodec			mcnv		= new MongoCodec(this);
+	final static Pattern	SIMPLE_EXPR	= Pattern.compile("([^=><~*]+)\\s*(=|<=|>=|>|<|~=)\\s*([^\\s]+)");
+	final MongoDBImpl		handler;
+	final Class<T>			type;
+	final DBCollection		db;
+	GridFS					gridfs;
+	final Field				_id;
+	final Map<String,Field>	unique		= new HashMap<String,Field>();
+	final Field				fields[];
+	final MongoCodec		mcnv		= new MongoCodec(this);
 
-	public MongoStoreImpl(MongoDBImpl handler, Class<T> type, DBCollection db)
-			throws Exception {
+	public MongoStoreImpl(MongoDBImpl handler, Class<T> type, DBCollection db) throws Exception {
 		this.handler = handler;
 		this.db = db;
 		this.type = type;
@@ -88,8 +86,7 @@ public class MongoStoreImpl<T> implements Store<T> {
 		return new MongoCursorImpl<T>(this).where("_id=*");
 	}
 
-	public MongoCursorImpl<T> find(String where, Object... args)
-			throws Exception {
+	public MongoCursorImpl<T> find(String where, Object... args) throws Exception {
 		return new MongoCursorImpl<T>(this).where(where, args);
 	}
 
@@ -181,8 +178,7 @@ public class MongoStoreImpl<T> implements Store<T> {
 				}
 				Matcher m = SIMPLE_EXPR.matcher(sb);
 				if (!m.matches())
-					throw new IllegalArgumentException(
-							"Not a valid LDAP expression " + sb);
+					throw new IllegalArgumentException("Not a valid LDAP expression " + sb);
 
 				String key = m.group(1);
 				String op = m.group(2);
@@ -194,28 +190,21 @@ public class MongoStoreImpl<T> implements Store<T> {
 					else {
 
 						if (regex) {
-							query.put(key, new BasicDBObject("$regex", "^"
-									+ value));
+							query.put(key, new BasicDBObject("$regex", "^" + value));
 							// TODO ensure valid regex for value
 						} else
 							query.put(key, fromBson(key, value));
 					}
 				} else if (op.equals(">"))
-					query.put(key, new BasicDBObject("$gt",
-							fromBson(key, value)));
+					query.put(key, new BasicDBObject("$gt", fromBson(key, value)));
 				else if (op.equals(">="))
-					query.put(key,
-							new BasicDBObject("$gte", fromBson(key, value)));
+					query.put(key, new BasicDBObject("$gte", fromBson(key, value)));
 				else if (op.equals("<"))
-					query.put(key, new BasicDBObject("$lt",
-							fromBson(key, value)));
+					query.put(key, new BasicDBObject("$lt", fromBson(key, value)));
 				else if (op.equals("<="))
-					query.put(key,
-							new BasicDBObject("$lte", fromBson(key, value)));
+					query.put(key, new BasicDBObject("$lte", fromBson(key, value)));
 				else if (op.equals("~="))
-					query.put(key,
-							new BasicDBObject("$regex", fromBson(key, value))
-									.append("$options", "i"));
+					query.put(key, new BasicDBObject("$regex", fromBson(key, value)).append("$options", "i"));
 				// TODO ensure valid regex for value
 				else
 					throw new IllegalArgumentException("Unknown operator " + op);
@@ -230,8 +219,7 @@ public class MongoStoreImpl<T> implements Store<T> {
 		Object result = value;
 		Field field = data.getField(type, key);
 		if (field != null) {
-			result = mcnv.converter.convert(field.getGenericType(),
-					result);
+			result = mcnv.converter.convert(field.getGenericType(), result);
 		}
 
 		result = mcnv.toMongo(result);

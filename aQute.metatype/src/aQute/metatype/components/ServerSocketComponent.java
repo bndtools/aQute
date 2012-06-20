@@ -17,25 +17,25 @@ public class ServerSocketComponent extends Thread {
 		};
 
 		String message();
+
 		int port();
-		
-		@Meta.AD(deflt="bandwidth")
+
+		@Meta.AD(deflt = "bandwidth")
 		Performance performance();
-		
-		@Meta.AD(deflt="0")
+
+		@Meta.AD(deflt = "0")
 		int soTimeout();
-		
-		
-		@Meta.AD(deflt="8192")
+
+		@Meta.AD(deflt = "8192")
 		int receiveBufferSize();
 	}
 
-	Config config;
-	ServerSocket server;
-	LogService log;
+	Config			config;
+	ServerSocket	server;
+	LogService		log;
 
 	@Activate
-	void activate(Map<String, Object> props) {
+	void activate(Map<String,Object> props) {
 		config = Configurable.createConfigurable(Config.class, props);
 		start();
 	}
@@ -45,7 +45,8 @@ public class ServerSocketComponent extends Thread {
 		interrupt();
 		try {
 			server.close();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			// ignore
 		}
 	}
@@ -53,30 +54,30 @@ public class ServerSocketComponent extends Thread {
 	public void run() {
 		try {
 			server = new ServerSocket(config.port());
-			
-			if ( config.receiveBufferSize() != 0)
+
+			if (config.receiveBufferSize() != 0)
 				server.setReceiveBufferSize(config.receiveBufferSize());
 			server.setSoTimeout(config.soTimeout());
-			
+
 			switch (config.performance()) {
-			case bandwidth:
-				server.setPerformancePreferences(0, 1, 2);
-				break;
-			case latency:
-				server.setPerformancePreferences(2, 1, 0);
-				break;
-			case connectionTime:
-				server.setPerformancePreferences(1, 2, 0);
-				break;
+				case bandwidth :
+					server.setPerformancePreferences(0, 1, 2);
+					break;
+				case latency :
+					server.setPerformancePreferences(2, 1, 0);
+					break;
+				case connectionTime :
+					server.setPerformancePreferences(1, 2, 0);
+					break;
 			}
 
 			while (!isInterrupted()) {
 				Socket socket = server.accept();
-				socket.getOutputStream().write(
-						(config.message() + "\n").getBytes());
+				socket.getOutputStream().write((config.message() + "\n").getBytes());
 				socket.close();
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			if (isInterrupted())
 				return;
 			log.log(LogService.LOG_ERROR, "IO error", e);

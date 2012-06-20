@@ -5,5 +5,5 @@ import java.io.*;
 public class ContentData {
 	public byte[]	_id;
 	public File		file;
-	public byte[] 	md5;
+	public byte[]	md5;
 }

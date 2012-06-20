@@ -11,12 +11,12 @@ import aQute.lib.io.*;
 import aQute.libg.reporter.*;
 
 public class JSite extends ReporterAdapter {
-	PrintStream	out		= System.out;
-	PrintStream	err		= System.err;
-	File		base	= new File(System.getProperty("user.dir"));
-	options		options;
-	DocumentBuilder db;
-	
+	PrintStream		out		= System.out;
+	PrintStream		err		= System.err;
+	File			base	= new File(System.getProperty("user.dir"));
+	options			options;
+	DocumentBuilder	db;
+
 	interface options extends Options {
 		boolean minify();
 
@@ -26,7 +26,6 @@ public class JSite extends ReporterAdapter {
 	}
 
 	/**
-	 * 
 	 * mrd --template x.html files...
 	 * 
 	 * @param args
@@ -43,7 +42,7 @@ public class JSite extends ReporterAdapter {
 
 	public void _jsite(options options) throws Exception {
 		db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		
+
 		this.options = options;
 		List<String> arguments = options._();
 		try {
@@ -58,16 +57,18 @@ public class JSite extends ReporterAdapter {
 					err.println(help);
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			error("Failed %s", e);
 			if (options.exceptions())
 				e.printStackTrace();
 		}
 	}
 
-	@Arguments(arg={"source","[target]"})
-	interface compileOptions extends Options {
-	}
+	@Arguments(arg = {
+			"source", "[target]"
+	})
+	interface compileOptions extends Options {}
 
 	public void _compile(compileOptions options) throws Exception {
 		List<String> spec = options._();
@@ -77,24 +78,22 @@ public class JSite extends ReporterAdapter {
 			error("The given source is not a directory: %s", source);
 			return;
 		}
-		
+
 		String targetSpec = spec.isEmpty() ? "static" : spec.remove(0);
 		File target = IO.getFile(base, targetSpec);
-		if ( !target.exists())
+		if (!target.exists())
 			target.mkdirs();
-		
+
 		if (!target.isDirectory()) {
 			error("Could not create target directory: %s", target);
 			return;
 		}
-		
 
-		
-		Site site = new Site(this,source, target);
-		if ( !site.prepare() )
+		Site site = new Site(this, source, target);
+		if (!site.prepare())
 			return;
-		
-		if (!isOk()  )
+
+		if (!isOk())
 			return;
 
 		site.build();

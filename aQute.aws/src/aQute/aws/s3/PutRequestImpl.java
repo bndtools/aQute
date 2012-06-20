@@ -8,11 +8,10 @@ import aQute.lib.base64.*;
 import aQute.lib.io.*;
 import aQute.libg.cryptography.*;
 
-class PutRequestImpl extends CommonRequestImpl<PutRequest> implements
-		PutRequest {
+class PutRequestImpl extends CommonRequestImpl<PutRequest> implements PutRequest {
 	final Bucket	bucket;
-	final String		key;
-	long				length	= -1;
+	final String	key;
+	long			length	= -1;
 
 	PutRequestImpl(S3 parent, Bucket Bucket, String key) {
 		super(parent);
@@ -52,14 +51,12 @@ class PutRequestImpl extends CommonRequestImpl<PutRequest> implements
 			Digester<MD5> md5 = MD5.getDigester(out);
 			IO.copy(in, md5);
 			if (!headers.containsKey("Content-MD5"))
-				headers.put("Content-MD5",
-						Base64.encodeBase64(md5.digest().digest()));
+				headers.put("Content-MD5", Base64.encodeBase64(md5.digest().digest()));
 			headers.put("Content-Length", Long.toString(tmpfile.length()));
 			in = new FileInputStream(tmpfile);
 		}
 		System.out.println(headers);
-		parent.construct(S3.METHOD.PUT, bucket.getName(), key, in, headers,
-				null);
+		parent.construct(S3.METHOD.PUT, bucket.getName(), key, in, headers, null);
 	}
 
 	public PutRequest contentLength(long length) {

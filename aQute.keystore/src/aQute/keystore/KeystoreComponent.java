@@ -2,13 +2,12 @@ package aQute.keystore;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
 
 import org.osgi.service.log.*;
-import aQute.osgi.log.*;
 
 import aQute.bnd.annotation.component.*;
 import aQute.bnd.annotation.metatype.*;
+import aQute.osgi.log.*;
 
 @Component(configurationPolicy = ConfigurationPolicy.require)
 public class KeystoreComponent {
@@ -25,9 +24,9 @@ public class KeystoreComponent {
 		INFO activating(String name);
 	}
 
-//	Log	log = Logger.newInstance(Log.class, "Key Store Component");
+	// Log log = Logger.newInstance(Log.class, "Key Store Component");
 	interface Config {
-		
+
 		String name();
 
 		byte[] data();
@@ -38,7 +37,7 @@ public class KeystoreComponent {
 	Config	config;
 
 	@Activate
-	void activate(Map<String, Object> properties) {
+	void activate(Map<String,Object> properties) {
 		this.config = Configurable.createConfigurable(Config.class, properties);
 		File out = new File(keystores, config.name() + ".tmp");
 		File to = new File(keystores, config.name());
@@ -55,13 +54,13 @@ public class KeystoreComponent {
 		}
 		catch (Throwable e) {
 			out.delete();
-//			log.failedToStoreKeyStore$At$(config.name(), to, e);
+			// log.failedToStoreKeyStore$At$(config.name(), to, e);
 		}
 	}
 
-	@Reference(type='*')
+	@Reference(type = '*')
 	public void setLog(LogService log) {
-//		log.setLogService(log);
+		// log.setLogService(log);
 	}
 
 }

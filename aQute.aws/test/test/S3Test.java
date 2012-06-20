@@ -22,11 +22,11 @@ public class S3Test extends TestCase {
 
 			boolean found = false;
 			for (Bucket b : s3.listBuckets()) {
-				if ( "libsync-test".equals(b.getName()))
+				if ("libsync-test".equals(b.getName()))
 					found = true;
 			}
 			assertTrue(found);
-			
+
 			bucket.putObject("1/a").put("0123");
 			bucket.putObject("2/b").put("abcdefgh");
 
@@ -34,28 +34,27 @@ public class S3Test extends TestCase {
 			boolean two = true;
 			int count = 0;
 			for (Content content : bucket.listObjects()) {
-				count ++;
-				assertEquals(bucket,content.bucket);
-				if ( "1/a".equals(content.key)) {
+				count++;
+				assertEquals(bucket, content.bucket);
+				if ("1/a".equals(content.key)) {
 					one = true;
-					assertEquals("eb62f6b9306db575c2d596b1279627a4", content.etag );
+					assertEquals("eb62f6b9306db575c2d596b1279627a4", content.etag);
 					assertEquals(4, content.size);
-					String c = IO.collect( bucket.getObject("1/a").get());
-					assertEquals( "0123", c);
-				} else
-				if ( "2/b".equals(content.key)) {
+					String c = IO.collect(bucket.getObject("1/a").get());
+					assertEquals("0123", c);
+				} else if ("2/b".equals(content.key)) {
 					one = true;
-					assertEquals("e8dc4081b13434b45189a720b77b6818", content.etag );
+					assertEquals("e8dc4081b13434b45189a720b77b6818", content.etag);
 					assertEquals(8, content.size);
-					String c = IO.collect( bucket.getObject("2/b").get());
-					assertEquals( "abcdefgh", c);
+					String c = IO.collect(bucket.getObject("2/b").get());
+					assertEquals("abcdefgh", c);
 				} else
 					fail("Unrecognized content " + content.key);
 			}
 			assertEquals(2, count);
-			assertTrue( one);
-			assertTrue( two);
-			
+			assertTrue(one);
+			assertTrue(two);
+
 			bucket.putObject("1/a").put("aa");
 			bucket.delete("hullo");
 			bucket.delete("bye");

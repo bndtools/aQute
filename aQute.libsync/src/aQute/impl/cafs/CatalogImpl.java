@@ -8,7 +8,7 @@ import aQute.service.cafs.data.*;
 public class CatalogImpl implements Catalog {
 	final CatalogData			cd;
 	final CAFSImpl				cafs;
-	Map<String, CatalogEntry>	cache;
+	Map<String,CatalogEntry>	cache;
 
 	public CatalogImpl(CAFSImpl cafs, CatalogData cd) {
 		this.cafs = cafs;
@@ -19,10 +19,12 @@ public class CatalogImpl implements Catalog {
 		int n = path.indexOf('/');
 		if (n > 0) {
 			String remainder = path.substring(n + 1);
-			String part = path.substring(0, n+1);
+			String part = path.substring(0, n + 1);
 			CatalogEntry entry = getCache().get(part);
-			if (entry == null) return null;
-			if (!entry.isCatalog()) return null; // stops here
+			if (entry == null)
+				return null;
+			if (!entry.isCatalog())
+				return null; // stops here
 
 			Catalog catalog = entry.getCatalog();
 			return catalog.getEntry(remainder);
@@ -31,7 +33,7 @@ public class CatalogImpl implements Catalog {
 		}
 	}
 
-	public Map<String, CatalogEntry> getEntries() {
+	public Map<String,CatalogEntry> getEntries() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -40,12 +42,13 @@ public class CatalogImpl implements Catalog {
 		return getCache().values().iterator();
 	}
 
-	private Map<String, CatalogEntry> getCache() {
+	private Map<String,CatalogEntry> getCache() {
 		if (cache == null) {
-			Map<String, CatalogEntry> map = new TreeMap<String, CatalogEntry>();
-			if (cd.entries != null) for (EntryData e : cd.entries) {
-				map.put(e.name, new CatalogEntryImpl(cafs, this, e));
-			}
+			Map<String,CatalogEntry> map = new TreeMap<String,CatalogEntry>();
+			if (cd.entries != null)
+				for (EntryData e : cd.entries) {
+					map.put(e.name, new CatalogEntryImpl(cafs, this, e));
+				}
 			cache = Collections.unmodifiableMap(map);
 		}
 		return cache;

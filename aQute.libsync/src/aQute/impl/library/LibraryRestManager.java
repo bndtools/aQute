@@ -9,20 +9,22 @@ import aQute.service.rest.*;
 public class LibraryRestManager implements ResourceManager {
 	Library	library;
 
-	interface POptions extends Options{
+	interface POptions extends Options {
 		int limit();
 	}
+
 	public Iterable< ? extends Program> getProgram(POptions o) throws Exception {
-		return library.find("bsn=*") ;
+		return library.find("bsn=*");
 	}
 
 	public Iterable< ? extends Program> getProgram(String s) throws Exception {
-		return library.find("bsn="+s) ;
+		return library.find("bsn=" + s);
 	}
 
 	public String getShit() {
 		return "shit";
 	}
+
 	@Reference
 	void setLibrary(Library lib) {
 		this.library = lib;

@@ -12,16 +12,18 @@ import com.hazelcast.core.*;
 import com.hazelcast.logging.*;
 import com.hazelcast.partition.*;
 
-@Component(designateFactory=Cfg.class, immediate=true)
+@Component(designateFactory = Cfg.class, immediate = true)
 public class HazelcastImpl implements HazelcastInstance {
-	HazelcastInstance instance;
+	HazelcastInstance	instance;
 
 	interface Cfg {
 		boolean multicast();
+
 		String name();
 	}
-	Cfg config;
-	
+
+	Cfg	config;
+
 	@Activate
 	void activate(Map<String,Object> props) {
 		config = Configurable.createConfigurable(Cfg.class, props);
@@ -33,16 +35,15 @@ public class HazelcastImpl implements HazelcastInstance {
 		new NetworkConfig().//
 				setJoin(new Join().setMulticastConfig(new MulticastConfig().//
 						setEnabled(config.multicast()))));
-		
+
 		instance = Hazelcast.newHazelcastInstance(c);
 	}
-	
+
 	@Deactivate
 	void deactivate() {
 		instance.getLifecycleService().kill();
 	}
-	
-	
+
 	/**
 	 * @param arg0
 	 * @see com.hazelcast.core.HazelcastInstance#addInstanceListener(com.hazelcast.core.InstanceListener)
@@ -166,7 +167,7 @@ public class HazelcastImpl implements HazelcastInstance {
 	 * @return
 	 * @see com.hazelcast.core.HazelcastInstance#getMap(java.lang.String)
 	 */
-	public <K, V> IMap<K, V> getMap(String arg0) {
+	public <K, V> IMap<K,V> getMap(String arg0) {
 		return instance.getMap(arg0);
 	}
 
@@ -175,7 +176,7 @@ public class HazelcastImpl implements HazelcastInstance {
 	 * @return
 	 * @see com.hazelcast.core.HazelcastInstance#getMultiMap(java.lang.String)
 	 */
-	public <K, V> MultiMap<K, V> getMultiMap(String arg0) {
+	public <K, V> MultiMap<K,V> getMultiMap(String arg0) {
 		return instance.getMultiMap(arg0);
 	}
 
@@ -262,5 +263,5 @@ public class HazelcastImpl implements HazelcastInstance {
 	public void shutdown() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 }

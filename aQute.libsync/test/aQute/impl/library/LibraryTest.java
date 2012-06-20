@@ -33,22 +33,22 @@ public class LibraryTest extends TestCase {
 		ds.wire();
 		mongo.getStore(Revision.class, "library").all().remove();
 	}
-	
-	public void testSimple() throws Exception {		
+
+	public void testSimple() throws Exception {
 		assertNotNull(lib);
-		Revision revision = lib.insert( "file:/Ws/posthooktest/aQute.libg/aQute.libg-2.7.0.jar");
+		Revision revision = lib.insert("file:/Ws/posthooktest/aQute.libg/aQute.libg-2.7.0.jar");
 		assertNotNull("Should have created a rvision", revision);
-		assertEquals( revision.bsn, "aQute.libg");
-		assertEquals( revision.version, "2.7.0");
-		Revision revision2 = lib.insert( "file:/Ws/posthooktest/aQute.libg/aQute.libg-2.7.1.jar");
+		assertEquals(revision.bsn, "aQute.libg");
+		assertEquals(revision.version, "2.7.0");
+		Revision revision2 = lib.insert("file:/Ws/posthooktest/aQute.libg/aQute.libg-2.7.1.jar");
 		assertNotNull(revision2);
-		
+
 		Program program = lib.getProgram("aQute.libg");
 		assertNotNull(program);
-		assertEquals( 2, program.revisions.size() );
+		assertEquals(2, program.revisions.size());
 		RevisionRef x270 = program.revisions.get(0);
 		RevisionRef x271 = program.revisions.get(1);
-		
+
 		assertNotNull(x270);
 		assertEquals("aQute.libg", x270.bsn);
 		assertEquals("2.7.0", x270.version);

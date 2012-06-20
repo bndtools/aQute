@@ -24,8 +24,7 @@ import aqute.eclipse.coffee.editor.*;
  * <li>page 2 Shows the page in Javascript
  * </ul>
  */
-public class CoffeeEditor extends MultiPageEditorPart implements
-		IResourceChangeListener {
+public class CoffeeEditor extends MultiPageEditorPart implements IResourceChangeListener {
 
 	/** The text editor used in page 0. */
 	private TextEditor	editor;
@@ -35,7 +34,8 @@ public class CoffeeEditor extends MultiPageEditorPart implements
 
 	/**
 	 * Creates a multi-page editor example.
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	public CoffeeEditor() throws IOException {
 		super();
@@ -52,9 +52,9 @@ public class CoffeeEditor extends MultiPageEditorPart implements
 			int index = addPage(editor, getEditorInput());
 			setPageText(index, "Coffee");
 			setPartName(editor.getTitle());
-		} catch (PartInitException e) {
-			ErrorDialog.openError(getSite().getShell(),
-					"Error creating nested text editor", null, e.getStatus());
+		}
+		catch (PartInitException e) {
+			ErrorDialog.openError(getSite().getShell(), "Error creating nested text editor", null, e.getStatus());
 		}
 	}
 
@@ -101,25 +101,25 @@ public class CoffeeEditor extends MultiPageEditorPart implements
 	// Originally saved it as a JS file but this was not that useful,
 	// should make it an action
 	private void saveJS() {
-//		try {
-//			IPath path = file.getLocation();
-//
-//			IPath jspath = path.makeAbsolute().removeFileExtension()
-//					.addFileExtension("js");
-//			File jsfile = jspath.toFile();
-//			File dir = jsfile.getParentFile();
-//			dir = new File(dir, "js");
-//			jsfile = new File(dir, jsfile.getName());
-//
-//			if (viewJavaScript()) {
-//				dir.mkdirs();
-//				IO.store(text.getText(), jsfile);
-//			} else
-//				jsfile.delete();
-//			file.getParent().refreshLocal(2, null);
-//		} catch (Exception e) {
-//			throw new RuntimeException(e);
-//		}
+		// try {
+		// IPath path = file.getLocation();
+		//
+		// IPath jspath = path.makeAbsolute().removeFileExtension()
+		// .addFileExtension("js");
+		// File jsfile = jspath.toFile();
+		// File dir = jsfile.getParentFile();
+		// dir = new File(dir, "js");
+		// jsfile = new File(dir, jsfile.getName());
+		//
+		// if (viewJavaScript()) {
+		// dir.mkdirs();
+		// IO.store(text.getText(), jsfile);
+		// } else
+		// jsfile.delete();
+		// file.getParent().refreshLocal(2, null);
+		// } catch (Exception e) {
+		// throw new RuntimeException(e);
+		// }
 	}
 
 	/**
@@ -144,11 +144,9 @@ public class CoffeeEditor extends MultiPageEditorPart implements
 	 * The <code>MultiPageEditorExample</code> implementation of this method
 	 * checks that the input is an instance of <code>IFileEditorInput</code>.
 	 */
-	public void init(IEditorSite site, IEditorInput editorInput)
-			throws PartInitException {
+	public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
 		if (!(editorInput instanceof IFileEditorInput))
-			throw new PartInitException(
-					"Invalid Input: Must be IFileEditorInput");
+			throw new PartInitException("Invalid Input: Must be IFileEditorInput");
 		super.init(site, editorInput);
 		file = ((IFileEditorInput) editorInput).getFile();
 
@@ -185,14 +183,11 @@ public class CoffeeEditor extends MultiPageEditorPart implements
 		if (event.getType() == IResourceChangeEvent.PRE_CLOSE) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					IWorkbenchPage[] pages = getSite().getWorkbenchWindow()
-							.getPages();
+					IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
 					for (int i = 0; i < pages.length; i++) {
-						if (((FileEditorInput) editor.getEditorInput())
-								.getFile().getProject()
+						if (((FileEditorInput) editor.getEditorInput()).getFile().getProject()
 								.equals(event.getResource())) {
-							IEditorPart editorPart = pages[i].findEditor(editor
-									.getEditorInput());
+							IEditorPart editorPart = pages[i].findEditor(editor.getEditorInput());
 							pages[i].closeEditor(editorPart, true);
 						}
 					}
@@ -209,13 +204,12 @@ public class CoffeeEditor extends MultiPageEditorPart implements
 	boolean viewJavaScript() {
 		try {
 			file.deleteMarkers(null, true, 0);
-			String input = editor.getDocumentProvider()
-					.getDocument(editor.getEditorInput()).get();
+			String input = editor.getDocumentProvider().getDocument(editor.getEditorInput()).get();
 
-			
 			text.setText(NativeCoffee.compile(input));
 			return true;
-		} catch (RuntimeException re) {
+		}
+		catch (RuntimeException re) {
 			try {
 				IMarker marker = file.createMarker(IMarker.PROBLEM);
 				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
@@ -223,10 +217,12 @@ public class CoffeeEditor extends MultiPageEditorPart implements
 				marker.setAttribute(IMarker.LINE_NUMBER, e.line);
 				marker.setAttribute(IMarker.MESSAGE, e.message);
 				text.setText(re.getMessage());
-			} catch (CoreException e) {
+			}
+			catch (CoreException e) {
 				new RuntimeException(e);
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			new RuntimeException(e);
 		}
 		return false;

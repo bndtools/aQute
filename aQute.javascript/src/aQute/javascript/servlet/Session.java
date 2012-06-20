@@ -25,8 +25,7 @@ public class Session {
 	private List<ServiceReference>	dependencies	= new ArrayList<ServiceReference>();
 
 	static {
-		ContextFactory.getGlobal().initApplicationClassLoader(
-				new WrapperClassLoader(Session.class.getClassLoader()));
+		ContextFactory.getGlobal().initApplicationClassLoader(new WrapperClassLoader(Session.class.getClassLoader()));
 	}
 
 	Session(Config config) throws Exception {
@@ -53,8 +52,7 @@ public class Session {
 
 	public void incl(String o) throws Exception {
 		String path = o.toString();
-		File f = new File(config.scriptDir(), path.replace('/',
-				File.separatorChar));
+		File f = new File(config.scriptDir(), path.replace('/', File.separatorChar));
 		if (f.isFile()) {
 
 			include(new FileInputStream(f));
@@ -62,8 +60,7 @@ public class Session {
 				lastModified = f.lastModified();
 			included.add(f);
 		} else
-			throw new IllegalArgumentException("No such included file: " + path
-					+ " in " + config.scriptDir());
+			throw new IllegalArgumentException("No such included file: " + path + " in " + config.scriptDir());
 	}
 
 	private void put(Scriptable scope, String name, Object x) {
@@ -71,8 +68,7 @@ public class Session {
 		ScriptableObject.putProperty(scope, name, o);
 	}
 
-	public void invoke(String name, HttpServletRequest rq,
-			HttpServletResponse rsp) throws Exception {
+	public void invoke(String name, HttpServletRequest rq, HttpServletResponse rsp) throws Exception {
 		Context ctx = Context.enter();
 
 		try {
@@ -80,9 +76,9 @@ public class Session {
 			synchronized (this) {
 				if (global == null) {
 					global = ctx.initStandardObjects();
-					global.defineFunctionProperties(new String[] {"println",
-							"json", "service"}, getClass(),
-							ScriptableObject.DONTENUM);
+					global.defineFunctionProperties(new String[] {
+							"println", "json", "service"
+					}, getClass(), ScriptableObject.DONTENUM);
 					put(global, "E", this);
 					include(getClass().getResourceAsStream("base.js"));
 					incl("server.jss");
@@ -105,30 +101,30 @@ public class Session {
 					if (o.getClass().isArray() && Array.getLength(o) == 1)
 						o = Array.get(o, 0);
 
-					ScriptableObject.putProperty(args, (String) key,
-							Context.javaToJS(o, requestScope));
+					ScriptableObject.putProperty(args, (String) key, Context.javaToJS(o, requestScope));
 				}
-				Function function = (Function) requestScope.get(name,
-						requestScope);
+				Function function = (Function) requestScope.get(name, requestScope);
 
-				Object o = function.call(ctx, requestScope, requestScope,
-						new Object[] {this, args});
+				Object o = function.call(ctx, requestScope, requestScope, new Object[] {
+						this, args
+				});
 				if (o instanceof Undefined)
 					return;
 
 				json(o, rsp.getWriter(), null);
-			} finally {
+			}
+			finally {
 				String s = sw.toString();
 				if (!s.isEmpty())
 					rsp.getWriter().println("Errors: " + s);
 			}
-		} finally {
+		}
+		finally {
 			Context.exit();
 		}
 	}
 
-	private void json(Object o, Appendable app,
-			IdentityHashMap<Object, Object> set) throws IOException {
+	private void json(Object o, Appendable app, IdentityHashMap<Object,Object> set) throws IOException {
 
 		if (o == null) {
 			app.append("null");
@@ -157,7 +153,7 @@ public class Session {
 		}
 
 		if (set == null)
-			set = new IdentityHashMap<Object, Object>();
+			set = new IdentityHashMap<Object,Object>();
 		else if (set.containsKey(o))
 			throw new IllegalStateException("cycle detected in JSON");
 		else
@@ -193,7 +189,7 @@ public class Session {
 			NativeObject no = (NativeObject) o;
 			app.append("{");
 			String del = "";
-			for (Entry<Object, Object> es : no.entrySet()) {
+			for (Entry<Object,Object> es : no.entrySet()) {
 				app.append(del);
 				String key = es.getKey().toString();
 				Object value = es.getValue();
@@ -257,15 +253,13 @@ public class Session {
 		app.append('"');
 	}
 
-	public static Object include(Context cx, Scriptable scope, Object[] args,
-			Function funObj) throws Exception {
+	public static Object include(Context cx, Scriptable scope, Object[] args, Function funObj) throws Exception {
 		Session s = sessions.get();
 		s.incl(args[0].toString());
 		return Context.getUndefinedValue();
 	}
 
-	public static Object println(Context cx, Scriptable thisObj, Object[] args,
-			Function funObj) {
+	public static Object println(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
 		PrintStream writer = System.out;
 		for (int i = 0; i < args.length; i++) {
 			if (i > 0)
@@ -277,8 +271,8 @@ public class Session {
 		return Context.getUndefinedValue();
 	}
 
-	public static Object service(Context cx, Scriptable scope, Object[] args,
-			Function funObj) throws InvalidSyntaxException {
+	public static Object service(Context cx, Scriptable scope, Object[] args, Function funObj)
+			throws InvalidSyntaxException {
 		Session s = sessions.get();
 
 		Object o = args[0];

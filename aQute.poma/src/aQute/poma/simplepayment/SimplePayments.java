@@ -14,21 +14,19 @@ import aQute.poma.service.payments.*;
 @Component
 public class SimplePayments implements PaymentManager {
 
-	private Auditor auditor;
-
+	private Auditor	auditor;
 
 	public void pay(Bill bill, Payment option) {
 		BigDecimal discount = auditor.audit(bill);
 		BigDecimal amount = bill.getAmount();
 		amount.subtract(discount);
-		option.transfer( amount);
-		
+		option.transfer(amount);
+
 		bill.setPaid(Bill.Payment.TRANSFER);
 	}
-	
-	
-	@Reference 
-	void setAudit( Auditor auditor ) {
+
+	@Reference
+	void setAudit(Auditor auditor) {
 		this.auditor = auditor;
 	}
 }

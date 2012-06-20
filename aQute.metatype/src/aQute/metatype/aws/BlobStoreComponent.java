@@ -12,26 +12,32 @@ import com.amazonaws.services.s3.model.*;
 
 interface Store {
 	InputStream get(String name);
+
 	void put(String name, InputStream in);
 }
-@Component(designate=BlobStoreComponent.Config.class,immediate=true)
+
+@Component(designate = BlobStoreComponent.Config.class, immediate = true)
 public class BlobStoreComponent implements Store {
 	interface Config {
 		String domain();
+
 		String _secretKey();
+
 		String _accessKey();
+
 		Region region();
 	};
-	Config config;
-	AmazonS3Client client;
-	
+
+	Config			config;
+	AmazonS3Client	client;
+
 	@Activate
-	void activate(Map<?,?> map) {
+	void activate(Map< ? , ? > map) {
 		System.out.println("activated");
 		config = Configurable.createConfigurable(Config.class, map);
 		AWSCredentials credentials = new BasicAWSCredentials(config._accessKey(), config._secretKey());
-	    client = new AmazonS3Client(credentials);
-		client.createBucket(config.domain(),config.region());
+		client = new AmazonS3Client(credentials);
+		client.createBucket(config.domain(), config.region());
 	}
 
 	@Override
@@ -44,5 +50,5 @@ public class BlobStoreComponent implements Store {
 	public void put(String name, InputStream input) {
 		client.putObject(config.domain(), name, input, null);
 	}
-	
+
 }

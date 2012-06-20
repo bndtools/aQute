@@ -18,15 +18,14 @@ import aQute.service.store.*;
 
 @Component
 public class LibraryImpl implements Library {
-	WeakHashMap<String, ProgramImpl>	cache	= new WeakHashMap<String, LibraryImpl.ProgramImpl>();
+	WeakHashMap<String,ProgramImpl>	cache	= new WeakHashMap<String,LibraryImpl.ProgramImpl>();
 
-	Store<ProgramImpl>					programs;
-	Store<RevisionImpl>					revisions;
-	LogService							log;
+	Store<ProgramImpl>				programs;
+	Store<RevisionImpl>				revisions;
+	LogService						log;
 
 	static public class ProgramImpl extends Program {
 		// public static final String _type = "program";
-
 
 	}
 
@@ -49,14 +48,12 @@ public class LibraryImpl implements Library {
 			throw new Exception(reporter.toString());
 
 		revision._id = revisions.uniqueId();
-		ProgramImpl program = programs.all().where("_id=%s", revision.bsn)
-				.one();
+		ProgramImpl program = programs.all().where("_id=%s", revision.bsn).one();
 
 		if (program != null) {
-			RevisionRef ref = getRevision(program,revision.version);
+			RevisionRef ref = getRevision(program, revision.version);
 			if (ref != null && ref.master)
-				throw new Exception("100 Attempt to insert a master revision "
-						+ revision.bsn + "-" + revision.version);
+				throw new Exception("100 Attempt to insert a master revision " + revision.bsn + "-" + revision.version);
 		}
 
 		revisions.insert(revision); // Save, might become orphaned
@@ -67,26 +64,24 @@ public class LibraryImpl implements Library {
 
 			if (program == null) {
 				program = new ProgramImpl();
-				data.assignIfNotSet(revision,program, "bsn", "docUrl", "vendor", "description");
+				data.assignIfNotSet(revision, program, "bsn", "docUrl", "vendor", "description");
 				program._id = revision.bsn;
 				program.revisions.add(ref);
 				programs.insert(program);
 			} else {
-				int n = programs
-						.optimistic(program)
-						.where("!(&(revisions.master=true)(revisions.version=%s))",
-								revision.version).append("revisions", ref)
-						.update();
+				int n = programs.optimistic(program)
+						.where("!(&(revisions.master=true)(revisions.version=%s))", revision.version)
+						.append("revisions", ref).update();
 
 				if (n == 0)
-					throw new Exception(
-							"100 Attempt to insert a master revision "
-									+ revision.bsn + "-" + revision.version);
+					throw new Exception("100 Attempt to insert a master revision " + revision.bsn + "-"
+							+ revision.version);
 
 				program.revisions.add(ref);
 			}
 
-		} catch (Exception t) {
+		}
+		catch (Exception t) {
 			revisions.find(revision).remove();
 			throw t;
 		}
@@ -103,13 +98,12 @@ public class LibraryImpl implements Library {
 	}
 
 	public Iterable< ? extends Program> find(String where) throws Exception {
-		if ( where == null)
+		if (where == null)
 			where = "(bsn=*)";
 		return programs.find(where).select();
 	}
 
-	private RevisionImpl parse(String spec, Reporter reporter)
-			throws IOException {
+	private RevisionImpl parse(String spec, Reporter reporter) throws IOException {
 		try {
 			URL url = new URL(spec);
 			JarInputStream in = new JarInputStream(url.openStream());
@@ -134,8 +128,7 @@ public class LibraryImpl implements Library {
 					reporter.error("Invalid version %s", v);
 					v = "0";
 				}
-				revision.version = new Version(v).getWithoutQualifier()
-						.toString();
+				revision.version = new Version(v).getWithoutQualifier().toString();
 				revision.qualifier = new Version(v).getQualifier();
 				revision.insertDate = System.currentTimeMillis();
 				revision.description = domain.get(Constants.BUNDLE_DESCRIPTION);
@@ -143,12 +136,10 @@ public class LibraryImpl implements Library {
 				revision.docUrl = domain.get(Constants.BUNDLE_DOCURL);
 				revision.url = spec;
 
-				Parameters licenses = OSGiHeader.parseHeader(domain
-						.get(Constants.BUNDLE_LICENSE));
+				Parameters licenses = OSGiHeader.parseHeader(domain.get(Constants.BUNDLE_LICENSE));
 				if (licenses.size() > 0) {
 					revision.licenses = new ArrayList<License>();
-					for (java.util.Map.Entry<String, Attrs> x : licenses
-							.entrySet()) {
+					for (java.util.Map.Entry<String,Attrs> x : licenses.entrySet()) {
 						Attrs attrs = x.getValue();
 						License license = new License();
 						license.name = x.getKey();
@@ -162,10 +153,12 @@ public class LibraryImpl implements Library {
 				revision.jpmService = attributes.getValue("JPM-Service");
 
 				return revision;
-			} finally {
+			}
+			finally {
 				in.close();
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			reporter.error("Errors during opening of URL", spec);
 		}
 		return null;
@@ -180,7 +173,7 @@ public class LibraryImpl implements Library {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Reference
 	void setStore(DB db) throws Exception {
 		programs = db.getStore(ProgramImpl.class, "library.program");
@@ -191,7 +184,6 @@ public class LibraryImpl implements Library {
 	void setLog(LogService log) throws Exception {
 		this.log = log;
 	}
-
 
 	public RevisionRef getRevision(Program program, String version) {
 		// TODO with or without?

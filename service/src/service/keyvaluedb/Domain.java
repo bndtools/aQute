@@ -3,8 +3,9 @@ package service.keyvaluedb;
 import java.util.*;
 
 public interface Domain<T> {
-	
+
 	T get(Object id);
+
 	Iterator<T> get(Object... id);
 
 	void update(T... items);

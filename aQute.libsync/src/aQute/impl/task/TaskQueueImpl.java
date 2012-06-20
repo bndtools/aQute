@@ -21,13 +21,10 @@ import com.hazelcast.core.*;
  * A Task Queue is intended to run tasks in a clustered environment. It can
  * queue tasks described by a TaskData, this queue is then read by anybody on
  * the same clusters, the task will be executed correctly only once on any of
- * the clustered system that runs this component.
- * 
- * This Tasks Queue first stores a task in the db and then sends the task to the
- * shared queue. This shared queue generates events when tasks are inserted.
- * These events are used to fill a queue with tasks to be processed. This queue
- * is read by a single thread.
- * 
+ * the clustered system that runs this component. This Tasks Queue first stores
+ * a task in the db and then sends the task to the shared queue. This shared
+ * queue generates events when tasks are inserted. These events are used to fill
+ * a queue with tasks to be processed. This queue is read by a single thread.
  */
 @Component(designate = TaskQueueImpl.Config.class)
 public class TaskQueueImpl extends Thread implements TaskQueue {
@@ -41,19 +38,19 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 		String		reference;
 	}
 
-	private BlockingQueue<Task>				queue		= new LinkedBlockingQueue<Task>();
-	private MultiMap<String, TaskWorker>	taskWorkers	= new MultiMap<String, TaskWorker>();
+	private BlockingQueue<Task>			queue		= new LinkedBlockingQueue<Task>();
+	private MultiMap<String,TaskWorker>	taskWorkers	= new MultiMap<String,TaskWorker>();
 
-	Store<TaskData>							store;
-	LogService								log;
-	IMap<byte[], String>					activeTasks;
-	Executor								executor;
-	HazelcastInstance						instance;
-	AtomicNumber							sweep;
-	int										errors;
-	Semaphore								throttle;
-	int										latency;
-	boolean									nosweep;
+	Store<TaskData>						store;
+	LogService							log;
+	IMap<byte[],String>					activeTasks;
+	Executor							executor;
+	HazelcastInstance					instance;
+	AtomicNumber						sweep;
+	int									errors;
+	Semaphore							throttle;
+	int									latency;
+	boolean								nosweep;
 
 	/**
 	 * Implementation section
@@ -66,55 +63,42 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 
 	private Config							config;
 
-	private EntryListener<byte[], String>	listener	= //
-														new EntryListener<byte[], String>() {
-															public void entryAdded(
-																	EntryEvent<byte[], String> event) {
+	private EntryListener<byte[],String>	listener	= //
+														new EntryListener<byte[],String>() {
+															public void entryAdded(EntryEvent<byte[],String> event) {
 																try {
-																	String value = event
-																			.getValue();
-																	System.out
-																			.println("Added "
-																					+ value
-																					+ " "
-																					+ activeTasks
-																							.size());
-																	TaskData data = codec
-																			.dec()
-																			.from(value)
+																	String value = event.getValue();
+																	System.out.println("Added " + value + " "
+																			+ activeTasks.size());
+																	TaskData data = codec.dec().from(value)
 																			.get(TaskData.class);
 																	synchronized (taskWorkers) {
-																		if (!taskWorkers
-																				.containsKey(data.type)) {
-																			System.out.println("No worker for " + data.type);
+																		if (!taskWorkers.containsKey(data.type)) {
+																			System.out.println("No worker for "
+																					+ data.type);
 																			return;
 																		}
 																	}
 																	Task task = new Task();
 																	task.data = data;
-																	task.reference = event
-																			.getValue();
+																	task.reference = event.getValue();
 																	queue.add(task);
-																} catch (Exception e) {
+																}
+																catch (Exception e) {
 																	log.log(LogService.LOG_ERROR,
 																			"Failed to add new item "
 																					+ event.getValue()
-																					+ " to task queue",
-																			e);
+																					+ " to task queue", e);
 																}
 															}
 
-															public void entryRemoved(
-																	EntryEvent<byte[], String> event) {
+															public void entryRemoved(EntryEvent<byte[],String> event) {
 																// Ignore
 															}
 
-															public void entryEvicted(
-																	EntryEvent<byte[], String> arg0) {
-															}
+															public void entryEvicted(EntryEvent<byte[],String> arg0) {}
 
-															public void entryUpdated(
-																	EntryEvent<byte[], String> arg0) {
+															public void entryUpdated(EntryEvent<byte[],String> arg0) {
 																System.out.println("Updated");
 															}
 														};
@@ -126,8 +110,7 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 		TaskData td = new TaskData();
 		td._id = id;
 		activeTasks.remove(id);
-		return store.find(td).where("state=QUEUED")
-				.set("state", TaskData.State.CANCELED).update() == 1;
+		return store.find(td).where("state=QUEUED").set("state", TaskData.State.CANCELED).update() == 1;
 	}
 
 	/**
@@ -158,7 +141,7 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 	}
 
 	@Activate
-	void activate(Map<String, Object> props) {
+	void activate(Map<String,Object> props) {
 		config = Configurable.createConfigurable(Config.class, props);
 		throttle = new Semaphore(config.parallel() == 0 ? 2 : config.parallel());
 		activeTasks = instance.getMap(getClass().getName() + ".map");
@@ -237,7 +220,7 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 					}
 				} else
 					delay = 10000;
-				
+
 				// Get some queued task data
 				final Task task = queue.poll(delay, TimeUnit.MILLISECONDS);
 				if (task == null)
@@ -246,14 +229,14 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 				// Throttle the number of active tasks
 				throttle.acquire();
 
-				System.out.println( "Contains (should be true) "  + activeTasks.containsKey(task.data._id));
+				System.out.println("Contains (should be true) " + activeTasks.containsKey(task.data._id));
 				if (activeTasks.remove(task.data._id) == null) {
 					// The task was already gone for some reason.
 					// Which is perfectly legal
 					throttle.release();
 					continue;
 				}
-				System.out.println( "Contains (should be false) "  + activeTasks.containsKey(task.data._id));
+				System.out.println("Contains (should be false) " + activeTasks.containsKey(task.data._id));
 				final TaskData td = task.data;
 				Runnable r = new Runnable() {
 
@@ -262,13 +245,11 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 							TaskWorker taskWorker;
 
 							synchronized (taskWorkers) {
-								List<TaskWorker> typeWorkers = taskWorkers
-										.get(td.type);
+								List<TaskWorker> typeWorkers = taskWorkers.get(td.type);
 
 								// Check if we actually have a worker for the
 								// type
-								if (typeWorkers == null
-										|| typeWorkers.isEmpty()) {
+								if (typeWorkers == null || typeWorkers.isEmpty()) {
 									activeTasks.put(td._id, task.reference);
 									return;
 								}
@@ -285,31 +266,25 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 								long now = System.currentTimeMillis();
 								if (td.periodic <= 0) {
 									System.out.println("Success ");
-									count = store
-											.find(td)
-											.set("state",
-													TaskData.State.SUCCEEDED)
+									count = store.find(td).set("state", TaskData.State.SUCCEEDED)
 											.set("stateChange", now).update();
 								} else {
 									System.out.println("Reschedule " + now + td.periodic);
-									count = store.find(td)
-											.set("after", now + td.periodic)
-											.set("stateChange", now).update();
+									count = store.find(td).set("after", now + td.periodic).set("stateChange", now)
+											.update();
 
 								}
 								assert count == 1;
 
 								return;
-							} catch (InvocationTargetException ite) {
-								log.log(LogService.LOG_ERROR,
-										"Task worker failed task "
-												+ Hex.toHexString(td._id),
+							}
+							catch (InvocationTargetException ite) {
+								log.log(LogService.LOG_ERROR, "Task worker failed task " + Hex.toHexString(td._id),
 										ite.getCause());
 
-							} catch (Throwable e) {
-								log.log(LogService.LOG_ERROR,
-										"Task worker failed task "
-												+ Hex.toHexString(td._id), e);
+							}
+							catch (Throwable e) {
+								log.log(LogService.LOG_ERROR, "Task worker failed task " + Hex.toHexString(td._id), e);
 
 							}
 
@@ -317,28 +292,30 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 
 						catch (Exception e) {
 							// the loop has a problem, not good
-							log.log(LogService.LOG_ERROR, "Task Worker failed",
-									e);
-						} finally {
+							log.log(LogService.LOG_ERROR, "Task Worker failed", e);
+						}
+						finally {
 							throttle.release();
 						}
 					}
 
 				};
 				executor.execute(r);
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e) {
 				System.out.println("Quiting");
 				return;
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 				// the loop has a problem, not good
-				log.log(LogService.LOG_ERROR,
-						"The main task loop failed, will sleep", e);
+				log.log(LogService.LOG_ERROR, "The main task loop failed, will sleep", e);
 				try {
 					// make sure we do not overload the system
 					errors++;
 					Thread.sleep(1000 * errors);
-				} catch (InterruptedException e1) {
+				}
+				catch (InterruptedException e1) {
 					interrupt();
 				}
 			}

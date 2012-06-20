@@ -12,14 +12,14 @@ import aQute.service.task.TaskQueue.Builder;
  */
 public class BuilderImpl<T> implements Builder<T> {
 	final TaskQueueImpl	tqi;
-	final TaskData		td	= new TaskData();
-	TimeUnit unit = TimeUnit.MILLISECONDS;
+	final TaskData		td		= new TaskData();
+	TimeUnit			unit	= TimeUnit.MILLISECONDS;
 
 	public BuilderImpl(TaskQueueImpl tqi, T work) throws Exception {
 		this.tqi = tqi;
 		td.task = TaskQueueImpl.codec.enc().put(work).toString();
 		td.type = work.getClass().getName();
-		td.before= Long.MAX_VALUE;
+		td.before = Long.MAX_VALUE;
 		td.after = 0;
 		td.state = TaskData.State.QUEUED;
 	}
@@ -56,8 +56,8 @@ public class BuilderImpl<T> implements Builder<T> {
 
 		if (td.after > td.before)
 			throw new IllegalArgumentException("Expires before it can run");
-		
-		if ( td.periodic > 0 && td.periodic < 5000) {
+
+		if (td.periodic > 0 && td.periodic < 5000) {
 			throw new IllegalArgumentException("Periodic must be at least 5 secs");
 		}
 	}

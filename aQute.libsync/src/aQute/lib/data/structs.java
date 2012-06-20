@@ -48,8 +48,7 @@ public class structs {
 	public static String validate(Match match, Object field) throws Exception {
 		String s = converter.convert(String.class, field);
 		if (!s.matches(match.value())) {
-			return "Pattern mismatch, expected " + match.value() + ", but got "
-					+ s;
+			return "Pattern mismatch, expected " + match.value() + ", but got " + s;
 		}
 
 		if (field != null && field instanceof Number) {
@@ -63,13 +62,11 @@ public class structs {
 		return null;
 	}
 
-	private static String validate(CollectionMatch match, Object value)
-			throws Exception {
+	private static String validate(CollectionMatch match, Object value) throws Exception {
 		if (value instanceof Collection) {
 			Collection< ? > coll = (Collection< ? >) value;
 			if (coll.size() > match.size())
-				return "Collection is too large, max size is " + match.size()
-						+ " is now " + coll.size();
+				return "Collection is too large, max size is " + match.size() + " is now " + coll.size();
 
 			for (Object member : coll) {
 				String s = validate(match.value(), member);
@@ -82,8 +79,7 @@ public class structs {
 			int length = Array.getLength(value);
 
 			if (length > match.size())
-				return "Array is too large, max size is " + match.size()
-						+ " is now " + length;
+				return "Array is too large, max size is " + match.size() + " is now " + length;
 
 			for (int i = 0; i < length; i++) {
 				Object member = Array.get(value, i);
@@ -97,8 +93,7 @@ public class structs {
 		if (value instanceof Map) {
 			Map< ? , ? > map = (Map< ? , ? >) value;
 			if (map.size() > match.size())
-				return "Map is too large, max size is " + match.size()
-						+ " is now " + map.size();
+				return "Map is too large, max size is " + match.size() + " is now " + map.size();
 
 			for (Map.Entry< ? , ? > e : map.entrySet()) {
 				String s = validate(match.key(), e.getKey());
@@ -128,7 +123,8 @@ public class structs {
 				if (toField.getType().isAssignableFrom(fromField.getClass())) {
 					toField.set(to, fromField.get(from));
 				}
-			} catch (NoSuchFieldException nsfe) {
+			}
+			catch (NoSuchFieldException nsfe) {
 				// Ignore
 			}
 		}

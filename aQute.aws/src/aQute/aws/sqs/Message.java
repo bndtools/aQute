@@ -17,9 +17,8 @@ public class Message {
 	final String		senderId;
 	final int			receiveCount;
 
-	Message(MessageQueue queue, String messageId, String content,
-			String receipt, long sentTimestamp, long receiveTimestamp,
-			int receiveCount, String senderId) {
+	Message(MessageQueue queue, String messageId, String content, String receipt, long sentTimestamp,
+			long receiveTimestamp, int receiveCount, String senderId) {
 		this.messageId = messageId;
 		this.content = content;
 		this.queue = queue;
@@ -38,8 +37,7 @@ public class Message {
 	 * @param body
 	 */
 	Message(MessageQueue queue, String messageId, String body) {
-		this(queue, messageId, body, null, System.currentTimeMillis(), 0, 0,
-				null);
+		this(queue, messageId, body, null, System.currentTimeMillis(), 0, 0, null);
 	}
 
 	/**
@@ -63,13 +61,13 @@ public class Message {
 	/**
 	 * Set the visibility timeout of this message.
 	 * 
-	 * @param seconds number of seconds before this message will become visible
-	 *        again.
+	 * @param seconds
+	 *            number of seconds before this message will become visible
+	 *            again.
 	 * @throws Exception
 	 */
 	public void setVisibilityTimeout(int seconds) throws Exception {
-		queue.parent.client.action("ChangeMessageVisibility")
-				.endpoint(queue.endpoint).arg("ReceiptHandle", receipt)
+		queue.parent.client.action("ChangeMessageVisibility").endpoint(queue.endpoint).arg("ReceiptHandle", receipt)
 				.arg("VisibilityTimeout", seconds).check();
 	}
 
@@ -80,8 +78,7 @@ public class Message {
 	 */
 
 	public boolean equals(Object o) {
-		return o instanceof Message
-				&& ((Message) o).messageId.equals(messageId);
+		return o instanceof Message && ((Message) o).messageId.equals(messageId);
 	}
 
 	/**

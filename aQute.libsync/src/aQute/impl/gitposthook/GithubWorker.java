@@ -15,12 +15,14 @@ import aQute.service.library.*;
 import aQute.service.store.*;
 import aQute.service.task.*;
 
-@Component(provide={Worker.class, GithubWorker.class})
+@Component(provide = {
+		Worker.class, GithubWorker.class
+})
 public class GithubWorker implements Worker<Data.Import> {
 
 	public static class Receipt extends Id {
 		public Receipt() {}
-		
+
 		Receipt(String sha) {
 			_id = Base64.decodeBase64(sha);
 		}
@@ -43,23 +45,20 @@ public class GithubWorker implements Worker<Data.Import> {
 
 		if (r != null) {
 			// We already have processed this hook
-			log.log(LogService.LOG_INFO, "Alread up to date for repo "
-					+ work.posthook.repository.name);
+			log.log(LogService.LOG_INFO, "Alread up to date for repo " + work.posthook.repository.name);
 			return;
 		}
 
 		r = receipts.find(before).select().one();
 
 		Importer importer = new Importer(github, library, work.posthook);
-		if ( r == null )
+		if (r == null)
 			importer.scan();
 		else
 			importer.delta();
 
 		if (!importer.isOk()) {
-			log.log(LogService.LOG_ERROR,
-					"failed to execute Github import hook for commit "
-							+ work.posthook.after);
+			log.log(LogService.LOG_ERROR, "failed to execute Github import hook for commit " + work.posthook.after);
 			return;
 		}
 
@@ -78,13 +77,14 @@ public class GithubWorker implements Worker<Data.Import> {
 	void setDb(DB db) throws Exception {
 		this.receipts = db.getStore(Receipt.class, "library.receipt");
 	}
+
 	@Reference
 	void setLibrary(Library lib) throws Exception {
 		this.library = lib;
 	}
-	
+
 	@Reference
-	void setLog( LogService log) throws ServletException, NamespaceException {
+	void setLog(LogService log) throws ServletException, NamespaceException {
 		this.log = log;
 	}
 

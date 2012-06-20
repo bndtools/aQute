@@ -18,30 +18,27 @@ public class Logger implements InvocationHandler {
 
 	@SuppressWarnings("unchecked")
 	static <T> T newInstance(Class<T> clazz, String type) {
-		return (T) Proxy.newProxyInstance(clazz.getClassLoader(),
-				new Class< ? >[] {clazz}, new Logger(type));
+		return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class< ? >[] {
+			clazz
+		}, new Logger(type));
 	}
 
-	public final Object invoke(Object proxy, Method method, Object[] args)
-			throws Throwable {
+	public final Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if (on) {
-			switch(level) {
-				case LogService.LOG_DEBUG:
-				case LogService.LOG_INFO:
-				case LogService.LOG_WARNING:
-				case LogService.LOG_ERROR:
+			switch (level) {
+				case LogService.LOG_DEBUG :
+				case LogService.LOG_INFO :
+				case LogService.LOG_WARNING :
+				case LogService.LOG_ERROR :
 			}
 			if (method.getReturnType() == DEBUG.class)
 				log(LogService.LOG_DEBUG, method, args);
-			else
-				if (method.getReturnType() == INFO.class)
-					log(LogService.LOG_INFO, method, args);
-				else
-					if (method.getReturnType() == WARNING.class)
-						log(LogService.LOG_WARNING, method, args);
-					else
-						if (method.getReturnType() == ERROR.class)
-							log(LogService.LOG_ERROR, method, args);
+			else if (method.getReturnType() == INFO.class)
+				log(LogService.LOG_INFO, method, args);
+			else if (method.getReturnType() == WARNING.class)
+				log(LogService.LOG_WARNING, method, args);
+			else if (method.getReturnType() == ERROR.class)
+				log(LogService.LOG_ERROR, method, args);
 		}
 		return null;
 	}
@@ -70,8 +67,7 @@ public class Logger implements InvocationHandler {
 		Format format = method.getAnnotation(Format.class);
 		if (format != null) {
 			message = String.format(format.value(), args);
-		}
-		else {
+		} else {
 			StringBuilder sb = new StringBuilder();
 			StringReader sr = new StringReader(method.getName());
 			int c;
@@ -81,14 +77,12 @@ public class Logger implements InvocationHandler {
 				if (Character.isUpperCase(cc)) {
 					sb.append(" ");
 					cc = Character.toLowerCase(cc);
+				} else if (cc == '$') {
+					if (i < args.length)
+						sb.append(args[i++]);
+					else
+						sb.append("<missing parameter>");
 				}
-				else
-					if (cc == '$') {
-						if (i < args.length)
-							sb.append(args[i++]);
-						else
-							sb.append("<missing parameter>");
-					}
 				sb.append(cc);
 			}
 			String del = ": ";

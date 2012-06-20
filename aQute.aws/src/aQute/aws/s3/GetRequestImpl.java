@@ -3,16 +3,14 @@ package aQute.aws.s3;
 import java.io.*;
 import java.util.*;
 
-import aQute.aws.s3.Bucket.*;
-
+import aQute.aws.s3.Bucket.GetRequest;
+import aQute.aws.s3.Bucket.Range;
 
 /**
  * Implements a get request so that the caller can provide all the options
  * without being confronted with a huge API.
- * 
  */
-public class GetRequestImpl extends CommonRequestImpl<GetRequest> implements
-		GetRequest {
+public class GetRequestImpl extends CommonRequestImpl<GetRequest> implements GetRequest {
 	final String	bucket;
 	final String	key;
 	List<Range>		ranges;
@@ -96,7 +94,7 @@ public class GetRequestImpl extends CommonRequestImpl<GetRequest> implements
 
 			if (e.responseCode == 412 && accept412)
 				return null;
-			
+
 			throw e;
 		}
 	}

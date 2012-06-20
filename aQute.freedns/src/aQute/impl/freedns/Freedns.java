@@ -33,26 +33,24 @@ public class Freedns {
 												if (options.key() == null)
 													throw new IllegalArgumentException(
 															"No url nor key set in configuration for Freedns");
-												url = new URL(
-														"http://freedns.afraid.org/dynamic/update.php?"
-																+ options.key());
+												url = new URL("http://freedns.afraid.org/dynamic/update.php?"
+														+ options.key());
 											}
 
-											String s = IO.collect(url
-													.openStream());
+											String s = IO.collect(url.openStream());
 											log.log(LogService.LOG_INFO, s);
 
-										} catch (Exception e) {
+										}
+										catch (Exception e) {
 											throw new RuntimeException(e);
 										}
 									}
 
 								};
 
-	void activate(Map<String, Object> map) {
+	void activate(Map<String,Object> map) {
 		options = Configurable.createConfigurable(FreednsOptions.class, map);
-		timer.schedule(timerTask, 100,
-				options.period() <= 0 ? 60000 : options.period() + 60000);
+		timer.schedule(timerTask, 100, options.period() <= 0 ? 60000 : options.period() + 60000);
 	}
 
 	void deactivate() {

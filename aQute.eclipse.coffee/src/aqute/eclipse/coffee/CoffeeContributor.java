@@ -53,8 +53,7 @@ public class CoffeeContributor extends MultiPageEditorActionBarContributor {
 		IActionBars actionBars = getActionBars();
 		if (actionBars != null) {
 
-			ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part
-					: null;
+			ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part : null;
 
 			actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(),
 					getAction(editor, ITextEditorActionConstants.DELETE));
@@ -72,8 +71,7 @@ public class CoffeeContributor extends MultiPageEditorActionBarContributor {
 					getAction(editor, ITextEditorActionConstants.SELECT_ALL));
 			actionBars.setGlobalActionHandler(ActionFactory.FIND.getId(),
 					getAction(editor, ITextEditorActionConstants.FIND));
-			actionBars.setGlobalActionHandler(
-					IDEActionFactory.BOOKMARK.getId(),
+			actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(),
 					getAction(editor, IDEActionFactory.BOOKMARK.getId()));
 			actionBars.updateActionBars();
 		}
@@ -85,35 +83,33 @@ public class CoffeeContributor extends MultiPageEditorActionBarContributor {
 				IDocumentProvider dp = editor.getDocumentProvider();
 				IDocument doc = dp.getDocument(editor.getEditorInput());
 
-				ITextSelection selection = (ITextSelection) editor
-						.getSelectionProvider().getSelection();
+				ITextSelection selection = (ITextSelection) editor.getSelectionProvider().getSelection();
 
 				if (!selection.isEmpty()) {
 					String result = "";
 					String source = selection.getText();
 					try {
 						result = NativeCoffee.eval(source);
-					} catch (Exception e) {
+					}
+					catch (Exception e) {
 						Err err = new Err(e.getMessage());
 						result = "#" + err.line + ": " + err.message;
 					}
 					try {
 						int n = selection.getEndLine();
 						int count = doc.getNumberOfLines();
-						if ( count > n +1)
+						if (count > n + 1)
 							n++;
-						
-						int offset = doc
-								.getLineOffset(n);
+
+						int offset = doc.getLineOffset(n);
 						doc.replace(offset, 0, result + "\n");
-						editor.getSelectionProvider().setSelection(
-								new TextSelection(offset, result.length()));
-					} catch (Exception ee) {
+						editor.getSelectionProvider().setSelection(new TextSelection(offset, result.length()));
+					}
+					catch (Exception ee) {
 						throw new RuntimeException(ee);
 					}
 				} else
-					MessageDialog.openWarning(null, "CoffeeScript",
-							"Nothing selected");
+					MessageDialog.openWarning(null, "CoffeeScript", "Nothing selected");
 			}
 		};
 		printIt.setAccelerator(SWT.MOD1 + '7');

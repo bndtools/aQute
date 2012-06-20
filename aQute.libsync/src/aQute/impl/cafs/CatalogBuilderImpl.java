@@ -26,26 +26,24 @@ public class CatalogBuilderImpl implements CatalogBuilder, Closeable {
 
 		final RandomAccessFile raf = new RandomAccessFile(tmp, "r");
 		try {
-			Map<SHA1, Node> nodes = new HashMap<SHA1, Node>();
+			Map<SHA1,Node> nodes = new HashMap<SHA1,Node>();
 
 			/*
 			 * Calculate the digests for the catalog nodes
 			 */
 			root.tree(0);
 			root.fixupCatalogs(nodes);
-			
+
 			/*
 			 * Find out what SHAs we're missing
 			 */
 
-			for (ContentData cd : cafs.cafs.select("_id").in("_id",
-					nodes.keySet()))
+			for (ContentData cd : cafs.cafs.select("_id").in("_id", nodes.keySet()))
 				nodes.remove(new SHA1(cd._id));
 
 			for (final Node f : nodes.values()) {
-				if (f.catalogData != null) {					
-					byte[] sha = cafs.store(new ByteArrayInputStream(
-							f.catalogData));
+				if (f.catalogData != null) {
+					byte[] sha = cafs.store(new ByteArrayInputStream(f.catalogData));
 					assert new SHA1(sha).equals(f.digest);
 				} else {
 					raf.seek(f.pos);
@@ -53,8 +51,7 @@ public class CatalogBuilderImpl implements CatalogBuilder, Closeable {
 						int	size	= f.size;
 
 						@Override
-						public int read(byte[] data, int off, int len)
-								throws IOException {
+						public int read(byte[] data, int off, int len) throws IOException {
 							len = Math.min(size, len);
 							int read = raf.read(data, off, len);
 							if (read != -1) {
@@ -68,7 +65,8 @@ public class CatalogBuilderImpl implements CatalogBuilder, Closeable {
 
 						@Override
 						public int read() throws IOException {
-							if (size < 0) return -1;
+							if (size < 0)
+								return -1;
 							size--;
 							return raf.read();
 						}
@@ -79,7 +77,8 @@ public class CatalogBuilderImpl implements CatalogBuilder, Closeable {
 			}
 
 			return new CatalogImpl(cafs, root.getCatalogData());
-		} finally {
+		}
+		finally {
 			raf.close();
 			close();
 		}
@@ -104,8 +103,7 @@ public class CatalogBuilderImpl implements CatalogBuilder, Closeable {
 		return this;
 	}
 
-	public CatalogBuilder setComment(String path, String comment)
-			throws Exception {
+	public CatalogBuilder setComment(String path, String comment) throws Exception {
 		Node entry = root.getNode(path);
 		entry.comment = comment;
 		return this;
@@ -114,13 +112,12 @@ public class CatalogBuilderImpl implements CatalogBuilder, Closeable {
 	public void close() {
 		try {
 			fout.close();
-		} catch (Exception e) {
 		}
+		catch (Exception e) {}
 		tmp.delete();
 	}
 
-	private SHA1 sha(InputStream zin, OutputStream fout)
-			throws NoSuchAlgorithmException, IOException, Exception {
+	private SHA1 sha(InputStream zin, OutputStream fout) throws NoSuchAlgorithmException, IOException, Exception {
 		Digester<SHA1> digester = SHA1.getDigester(fout);
 		IO.copy(zin, digester);
 		SHA1 digest = digester.digest();

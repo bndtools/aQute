@@ -3,8 +3,9 @@ package aQute.hello.impl;
 import aQute.bnd.annotation.component.*;
 import aQute.service.hello.*;
 
-@Component(properties="locale=fr") public class HelloServiceImpl implements HelloService {
-	
+@Component(properties = "locale=fr")
+public class HelloServiceImpl implements HelloService {
+
 	@Override
 	public String sayHello() {
 		return "Bonjour";
@@ -12,7 +13,7 @@ import aQute.service.hello.*;
 
 	@Override
 	public String sayGoodbye() {
-		return "Au Revoir";		
+		return "Au Revoir";
 	}
 
 }

@@ -3,7 +3,6 @@ package aQute.poma.visa;
 import java.math.*;
 
 import aQute.bnd.annotation.component.*;
-import aQute.poma.domain.*;
 import aQute.poma.service.gateway.*;
 
 /**
@@ -29,12 +28,11 @@ public class Visa implements PaymentGateway {
 
 			@Override
 			public void transfer(BigDecimal amount) {
-				System.out.println("Charging VISA card " + vf.getCCNumber() + " for "+ amount + " from " + vf.getName());
+				System.out.println("Charging VISA card " + vf.getCCNumber() + " for " + amount + " from "
+						+ vf.getName());
 			}
-			
+
 		};
 	}
-	
-	
 
 }

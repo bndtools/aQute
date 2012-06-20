@@ -11,11 +11,9 @@ import aQute.lib.osgi.*;
 
 /**
  * Intended to wire a number components for testing
- * 
  */
 public class DummyDS {
-	static Pattern	REFERENCE	= Pattern
-										.compile("([^/]+)/([^/]+)(?:/([^/]+))?");
+	static Pattern	REFERENCE	= Pattern.compile("([^/]+)/([^/]+)(?:/([^/]+))?");
 
 	public class Reference {
 		String	name;
@@ -29,7 +27,7 @@ public class DummyDS {
 	public class Component<T> {
 		Class<T>			type;
 		T					instance;
-		Map<String, Object>	properties	= new HashMap<String, Object>();
+		Map<String,Object>	properties	= new HashMap<String,Object>();
 		boolean				wiring;
 		Method				activate;
 		Method				deactivate;
@@ -49,12 +47,10 @@ public class DummyDS {
 
 			ClassLoader loader = type.getClassLoader();
 			if (loader != null) {
-				URL url = loader.getResource(type.getName().replace('.', '/')
-						+ ".class");
+				URL url = loader.getResource(type.getName().replace('.', '/') + ".class");
 				Analyzer a = new Analyzer();
 				Clazz clazz = new Clazz(a, "", new URLResource(url));
-				Map<String, String> d = ComponentAnnotationReader
-						.getDefinition(clazz);
+				Map<String,String> d = ComponentAnnotationReader.getDefinition(clazz);
 				System.out.println(d);
 
 				for (String key : d.keySet()) {
@@ -100,9 +96,8 @@ public class DummyDS {
 					List<Component< ? >> refComp = map.get(requested);
 					if (refComp == null || refComp.isEmpty()) {
 						if (!ref.optional)
-							throw new IllegalStateException(type
-									+ " requires at least one component for "
-									+ ref.name + " of type " + requested);
+							throw new IllegalStateException(type + " requires at least one component for " + ref.name
+									+ " of type " + requested);
 					} else {
 						for (Component< ? > c : refComp) {
 							m.setAccessible(true);
@@ -120,8 +115,7 @@ public class DummyDS {
 						if (Map.class.isAssignableFrom(types[i])) {
 							parameters[i] = properties;
 						} else
-							throw new IllegalArgumentException(
-									"Not a pojo, requires " + types[i]);
+							throw new IllegalArgumentException("Not a pojo, requires " + types[i]);
 					}
 					activate.invoke(instance, parameters);
 				}
@@ -159,7 +153,7 @@ public class DummyDS {
 
 	}
 
-	final MultiMap<Class< ? >, Component< ? >>	map			= new MultiMap<Class< ? >, Component< ? >>();
+	final MultiMap<Class< ? >,Component< ? >>	map			= new MultiMap<Class< ? >,Component< ? >>();
 	final Set<Component< ? >>					components	= new HashSet<Component< ? >>();				;
 	final List<Component< ? >>					ordered		= new ArrayList<Component< ? >>();				;
 
@@ -184,10 +178,10 @@ public class DummyDS {
 	}
 
 	public <T> T get(Class<T> c) {
-		List<Component<?>> components =  map.get(c);
-		if ( components == null || components.size() == 0)
+		List<Component< ? >> components = map.get(c);
+		if (components == null || components.size() == 0)
 			return null;
-		
+
 		return c.cast(components.get(0).instance);
 	}
 }

@@ -30,16 +30,12 @@ public class S3 {
 		}
 	}
 
-	static DocumentBuilderFactory	dbf				= DocumentBuilderFactory
-															.newInstance();
-	static XPathFactory				xpf				= XPathFactory
-															.newInstance();
+	static DocumentBuilderFactory	dbf				= DocumentBuilderFactory.newInstance();
+	static XPathFactory				xpf				= XPathFactory.newInstance();
 	static Mac						mac;
 	static Random					r				= new Random();
-	static SimpleDateFormat			httpDateFormat	= new SimpleDateFormat(
-															"EEE, dd MMM yyyy HH:mm:ss zzz");
-	static SimpleDateFormat			awsDateFormat	= new SimpleDateFormat(
-															"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	static SimpleDateFormat			httpDateFormat	= new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+	static SimpleDateFormat			awsDateFormat	= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
 	static {
 		dbf.setNamespaceAware(false);
@@ -61,12 +57,11 @@ public class S3 {
 		this.awsId = awsId;
 	}
 
-	public Bucket createBucket(String bucket, String... region)
-			throws Exception {
+	public Bucket createBucket(String bucket, String... region) throws Exception {
 		Bucket b = new Bucket(this, bucket);
-		SortedMap<String, String> map = null;
+		SortedMap<String,String> map = null;
 		if (region.length > 0) {
-			map = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+			map = new TreeMap<String,String>(String.CASE_INSENSITIVE_ORDER);
 			map.put("LocationConstraint", region[0]);
 		}
 		construct(METHOD.PUT, bucket, null, null, null, null);
@@ -89,8 +84,7 @@ public class S3 {
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(in);
 		XPath xpath = xpf.newXPath();
-		NodeList items = (NodeList) xpath.evaluate(
-				"/ListAllMyBucketsResult/Buckets/Bucket", doc,
+		NodeList items = (NodeList) xpath.evaluate("/ListAllMyBucketsResult/Buckets/Bucket", doc,
 				XPathConstants.NODESET);
 		for (int i = 0; i < items.getLength(); i++) {
 			String name = xpath.evaluate("Name", items.item(i));
@@ -102,16 +96,15 @@ public class S3 {
 
 	/**
 	 * <pre>
-	 * StringToSign = HTTP - Verb + &quot;\n&quot; + Content - MD5 + &quot;\n&quot; + Content - Type
-	 * 		+ &quot;\n&quot; + Date + &quot;\n&quot; + CanonicalizedAmzHeaders + CanonicalizedResource;
+	 * StringToSign = HTTP - Verb + &quot;\n&quot; + Content - MD5 + &quot;\n&quot; + Content - Type + &quot;\n&quot; + Date + &quot;\n&quot;
+	 * 		+ CanonicalizedAmzHeaders + CanonicalizedResource;
 	 * </pre>
 	 * 
 	 * @param url
 	 */
 
-	InputStream construct(METHOD method, String bucket, String id,
-			InputStream content, SortedMap<String, String> headers,
-			SortedMap<String, String> query) throws Exception {
+	InputStream construct(METHOD method, String bucket, String id, InputStream content,
+			SortedMap<String,String> headers, SortedMap<String,String> query) throws Exception {
 
 		String etag = null;
 		String type = null;
@@ -123,7 +116,7 @@ public class S3 {
 
 		if (query != null && query.size() > 0) {
 			String del = "?";
-			for (Map.Entry<String, String> entry : query.entrySet()) {
+			for (Map.Entry<String,String> entry : query.entrySet()) {
 				qsb.append(del);
 				qsb.append(entry.getKey());
 				qsb.append("=");
@@ -170,19 +163,15 @@ public class S3 {
 
 		// CanonicalizedAmzHeaders
 		if (headers != null) {
-			for (Map.Entry<String, String> entry : headers.entrySet()) {
+			for (Map.Entry<String,String> entry : headers.entrySet()) {
 				if (entry.getKey().startsWith("x-amz")) {
 					sb.append(entry.getKey());
 					sb.append(":");
 					sb.append(entry.getValue().trim());
-				}
+				} else if (entry.getKey().equalsIgnoreCase("Content-Length"))
+					conn.setFixedLengthStreamingMode(Integer.parseInt(entry.getValue()));
 				else
-					if (entry.getKey().equalsIgnoreCase("Content-Length"))
-						conn.setFixedLengthStreamingMode(Integer.parseInt(entry
-								.getValue()));
-					else
-						conn.setRequestProperty(entry.getKey(),
-								entry.getValue());
+					conn.setRequestProperty(entry.getKey(), entry.getValue());
 			}
 		}
 
@@ -247,8 +236,7 @@ public class S3 {
 	}
 
 	String encodeUrl(String value) throws Exception {
-		return URLEncoder.encode(value, "utf-8").replace("+", "%20")
-				.replace("*", "%2A").replace("%7E", "~");
+		return URLEncoder.encode(value, "utf-8").replace("+", "%20").replace("*", "%2A").replace("%7E", "~");
 	}
 
 	synchronized Date awsDate(String evaluate) throws ParseException {

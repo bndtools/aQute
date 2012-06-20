@@ -20,8 +20,7 @@ public class Importer extends ReporterAdapter {
 		this.posthook = posthook;
 		this.github = github;
 		this.library = registry;
-		repo = github.getRepository(posthook.repository.name)
-				.owner(posthook.repository.owner.name).get();
+		repo = github.getRepository(posthook.repository.name).owner(posthook.repository.owner.name).get();
 	}
 
 	void scan() throws Exception {
@@ -60,9 +59,10 @@ public class Importer extends ReporterAdapter {
 				if (rev == null) {
 					error("Could not insert %s", uri);
 				} else if (master)
-					; //library.master(rev);
+					; // library.master(rev);
 
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 				error("Failed to insert %s : %s", uri, e);
 			}

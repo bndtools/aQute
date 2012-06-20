@@ -1,33 +1,28 @@
 package aQute.vaadin.tabs;
 
-import java.util.Date;
-import java.util.Enumeration;
+import java.util.*;
 
-import org.osgi.service.log.LogEntry;
-import org.osgi.service.log.LogListener;
-import org.osgi.service.log.LogReaderService;
-import org.osgi.service.log.LogService;
+import org.osgi.service.log.*;
 
-import aQute.bnd.annotation.component.Reference;
+import aQute.bnd.annotation.component.*;
 
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.Table;
+import com.vaadin.data.util.*;
+import com.vaadin.ui.*;
 
-@aQute.bnd.annotation.component.Component(factory = "com.vaadin.Component/contribution", properties = "name"
-		+ "=Log")
+@aQute.bnd.annotation.component.Component(factory = "com.vaadin.Component/contribution", properties = "name" + "=Log")
 public class LogTab extends CustomComponent {
-	private static final long serialVersionUID = 1L;
-	static String[] fields = { "Time", "Level", "Message", "Exception" };
-	final IndexedContainer container = new IndexedContainer();
+	private static final long	serialVersionUID	= 1L;
+	static String[]				fields				= {
+			"Time", "Level", "Message", "Exception"
+													};
+	final IndexedContainer		container			= new IndexedContainer();
 	{
 		for (String p : fields) {
 			container.addContainerProperty(p, String.class, "");
 		}
 	}
 
-	final Table log = new Table();
-
+	final Table					log					= new Table();
 
 	public LogTab() {
 		setCaption("Logging");
@@ -38,7 +33,7 @@ public class LogTab extends CustomComponent {
 
 	@Reference
 	protected void setLogReader(LogReaderService logreader) {
-		for (Enumeration<?> e = logreader.getLog(); e.hasMoreElements();) {
+		for (Enumeration< ? > e = logreader.getLog(); e.hasMoreElements();) {
 			addEntry((LogEntry) e.nextElement());
 		}
 		logreader.addLogListener(new LogListener() {
@@ -53,34 +48,31 @@ public class LogTab extends CustomComponent {
 		try {
 			Object id = container.addItem();
 			Date time = new Date(entry.getTime());
-			container.getContainerProperty(id, "Time")
-					.setValue(time.toString());
-			container.getContainerProperty(id, "Level").setValue(
-					getLevel(entry.getLevel()));
+			container.getContainerProperty(id, "Time").setValue(time.toString());
+			container.getContainerProperty(id, "Level").setValue(getLevel(entry.getLevel()));
 			if (entry.getMessage() != null)
-				container.getContainerProperty(id, "Message").setValue(
-						entry.getMessage());
+				container.getContainerProperty(id, "Message").setValue(entry.getMessage());
 			if (entry.getException() != null)
-				container.getContainerProperty(id, "Exception").setValue(
-						entry.getException().getMessage());
-		} catch (Exception e) {
+				container.getContainerProperty(id, "Exception").setValue(entry.getException().getMessage());
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	private Object getLevel(int level) {
 		switch (level) {
-		case LogService.LOG_DEBUG:
-			return "debug";
-		case LogService.LOG_ERROR:
-			return "error";
-		case LogService.LOG_INFO:
-			return "info";
-		case LogService.LOG_WARNING:
-			return "warning";
+			case LogService.LOG_DEBUG :
+				return "debug";
+			case LogService.LOG_ERROR :
+				return "error";
+			case LogService.LOG_INFO :
+				return "info";
+			case LogService.LOG_WARNING :
+				return "warning";
 
-		default:
-			return "?" + level;
+			default :
+				return "?" + level;
 		}
 	}
 

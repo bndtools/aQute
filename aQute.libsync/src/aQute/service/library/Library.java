@@ -28,9 +28,8 @@ public interface Library {
 		public String	link;
 	}
 
-	public class RevisionRef{
-		public RevisionRef() {
-		}
+	public class RevisionRef {
+		public RevisionRef() {}
 
 		public RevisionRef(Revision revision) {
 			this.revision = revision._id;

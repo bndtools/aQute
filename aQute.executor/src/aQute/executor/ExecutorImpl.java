@@ -10,7 +10,7 @@ import aQute.bnd.annotation.metatype.*;
 import aQute.executor.ExecutorImpl.Config;
 import aQute.executor.ExecutorImpl.Config.Type;
 
-@Component(designateFactory = Config.class, configurationPolicy=ConfigurationPolicy.require)
+@Component(designateFactory = Config.class, configurationPolicy = ConfigurationPolicy.require)
 public class ExecutorImpl implements Executor {
 	ExecutorService	es;
 
@@ -31,7 +31,7 @@ public class ExecutorImpl implements Executor {
 	Config	config;
 
 	@Activate
-	void activate(Map<String, Object> properties) {
+	void activate(Map<String,Object> properties) {
 		config = Configurable.createConfigurable(Config.class, properties);
 		Type t = config.type();
 		if (t == null)

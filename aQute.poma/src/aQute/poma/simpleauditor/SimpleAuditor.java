@@ -8,7 +8,6 @@ import aQute.poma.service.audit.*;
 
 /**
  * An implementation of a trivial auditor.
- * 
  */
 @Component
 public class SimpleAuditor implements Auditor {

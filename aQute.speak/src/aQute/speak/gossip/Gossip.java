@@ -5,10 +5,10 @@ import org.osgi.service.log.*;
 import aQute.bnd.annotation.component.*;
 import aQute.service.speak.*;
 
-@Component(immediate=true)
+@Component(immediate = true)
 public class Gossip implements LogListener {
-	Speak speak;
-	LogListener listener;
+	Speak		speak;
+	LogListener	listener;
 
 	@Reference
 	protected void setLogReader(LogReaderService lr) {
@@ -22,7 +22,8 @@ public class Gossip implements LogListener {
 	public void logged(LogEntry entry) {
 		try {
 			speak.say(entry.getMessage());
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// Ignore
 		}
 	}

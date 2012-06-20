@@ -10,11 +10,9 @@ import aQute.aws.*;
 
 /**
  * A service interface based on Amazon's Simple Queue Service (SQS) {@see
- * http://aws.amazon.com/sqs/}.
- * 
- * The SQ Service provides a fluent interface to the queuing service. It uses
- * {@link MessageQueue} and {@link Message} objects to model the service.
- * 
+ * http://aws.amazon.com/sqs/}. The SQ Service provides a fluent interface to
+ * the queuing service. It uses {@link MessageQueue} and {@link Message} objects
+ * to model the service.
  */
 public class SQS {
 	public final static String	version	= "2011-10-01";
@@ -32,14 +30,14 @@ public class SQS {
 	}
 
 	/**
-	 * A fluid interface to create a named queue.
+	 * A fluid interface to create a named queue. This returns a
+	 * {@link CreateQueueRequest} object that contains the options for the
+	 * queue. Finally calling {@link CreateQueueRequest#get()} will create the
+	 * queue.
 	 * 
-	 * This returns a {@link CreateQueueRequest} object that contains the
-	 * options for the queue. Finally calling {@link CreateQueueRequest#get()}
-	 * will create the queue.
-	 * 
-	 * @param name The name of the queue, maximum 80 characters; alphanumeric
-	 *        characters, hyphens (-), and underscores (_) are allowed.
+	 * @param name
+	 *            The name of the queue, maximum 80 characters; alphanumeric
+	 *            characters, hyphens (-), and underscores (_) are allowed.
 	 * @return A fluid interface for the remaining arguments
 	 * @throws Exception
 	 */
@@ -55,8 +53,9 @@ public class SQS {
 	/**
 	 * Delete the queue with the given name if it exists.
 	 * 
-	 * @param name The name of the queue, maximum 80 characters; alphanumeric
-	 *        characters, hyphens (-), and underscores (_) are allowed.
+	 * @param name
+	 *            The name of the queue, maximum 80 characters; alphanumeric
+	 *            characters, hyphens (-), and underscores (_) are allowed.
 	 * @throws Exception
 	 */
 	public void deleteQueue(MessageQueue queue) throws Exception {
@@ -69,16 +68,15 @@ public class SQS {
 	 * List the queues with the given prefix. If the prefix is null, all queues
 	 * are returned.
 	 * 
-	 * @param prefix the prefix or null
+	 * @param prefix
+	 *            the prefix or null
 	 * @return a list of message queues
 	 * @throws Exception
 	 */
 	public List<MessageQueue> listQueues(String prefix) throws Exception {
-		Request request = client.action("ListQueues").arg("QueueNamePrefix",
-				prefix);
+		Request request = client.action("ListQueues").arg("QueueNamePrefix", prefix);
 		List<MessageQueue> result = new ArrayList<MessageQueue>();
-		for (Node node : request
-				.nodes("ListQueuesResponse/ListQueuesResult/QueueUrl")) {
+		for (Node node : request.nodes("ListQueuesResponse/ListQueuesResult/QueueUrl")) {
 			String url = node.getTextContent().trim();
 			result.add(new MessageQueue(this, url));
 		}
@@ -88,8 +86,9 @@ public class SQS {
 	/**
 	 * Return the queue object for the given name
 	 * 
-	 * @param name The name of the queue, maximum 80 characters; alphanumeric
-	 *        characters, hyphens (-), and underscores (_) are allowed.
+	 * @param name
+	 *            The name of the queue, maximum 80 characters; alphanumeric
+	 *            characters, hyphens (-), and underscores (_) are allowed.
 	 * @return the queue object or null of no such queue
 	 * @throws Exception
 	 */
@@ -99,8 +98,7 @@ public class SQS {
 		if (request.getError() != null)
 			return null; // no such queue (otherwise check would have thrown up)
 
-		String url = request
-				.string("GetQueueUrlResponse/GetQueueUrlResult/QueueUrl");
+		String url = request.string("GetQueueUrlResponse/GetQueueUrlResult/QueueUrl");
 		return new MessageQueue(this, url);
 	}
 
@@ -111,8 +109,7 @@ public class SQS {
 		final String	name;
 
 		CreateQueueRequest(SQS sqs, String queueName) throws Exception {
-			request = sqs.client.action("CreateQueue").arg("QueueName",
-					queueName);
+			request = sqs.client.action("CreateQueue").arg("QueueName", queueName);
 			this.sqs = sqs;
 			this.name = queueName;
 		}
@@ -121,7 +118,8 @@ public class SQS {
 		 * Optional seconds that the messages will be visible. The default for
 		 * this attribute is 30.
 		 * 
-		 * @param seconds From 0 to 43200 (12 hours).
+		 * @param seconds
+		 *            From 0 to 43200 (12 hours).
 		 * @return self
 		 */
 		public CreateQueueRequest visibilityTimeOut(int seconds) {
@@ -133,8 +131,9 @@ public class SQS {
 		 * Maximum message size. The default for this attribute is 65536 (64
 		 * KiB)
 		 * 
-		 * @param size An integer from 1024 bytes (1 KiB) up to 65536 bytes (64
-		 *        KiB).
+		 * @param size
+		 *            An integer from 1024 bytes (1 KiB) up to 65536 bytes (64
+		 *            KiB).
 		 * @return self
 		 */
 		public CreateQueueRequest maximumMessageSize(int size) {
@@ -146,8 +145,9 @@ public class SQS {
 		 * Maximum period the queue will maintain a message without delivery.
 		 * The default for this attribute is 345600 (4 days).
 		 * 
-		 * @param seconds Integer representing seconds, from 60 (1 minute) to
-		 *        1209600 (14 days).
+		 * @param seconds
+		 *            Integer representing seconds, from 60 (1 minute) to
+		 *            1209600 (14 days).
 		 * @return self
 		 */
 		public CreateQueueRequest retentionPeriod(int seconds) {
@@ -159,7 +159,8 @@ public class SQS {
 		 * Number of seconds before the messages becomes visible in the queue.
 		 * The default for this attribute is 0 (zero).
 		 * 
-		 * @param seconds An integer from 0 to 900 (15 minutes).
+		 * @param seconds
+		 *            An integer from 0 to 900 (15 minutes).
 		 * @return self
 		 */
 		public CreateQueueRequest delay(int seconds) {
@@ -175,8 +176,7 @@ public class SQS {
 		 * @throws Exception
 		 */
 		public MessageQueue get() throws Exception {
-			String url = request
-					.string("CreateQueueResponse/CreateQueueResult/QueueUrl");
+			String url = request.string("CreateQueueResponse/CreateQueueResult/QueueUrl");
 
 			assert url.matches("http.?://.*/" + name);
 			return new MessageQueue(sqs, url);

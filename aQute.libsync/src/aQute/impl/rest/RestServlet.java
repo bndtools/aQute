@@ -18,14 +18,18 @@ import aQute.lib.converter.*;
 import aQute.lib.json.*;
 import aQute.service.rest.*;
 
-@Component(provide = Servlet.class, properties = {"alias=/rest"})
-@SuppressWarnings({"unchecked", "rawtypes"})
+@Component(provide = Servlet.class, properties = {
+	"alias=/rest"
+})
+@SuppressWarnings({
+		"unchecked", "rawtypes"
+})
 public class RestServlet extends HttpServlet {
 	private static final long	serialVersionUID	= 1L;
 	final static Converter		converter			= new Converter();
 	final static JSONCodec		codec				= new JSONCodec();
 	LogService					log;
-	MultiMap<String, Function>	functions			= new MultiMap<String, Function>();
+	MultiMap<String,Function>	functions			= new MultiMap<String,Function>();
 
 	class Function {
 		Method	method;
@@ -37,8 +41,7 @@ public class RestServlet extends HttpServlet {
 		}
 	}
 
-	public void service(HttpServletRequest rq, HttpServletResponse rsp)
-			throws IOException {
+	public void service(HttpServletRequest rq, HttpServletResponse rsp) throws IOException {
 		String pathInfo = rq.getPathInfo();
 		if (pathInfo == null) {
 			rsp.getWriter()
@@ -59,8 +62,7 @@ public class RestServlet extends HttpServlet {
 		}
 
 		String acceptEncoding = rq.getHeader("Accept-Encoding");
-		boolean deflate = acceptEncoding != null
-				&& acceptEncoding.indexOf("deflate") >= 0;
+		boolean deflate = acceptEncoding != null && acceptEncoding.indexOf("deflate") >= 0;
 
 		Map parameters = new HashMap(rq.getParameterMap());
 
@@ -71,26 +73,21 @@ public class RestServlet extends HttpServlet {
 			List<Function> functions = this.functions.get(verb.toString());
 			if (functions == null) {
 				rsp.getWriter().println(
-						"No such rest type found: " + verb
-								+ ", available verbs "
-								+ this.functions.keySet());
+						"No such rest type found: " + verb + ", available verbs " + this.functions.keySet());
 				rsp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				return;
 
 			}
 			for (Function f : functions) {
 
-				Object[] args = mapArguments(
-						f.method.getGenericParameterTypes(), parameters, parts,
+				Object[] args = mapArguments(f.method.getGenericParameterTypes(), parameters, parts,
 						rq.getInputStream());
 
 				if (args != null) {
 					Object result = f.method.invoke(f.target, args);
 					if (result == null) {
 						rsp.getWriter().println(
-								"Cannot " + verb + " Resource " + pathInfo
-										+ " with parameters " + parameters
-										+ ".");
+								"Cannot " + verb + " Resource " + pathInfo + " with parameters " + parameters + ".");
 						rsp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					}
@@ -107,24 +104,22 @@ public class RestServlet extends HttpServlet {
 			}
 
 			rsp.getWriter().println(
-					"Cannot find Resource Manager for uri " + pathInfo + " ("
-							+ verb + "), available Resource Managers are "
-							+ this.functions.keySet());
+					"Cannot find Resource Manager for uri " + pathInfo + " (" + verb
+							+ "), available Resource Managers are " + this.functions.keySet());
 			rsp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return;
 
-		} catch (Exception e) {
-			rsp.getWriter().println(
-					"Cannot " + verb + " Resource " + pathInfo
-							+ " with parameters " + parameters + ".");
+		}
+		catch (Exception e) {
+			rsp.getWriter()
+					.println("Cannot " + verb + " Resource " + pathInfo + " with parameters " + parameters + ".");
 			e.printStackTrace(rsp.getWriter());
 			rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return;
 		}
 	}
 
-	private Object[] mapArguments(Type[] types, Map parameters,
-			List<String> parts, InputStream in) throws Exception {
+	private Object[] mapArguments(Type[] types, Map parameters, List<String> parts, InputStream in) throws Exception {
 
 		// TODO quick checks to see it can never match
 
@@ -132,10 +127,8 @@ public class RestServlet extends HttpServlet {
 
 		try {
 			int i = 0, p = 0;
-			if (arguments.length > 0
-					&& Options.class.isAssignableFrom((Class) types[0])) {
-				arguments[0] = Configurable.createConfigurable(
-						(Class) types[0], parameters);
+			if (arguments.length > 0 && Options.class.isAssignableFrom((Class) types[0])) {
+				arguments[0] = Configurable.createConfigurable((Class) types[0], parameters);
 				i++;
 			}
 
@@ -144,13 +137,13 @@ public class RestServlet extends HttpServlet {
 			}
 			if (p == parts.size()) {
 				if (i == arguments.length - 1) {
-					arguments[i++] = codec.dec().from(in).charset("UTF-8")
-							.get(types[i]);
+					arguments[i++] = codec.dec().from(in).charset("UTF-8").get(types[i]);
 				}
 				if (i == arguments.length)
 					return arguments;
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// Ignore since another method might match
 		}
 		return null;

@@ -26,8 +26,7 @@ public class NativeCoffee {
 		String s = compile("console.log (" + source + ")");
 		int result = command.execute(s, stdout, stderr);
 		if (result != 0)
-			throw new RuntimeException(result + " : " + stderr.toString()
-					+ stdout.toString());
+			throw new RuntimeException(result + " : " + stderr.toString() + stdout.toString());
 
 		return stdout.toString();
 	}
@@ -35,8 +34,7 @@ public class NativeCoffee {
 	public static void main(String[] args) throws Exception {
 		NativeCoffee n = new NativeCoffee();
 		System.out.println("compile " + n.compile("()-> 1"));
-		System.out.println("compile "
-				+ n.compile("{ a:i, b:i*i } for i in [1..10]"));
+		System.out.println("compile " + n.compile("{ a:i, b:i*i } for i in [1..10]"));
 		System.out.println("eval " + n.eval("{ a:i, b:i*i } for i in [1..10]"));
 	}
 

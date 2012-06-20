@@ -2,8 +2,7 @@ package aQute.aws.sdb;
 
 import java.util.*;
 
-import aQute.aws.sdb.Domain.*;
-
+import aQute.aws.sdb.Domain.SelectRequest;
 
 public class SelectRequestImpl<T> implements SelectRequest<T> {
 	int				limit			= -1;
@@ -14,8 +13,7 @@ public class SelectRequestImpl<T> implements SelectRequest<T> {
 	DomainImpl<T>	domain;
 	String			where;
 
-	public SelectRequestImpl(SDBImpl parent, DomainImpl<T> domain,
-			String where, Object... args) {
+	public SelectRequestImpl(SDBImpl parent, DomainImpl<T> domain, String where, Object... args) {
 		this.parent = parent;
 		this.domain = domain;
 		this.where = format(where, args);
@@ -81,14 +79,14 @@ public class SelectRequestImpl<T> implements SelectRequest<T> {
 
 	@Override
 	public Collection< ? > itemNames() {
-//		Collection< ? > os = select("itemName()");
+		// Collection< ? > os = select("itemName()");
 		return null;
 	}
 
 	private String format(String where, Object... args) {
 		StringBuilder sb = new StringBuilder();
 		int n = 0;
-		
+
 		for (int i = 0; i < where.length(); i++) {
 			char c = where.charAt(i);
 			if (c == '%') {
@@ -97,9 +95,9 @@ public class SelectRequestImpl<T> implements SelectRequest<T> {
 					case '%' :
 						sb.append('%');
 						break;
-						
+
 					case 's' :
-						
+
 					default :
 						throw new IllegalArgumentException(where);
 				}

@@ -40,9 +40,10 @@ public class CAFSImpl implements CAFS {
 		ContentData cd = new ContentData();
 		cd._id = sha.digest();
 		cd = cafs.find(cd).one();
-		if (cd.file == null) return null;
+		if (cd.file == null)
+			return null;
 
-		InflaterInputStream zin = new InflaterInputStream( new FileInputStream(cd.file));
+		InflaterInputStream zin = new InflaterInputStream(new FileInputStream(cd.file));
 		return zin;
 	}
 
@@ -56,34 +57,35 @@ public class CAFSImpl implements CAFS {
 			try {
 				Digester<MD5> md5d = MD5.getDigester(out);
 				DeflaterOutputStream zout = new DeflaterOutputStream(md5d);
-				
+
 				Digester<SHA1> sha1d = SHA1.getDigester(zout);
 				IO.copy(in, sha1d);
 				zout.close(); // make sure output is flushed
-				
+
 				SHA1 sha1 = sha1d.digest();
-				
+
 				/*
 				 * The following might actually cause duplicates but we take
-				 * that chance. Can be solved by running a process to
-				 * delete duplicates
+				 * that chance. Can be solved by running a process to delete
+				 * duplicates
 				 */
-				ContentData cd= new ContentData();
+				ContentData cd = new ContentData();
 				cd._id = sha1.digest();
-				
-				if ( cafs.find(cd).isEmpty()) {
+
+				if (cafs.find(cd).isEmpty()) {
 					cd.file = tmp;
 					cafs.insert(cd);
 				}
 				return cd._id;
-			} finally {
+			}
+			finally {
 				out.close();
 			}
-		} finally {
+		}
+		finally {
 			tmp.delete();
 		}
 	}
-
 
 	@Reference
 	public void setDB(DB db) throws Exception {

@@ -23,7 +23,7 @@ class TaskWorker {
 			if (m.getName().equals("execute")) {
 				if (m.getParameterTypes().length == 1) {
 					type = (Class<Object>) m.getParameterTypes()[0];
-					execute= m;
+					execute = m;
 					break;
 				}
 			}
@@ -36,9 +36,6 @@ class TaskWorker {
 		execute.invoke(worker, task);
 	}
 
-	
-	
-	
 	/*
 	 * We take listener identity for equals semantics
 	 */

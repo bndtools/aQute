@@ -16,10 +16,10 @@ public class PolyglotHello implements HelloService {
 		String goodbye();
 	}
 
-	Config config;
+	Config	config;
 
 	@Activate
-	void activate(Map<String, Object> props) {
+	void activate(Map<String,Object> props) {
 		config = Configurable.createConfigurable(Config.class, props);
 	}
 

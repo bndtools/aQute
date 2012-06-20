@@ -2,18 +2,17 @@ package com.extensiblejava.impl.dumbclient;
 
 import java.math.*;
 
-import com.extensiblejava.service.facade.*;
-
 import aQute.bnd.annotation.component.*;
+
+import com.extensiblejava.service.facade.*;
 
 @Component
 public class DumbClientImpl {
-	LoanFacade loanFacade;
+	LoanFacade	loanFacade;
 
 	@Activate
 	void activate() {
-		BigDecimal payment = this.loanFacade.getMonthlyPayment(new BigDecimal(
-				"15000"), new BigDecimal("12"), 60);
+		BigDecimal payment = this.loanFacade.getMonthlyPayment(new BigDecimal("15000"), new BigDecimal("12"), 60);
 		System.out.println("Payment: " + payment);
 
 	}

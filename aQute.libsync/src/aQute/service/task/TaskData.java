@@ -15,7 +15,7 @@ public class TaskData implements Serializable {
 	public long			stateChange;
 	public long			before;
 	public long			after;
-	public long 		periodic;
+	public long			periodic;
 	public List<String>	log;
 	public int			failures;
 	public String		type;

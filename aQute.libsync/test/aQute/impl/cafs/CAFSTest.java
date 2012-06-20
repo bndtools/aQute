@@ -13,9 +13,9 @@ import aQute.test.dummy.ds.*;
 import aQute.test.dummy.log.*;
 
 public class CAFSTest extends TestCase {
-	DummyDS			ds	= new DummyDS();
-	CAFSImpl			cafs;
-	
+	DummyDS		ds	= new DummyDS();
+	CAFSImpl	cafs;
+
 	@Reference
 	void setCAFS(CAFSImpl cafs) throws Exception {
 		this.cafs = cafs;
@@ -48,8 +48,7 @@ public class CAFSTest extends TestCase {
 		cafs.store(new ByteArrayInputStream(data));
 
 		CatalogBuilder cb = cafs.builder();
-		cb.add("META-INF/MANIFEST.MF", new ByteArrayInputStream(
-				"Manifest-Version: 1".getBytes()));
+		cb.add("META-INF/MANIFEST.MF", new ByteArrayInputStream("Manifest-Version: 1".getBytes()));
 		Catalog cat = cb.build();
 		assertNotNull(cat);
 		CatalogEntry entry = cat.getEntry("META-INF/MANIFEST.MF");

@@ -27,8 +27,7 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 		this.store = store;
 	}
 
-	public MongoCursorImpl<T> where(String ldap, Object... args)
-			throws Exception {
+	public MongoCursorImpl<T> where(String ldap, Object... args) throws Exception {
 		combine("$and", store.filter(ldap, args));
 		return this;
 	}
@@ -94,7 +93,8 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 				try {
 					DBObject object = cursor.next();
 					return (T) store.mcnv.fromMongo(store.type, object);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -188,14 +188,12 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 		return this;
 	}
 
-	public MongoCursorImpl<T> append(String field, Object... value)
-			throws Exception {
+	public MongoCursorImpl<T> append(String field, Object... value) throws Exception {
 		combineUpdate(field, "$pushAll", store.mcnv.toMongo(value));
 		return this;
 	}
 
-	public MongoCursorImpl<T> remove(String field, Object... value)
-			throws Exception {
+	public MongoCursorImpl<T> remove(String field, Object... value) throws Exception {
 		combineUpdate(field, "$pullAll", store.mcnv.toMongo(value));
 		return this;
 	}
@@ -209,8 +207,7 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 		return count() == 0;
 	}
 
-	private void combineUpdate(String field, String op, Object value)
-			throws Exception {
+	private void combineUpdate(String field, String op, Object value) throws Exception {
 		if (update == null)
 			update = new BasicDBObject();
 
@@ -225,19 +222,16 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 	}
 
 	public int update() {
-		WriteResult result = store.db.update(where == null ? EMPTY : where,
-				update, false, true);
+		WriteResult result = store.db.update(where == null ? EMPTY : where, update, false, true);
 		store.error(result);
 		return result.getN();
 	}
 
-	public MongoCursorImpl<T> in(String field, Object... values)
-			throws Exception {
+	public MongoCursorImpl<T> in(String field, Object... values) throws Exception {
 		return in(field, Arrays.asList(values));
 	}
 
-	public MongoCursorImpl<T> in(String field, Collection< ? > values)
-			throws Exception {
+	public MongoCursorImpl<T> in(String field, Collection< ? > values) throws Exception {
 		if (where == null)
 			where = new BasicDBObject();
 
@@ -253,9 +247,9 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 		where.put(field, in);
 		return this;
 	}
-	
+
 	public MongoCursorImpl<T> optimistic(T value) {
-		// TODO 
+		// TODO
 		return this;
 	}
 

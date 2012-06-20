@@ -7,21 +7,20 @@ import aQute.lib.converter.*;
 import aQute.lib.json.*;
 
 @SuppressWarnings("rawtypes")
-public class data<T> implements Map<String, Object> {
+public class data<T> implements Map<String,Object> {
 	static Converter	converter	= new Converter();
 	static JSONCodec	codec		= new JSONCodec().setIgnorenull(true);
 
 	static class Cache {
-		Map<String, Field>	fields	= new HashMap<String, Field>();
+		Map<String,Field>	fields	= new HashMap<String,Field>();
 		Field[]				fs;
 		String[]			names;
-		Set<String>			keys	= Collections.unmodifiableSet(fields
-											.keySet());
+		Set<String>			keys	= Collections.unmodifiableSet(fields.keySet());
 		int					size;
 		Field				extra;
 	}
 
-	final static WeakHashMap<Class, Cache>	caches	= new WeakHashMap<Class, data.Cache>();
+	final static WeakHashMap<Class,Cache>	caches	= new WeakHashMap<Class,data.Cache>();
 	private final Cache						cache;
 	private final T							instance;
 
@@ -78,7 +77,8 @@ public class data<T> implements Map<String, Object> {
 
 		try {
 			return f.get(instance);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// Should not happen since we only have publics
 			throw new RuntimeException(e);
 		}
@@ -90,16 +90,16 @@ public class data<T> implements Map<String, Object> {
 		if (f == null) {
 			if (cache.extra != null) {
 				try {
-					Map<String, Object> x = (Map) cache.extra.get(this);
+					Map<String,Object> x = (Map) cache.extra.get(this);
 					if (x == null)
 						cache.extra.set(this, x = new HashMap());
 					x.put(key, value);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					// Fall through to unsupported exception
 				}
 			}
-			throw new UnsupportedOperationException(
-					"A struct requires an existing key");
+			throw new UnsupportedOperationException("A struct requires an existing key");
 		}
 
 		try {
@@ -107,15 +107,15 @@ public class data<T> implements Map<String, Object> {
 			Object old = f.get(instance);
 			f.set(instance, converted);
 			return old;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// Should not happen since we only have publics
 			throw new RuntimeException(e);
 		}
 	}
 
 	public Object remove(Object key) {
-		throw new UnsupportedOperationException(
-				"Cannot removed fields from a struct " + getClass().getName());
+		throw new UnsupportedOperationException("Cannot removed fields from a struct " + getClass().getName());
 	}
 
 	public void putAll(Map< ? extends String, ? extends Object> m) {
@@ -137,7 +137,8 @@ public class data<T> implements Map<String, Object> {
 		for (Field f : cache.fs) {
 			try {
 				set.add(f.get(instance));
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				// Should not happen since we only have publics
 				throw new RuntimeException(e);
 			}
@@ -145,8 +146,8 @@ public class data<T> implements Map<String, Object> {
 		return set;
 	}
 
-	public Set<Map.Entry<String, Object>> entrySet() {
-		return new Set<Map.Entry<String, Object>>() {
+	public Set<Map.Entry<String,Object>> entrySet() {
+		return new Set<Map.Entry<String,Object>>() {
 
 			public int size() {
 				return cache.size;
@@ -158,21 +159,20 @@ public class data<T> implements Map<String, Object> {
 
 			public boolean contains(Object o) {
 				// TODO
-				throw new UnsupportedOperationException(
-						"Hmm, too complicated to implement and not very useful I think");
+				throw new UnsupportedOperationException("Hmm, too complicated to implement and not very useful I think");
 			}
 
-			public Iterator<Map.Entry<String, Object>> iterator() {
-				return new Iterator<Map.Entry<String, Object>>() {
+			public Iterator<Map.Entry<String,Object>> iterator() {
+				return new Iterator<Map.Entry<String,Object>>() {
 					int	n	= -1;
 
 					public boolean hasNext() {
 						return n + 1 < cache.size;
 					}
 
-					public java.util.Map.Entry<String, Object> next() {
+					public java.util.Map.Entry<String,Object> next() {
 						n++;
-						return new Map.Entry<String, Object>() {
+						return new Map.Entry<String,Object>() {
 
 							public String getKey() {
 								return cache.fs[n].getName();
@@ -181,14 +181,14 @@ public class data<T> implements Map<String, Object> {
 							public Object getValue() {
 								try {
 									return cache.fs[n].get(data.this);
-								} catch (Exception e) {
+								}
+								catch (Exception e) {
 									throw new RuntimeException(e);
 								}
 							}
 
 							public Object setValue(Object value) {
-								throw new UnsupportedOperationException(
-										"Read only");
+								throw new UnsupportedOperationException("Read only");
 							}
 						};
 					}
@@ -202,17 +202,15 @@ public class data<T> implements Map<String, Object> {
 
 			public Object[] toArray() {
 				// TODO
-				throw new UnsupportedOperationException(
-						"Hmm, too complicated to implement and not very useful I think");
+				throw new UnsupportedOperationException("Hmm, too complicated to implement and not very useful I think");
 			}
 
 			public <X> X[] toArray(X[] a) {
 				// TODO
-				throw new UnsupportedOperationException(
-						"Hmm, too complicated to implement and not very useful I think");
+				throw new UnsupportedOperationException("Hmm, too complicated to implement and not very useful I think");
 			}
 
-			public boolean add(java.util.Map.Entry<String, Object> e) {
+			public boolean add(java.util.Map.Entry<String,Object> e) {
 				throw new UnsupportedOperationException("Read only");
 			}
 
@@ -222,12 +220,10 @@ public class data<T> implements Map<String, Object> {
 
 			public boolean containsAll(Collection< ? > c) {
 				// TODO
-				throw new UnsupportedOperationException(
-						"Hmm, too complicated to implement and not very useful I think");
+				throw new UnsupportedOperationException("Hmm, too complicated to implement and not very useful I think");
 			}
 
-			public boolean addAll(
-					Collection< ? extends java.util.Map.Entry<String, Object>> c) {
+			public boolean addAll(Collection< ? extends java.util.Map.Entry<String,Object>> c) {
 				throw new UnsupportedOperationException("Read only");
 			}
 
@@ -264,7 +260,8 @@ public class data<T> implements Map<String, Object> {
 				}
 			}
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -276,7 +273,8 @@ public class data<T> implements Map<String, Object> {
 	public String toString() {
 		try {
 			return codec.enc().put(instance).toString();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -289,8 +287,7 @@ public class data<T> implements Map<String, Object> {
 		return new data<T>(instance);
 	}
 
-	public static void assign(Object from, Object to, boolean override,
-			String... fields) throws Exception {
+	public static void assign(Object from, Object to, boolean override, String... fields) throws Exception {
 		Cache fromCache = getCache(from.getClass());
 		Cache toCache = getCache(to.getClass());
 
@@ -300,27 +297,23 @@ public class data<T> implements Map<String, Object> {
 		for (String name : fields) {
 			Field toField = toCache.fields.get(name);
 			if (toField == null)
-				throw new IllegalArgumentException(name + " is not a field in "
-						+ new data<Object>(to));
+				throw new IllegalArgumentException(name + " is not a field in " + new data<Object>(to));
 
 			Field fromField = fromCache.fields.get(name);
 			if (fromField == null)
 				continue;
 
 			Object value = fromField.get(from);
-			Object converted = converter.convert(toField.getGenericType(),
-					value);
+			Object converted = converter.convert(toField.getGenericType(), value);
 			toField.set(to, converted);
 		}
 	}
 
-	public static void assign(Object from, Object to, String... fields)
-			throws Exception {
+	public static void assign(Object from, Object to, String... fields) throws Exception {
 		assign(from, to, true, fields);
 	}
 
-	public static void assignIfNotSet(Object from, Object to, String... fields)
-			throws Exception {
+	public static void assignIfNotSet(Object from, Object to, String... fields) throws Exception {
 		assign(from, to, false, fields);
 	}
 
@@ -328,8 +321,8 @@ public class data<T> implements Map<String, Object> {
 		Cache c = getCache(o.getClass());
 		return c.size > 0;
 	}
-	
-	public static Field [] fields(Class c) {
+
+	public static Field[] fields(Class c) {
 		return getCache(c).fs;
 	}
 

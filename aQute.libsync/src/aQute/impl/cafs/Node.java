@@ -13,7 +13,7 @@ class Node {
 	int						size	= -1;
 	long					time;
 	long					pos;
-	final Map<String, Node>	entries	= new HashMap<String, Node>();
+	final Map<String,Node>	entries	= new HashMap<String,Node>();
 	SHA1					digest;
 	byte[]					catalogData;
 	private long			flags;
@@ -24,12 +24,12 @@ class Node {
 		int n = path.indexOf('/');
 		if (n >= 0) {
 			String name = path.substring(0, n + 1); // Include /
-			String remainder = path.substring(n+1);
+			String remainder = path.substring(n + 1);
 			System.out.println("Descent " + path + " local=" + name + " remainder=" + remainder);
 			Node node = getLocalNode(name);
-			if ( remainder.isEmpty())
+			if (remainder.isEmpty())
 				return node; // directory node
-			
+
 			return node.getNode(remainder);
 		}
 		return getLocalNode(path);
@@ -39,7 +39,7 @@ class Node {
 		Node node = entries.get(name);
 		if (node == null) {
 			System.out.println("Creating new node " + name);
-			
+
 			node = new Node();
 			node.name = name;
 			entries.put(name, node);
@@ -54,12 +54,14 @@ class Node {
 	 * @return
 	 * @throws Exception
 	 */
-	void fixupCatalogs(Map<SHA1, Node> shas) throws Exception {
+	void fixupCatalogs(Map<SHA1,Node> shas) throws Exception {
 		System.out.println("Fixing up " + name);
 		if (isDirectory()) {
 			for (Node node : entries.values()) {
-				if (node.size < 0) node.fixupCatalogs(shas); // catalog
-				else shas.put(node.digest, node); // normal data
+				if (node.size < 0)
+					node.fixupCatalogs(shas); // catalog
+				else
+					shas.put(node.digest, node); // normal data
 			}
 
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -79,7 +81,7 @@ class Node {
 	CatalogData getCatalogData() {
 		CatalogData data = new CatalogData();
 		data.entries = new ArrayList<EntryData>();
-		for (Map.Entry<String, Node> e : entries.entrySet()) {
+		for (Map.Entry<String,Node> e : entries.entrySet()) {
 			EntryData entryData = new EntryData();
 			entryData.name = e.getKey();
 			entryData.size = e.getValue().size;
@@ -95,8 +97,9 @@ class Node {
 		for (int i = 0; i < n; i++)
 			System.out.print(" ");
 		System.out.println(name + " " + digest);
-		if (entries != null) for (Node node : entries.values()) {
-			node.tree(n + 1);
-		}
+		if (entries != null)
+			for (Node node : entries.values()) {
+				node.tree(n + 1);
+			}
 	}
 }

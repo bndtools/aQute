@@ -7,7 +7,7 @@ import aQute.aws.s3.S3.StorageClass;
 
 public class Bucket {
 	final String	name;
-	final S3	parent;
+	final S3		parent;
 
 	// TODO verify bucket name
 
@@ -29,7 +29,7 @@ public class Bucket {
 	}
 
 	public PutRequest putObject(String key) {
-		return new PutRequestImpl(parent,this,key);
+		return new PutRequestImpl(parent, this, key);
 	}
 
 	public ListRequest listObjects() throws Exception {
@@ -46,7 +46,7 @@ public class Bucket {
 		public Date			lastModified;
 		public long			size;
 		public StorageClass	storageClass;
-		public String		etag;		
+		public String		etag;
 	}
 
 	public static class Range {
@@ -95,7 +95,6 @@ public class Bucket {
 		InputStream get() throws Exception;
 	}
 
-
 	public interface PutRequest extends CommonRequest<PutRequest> {
 		PutRequest contentEncoding(String s);
 
@@ -112,15 +111,14 @@ public class Bucket {
 		/**
 		 * Put a string as UTF-8 encoded data.
 		 * 
-		 * @param in The string to put
+		 * @param in
+		 *            The string to put
 		 * @throws Exception
 		 */
 		void put(String in) throws Exception;
 	}
 
-
-	public interface ListRequest extends CommonRequest<ListRequest>,
-			Iterable<Content> {
+	public interface ListRequest extends CommonRequest<ListRequest>, Iterable<Content> {
 		ListRequest delimeter(String delimeter);
 
 		ListRequest marker(String marker);

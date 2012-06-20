@@ -16,13 +16,12 @@ import com.mongodb.*;
  * This component is driven by a Managed Service Factory. It opens a Mongo DB,
  * gets a DB object and provides access to the stores. This component implements
  * the aQute.service.store service.
- * 
  */
 @Component(configurationPolicy = ConfigurationPolicy.require, designateFactory = Config.class)
 public class MongoDBImpl implements aQute.service.store.DB {
-	Mongo			mongo;
-	DB				db;
-	LogService		log;
+	Mongo		mongo;
+	DB			db;
+	LogService	log;
 
 	public interface Config {
 		/**
@@ -70,8 +69,7 @@ public class MongoDBImpl implements aQute.service.store.DB {
 	 * @throws MongoException
 	 */
 	@Activate
-	void activate(Map<String, Object> properties)
-			throws UnknownHostException, MongoException {
+	void activate(Map<String,Object> properties) throws UnknownHostException, MongoException {
 		config = Configurable.createConfigurable(Config.class, properties);
 
 		// Get the host
@@ -84,17 +82,15 @@ public class MongoDBImpl implements aQute.service.store.DB {
 			mongo = new Mongo();
 
 		this.db = mongo.getDB(config.db());
-		if ( config.init())
+		if (config.init())
 			this.db.dropDatabase();
 		this.db = mongo.getDB(config.db());
-		
+
 		// Log in if required
-		if (config.user() != null && config.user().length() > 1
-				&& config._password() != null) {
+		if (config.user() != null && config.user().length() > 1 && config._password() != null) {
 			db.authenticate(config.user(), config._password().toCharArray());
 		}
 
-		
 	}
 
 	/**

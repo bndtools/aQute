@@ -1,6 +1,5 @@
 package aQute.impl.rest;
 
-import java.io.*;
 import java.util.*;
 
 import junit.framework.*;
@@ -22,43 +21,43 @@ public class RestTest extends TestCase {
 
 	public class UserManaer implements ResourceManager {
 
-//		// PUT /rest/user
-//		public String putUser( User user) {return null;}
-//		
-//		// PUT /rest/user/123
-//		public void putUser( User user, String id) {}
-//		
-//		public void postCard( options options, String userId) {
-//			
-//		}
-//		public User get(options options, String id) {
-//
-//		}
-//
-//		public Card getCard(options options, String userId, String cardId) {
-//
-//		}
-//
-//		public Iterable<Card> getCard(options options, String userId) {
-//
-//		}
-//		
-//
-//		public Card getCard(options options) {
-//
-//		}
-//
-//		public Iterable<User> get(query query) {
-//
-//		}
-//
-//		public void delete(String id) {
-//
-//		}
-//
-//		public void deleteCard(String userId, String cardId) {
-//
-//		}
-//
+		// // PUT /rest/user
+		// public String putUser( User user) {return null;}
+		//
+		// // PUT /rest/user/123
+		// public void putUser( User user, String id) {}
+		//
+		// public void postCard( options options, String userId) {
+		//
+		// }
+		// public User get(options options, String id) {
+		//
+		// }
+		//
+		// public Card getCard(options options, String userId, String cardId) {
+		//
+		// }
+		//
+		// public Iterable<Card> getCard(options options, String userId) {
+		//
+		// }
+		//
+		//
+		// public Card getCard(options options) {
+		//
+		// }
+		//
+		// public Iterable<User> get(query query) {
+		//
+		// }
+		//
+		// public void delete(String id) {
+		//
+		// }
+		//
+		// public void deleteCard(String userId, String cardId) {
+		//
+		// }
+		//
 	}
 }

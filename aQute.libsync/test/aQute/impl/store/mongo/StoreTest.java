@@ -11,13 +11,14 @@ import aQute.test.dummy.ds.*;
 import aQute.test.dummy.log.*;
 
 public class StoreTest extends TestCase {
-	
-	MongoDBImpl mongo;
-	
+
+	MongoDBImpl	mongo;
+
 	@Reference
 	void setMongo(MongoDBImpl mongo) throws Exception {
 		this.mongo = mongo;
 	}
+
 	public void setUp() throws Exception {
 		DummyDS ds = new DummyDS();
 		ds.add(this);
@@ -25,40 +26,40 @@ public class StoreTest extends TestCase {
 		ds.add(new DummyLog().direct().stacktrace());
 		ds.wire();
 	}
-	
-	MongoCodec mc = new MongoCodec(null);
-	
+
+	MongoCodec	mc	= new MongoCodec(null);
+
 	public void testConverter() throws Exception {
-		assertEquals( "A", mc.toMongo('A'));
+		assertEquals("A", mc.toMongo('A'));
 	}
+
 	public static class Complex {
-		public int a = 1;
-		public String b= "x";
+		public int		a	= 1;
+		public String	b	= "x";
 	}
+
 	public static class TestData {
-		public String		_id;
-		public Version		version;
-		public List<String>	packages;
-		public byte			b;
-		public char			c;
-		public float		f;
-		public double		d;
-		public boolean		bo;
-		public byte[]		data;
-		public char[]		chars;
-		public int[]		ints;
-		public boolean[]	booleans;
-		public float[]		floats;
-		public double[]		doubles;
-		public long[]		longs;
-		public short[]		shorts;
-		public List<Complex> complex = new ArrayList<Complex>();
+		public String			_id;
+		public Version			version;
+		public List<String>		packages;
+		public byte				b;
+		public char				c;
+		public float			f;
+		public double			d;
+		public boolean			bo;
+		public byte[]			data;
+		public char[]			chars;
+		public int[]			ints;
+		public boolean[]		booleans;
+		public float[]			floats;
+		public double[]			doubles;
+		public long[]			longs;
+		public short[]			shorts;
+		public List<Complex>	complex	= new ArrayList<Complex>();
 	}
 
-
-	
 	public void testBasic() throws Exception {
-		MongoStoreImpl<TestData>	store = mongo.getStore(TestData.class, "testdata");
+		MongoStoreImpl<TestData> store = mongo.getStore(TestData.class, "testdata");
 		store.all().remove();
 		TestData a1 = new TestData();
 		a1._id = "com.libsync.store";
@@ -69,13 +70,25 @@ public class StoreTest extends TestCase {
 		a1.data = "hello world".getBytes();
 		a1.chars = "XYZ".toCharArray();
 		a1.c = 'A';
-		a1.ints = new int[] {1, 2, 3};
-		a1.booleans = new boolean[] {false, true};
-		a1.shorts = new short[] {1, 2};
-		a1.longs = new long[] {1, 2};
-		a1.floats = new float[] {1, 2};
-		a1.doubles = new double[] {1, 2};
-		a1.complex.add( new Complex());
+		a1.ints = new int[] {
+				1, 2, 3
+		};
+		a1.booleans = new boolean[] {
+				false, true
+		};
+		a1.shorts = new short[] {
+				1, 2
+		};
+		a1.longs = new long[] {
+				1, 2
+		};
+		a1.floats = new float[] {
+				1, 2
+		};
+		a1.doubles = new double[] {
+				1, 2
+		};
+		a1.complex.add(new Complex());
 		store.upsert(a1);
 
 		boolean further = false;
@@ -104,7 +117,7 @@ public class StoreTest extends TestCase {
 	}
 
 	public void testUnique() throws Exception {
-		MongoStoreImpl<UniqueData>	store = mongo.getStore(UniqueData.class, "unique");
+		MongoStoreImpl<UniqueData> store = mongo.getStore(UniqueData.class, "unique");
 		store.all().remove();
 		UniqueData u = new UniqueData();
 		assertNull(u._id);
@@ -114,7 +127,8 @@ public class StoreTest extends TestCase {
 		try {
 			store.insert(u);
 			fail();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// ok, no dups allowed
 		}
 
@@ -162,7 +176,7 @@ public class StoreTest extends TestCase {
 	}
 
 	public void testFilter() throws Exception {
-		MongoStoreImpl<Basic> store = mongo.getStore(Basic.class,"filter");
+		MongoStoreImpl<Basic> store = mongo.getStore(Basic.class, "filter");
 		store.unique("value");
 		store.all().remove();
 
@@ -198,28 +212,29 @@ public class StoreTest extends TestCase {
 		}
 		assertEquals(2, n);
 	}
-	
+
 	/**
 	 * test the file storage
 	 */
 	public static class FileData {
-		public byte[] _id;
-		public File f;
+		public byte[]	_id;
+		public File		f;
 	}
+
 	public void testFiles() throws Exception {
-		MongoStoreImpl<FileData>	store = mongo.getStore(FileData.class, "files");
+		MongoStoreImpl<FileData> store = mongo.getStore(FileData.class, "files");
 		store.drop();
-		
+
 		FileData d = new FileData();
 		d.f = File.createTempFile("filetest", ".tmp");
 		IO.store("Hello", d.f);
 		store.insert(d);
 		d.f.delete();
-		
+
 		d = store.all().first();
 		String s = IO.collect(d.f);
-		assertEquals("Hello",s);
-		
+		assertEquals("Hello", s);
+
 		d = store.all().select("_id").first();
 		assertNull(d.f);
 	}

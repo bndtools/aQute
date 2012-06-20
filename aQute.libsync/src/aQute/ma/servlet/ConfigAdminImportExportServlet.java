@@ -15,8 +15,7 @@ public class ConfigAdminImportExportServlet extends HttpServlet {
 	private static final long	serialVersionUID	= 1L;
 	ConfigurationAdmin			admin;
 
-	public void doGet(HttpServletRequest rq, HttpServletResponse rsp)
-			throws IOException {
+	public void doGet(HttpServletRequest rq, HttpServletResponse rsp) throws IOException {
 
 		rsp.setContentType("application/json");
 		try {

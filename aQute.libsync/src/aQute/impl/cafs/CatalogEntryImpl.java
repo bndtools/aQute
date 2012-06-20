@@ -29,7 +29,8 @@ public class CatalogEntryImpl implements CatalogEntry {
 		if (!isCatalog())
 			throw new UnsupportedOperationException("Not a catalog");
 
-		if (child == null) child = cafs.getCatalog(ed.digest);
+		if (child == null)
+			child = cafs.getCatalog(ed.digest);
 
 		return child;
 	}

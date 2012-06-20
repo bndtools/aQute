@@ -11,15 +11,13 @@ import org.w3c.dom.*;
 import aQute.aws.s3.Bucket.Content;
 import aQute.aws.s3.Bucket.ListRequest;
 
-public class ListRequestImpl extends CommonRequestImpl<ListRequest> implements
-		ListRequest {
+public class ListRequestImpl extends CommonRequestImpl<ListRequest> implements ListRequest {
 	final Bucket					bucket;
-	final SortedMap<String, String>	args	= new TreeMap<String, String>();
+	final SortedMap<String,String>	args	= new TreeMap<String,String>();
 	final DocumentBuilder			db;
 	final XPath						xpath;
 
-	ListRequestImpl(S3 parent, Bucket bucket)
-			throws ParserConfigurationException {
+	ListRequestImpl(S3 parent, Bucket bucket) throws ParserConfigurationException {
 		super(parent);
 		this.bucket = bucket;
 		db = S3.dbf.newDocumentBuilder();
@@ -28,13 +26,15 @@ public class ListRequestImpl extends CommonRequestImpl<ListRequest> implements
 
 	@Override
 	public ListRequestImpl delimeter(String delimeter) {
-		args.put("delimeter", delimeter);;
+		args.put("delimeter", delimeter);
+		;
 		return this;
 	}
 
 	@Override
 	public ListRequest marker(String marker) {
-		args.put("marker", marker);;
+		args.put("marker", marker);
+		;
 		return this;
 	}
 
@@ -46,7 +46,8 @@ public class ListRequestImpl extends CommonRequestImpl<ListRequest> implements
 
 	@Override
 	public ListRequest prefix(String prefix) {
-		args.put("prefix", prefix);;
+		args.put("prefix", prefix);
+		;
 		return this;
 	}
 
@@ -73,32 +74,28 @@ public class ListRequestImpl extends CommonRequestImpl<ListRequest> implements
 			NodeList	contents;
 			int			item;
 			boolean		isTruncated	= true;
-			Content 	current;
-			
+			Content		current;
+
 			@Override
 			public boolean hasNext() {
 				if (contents != null && item < contents.getLength())
 					return true;
 				try {
 					while (isTruncated) {
-						if ( current != null)
+						if (current != null)
 							args.put("marker", current.key);
-						InputStream in = parent.construct(S3.METHOD.GET,
-								bucket.getName(), null, null, headers, args);
-				
-						if ( in == null)
-							return false;
-						
-						//IO.copy(in, System.out);
-						Document doc = db.parse(in);
-						Node listBucketResult = (Node) xpath.evaluate("/ListBucketResult",
-								doc, XPathConstants.NODE);
+						InputStream in = parent.construct(S3.METHOD.GET, bucket.getName(), null, null, headers, args);
 
-						String trunc = xpath.evaluate("IsTruncated",
-								listBucketResult);
+						if (in == null)
+							return false;
+
+						// IO.copy(in, System.out);
+						Document doc = db.parse(in);
+						Node listBucketResult = (Node) xpath.evaluate("/ListBucketResult", doc, XPathConstants.NODE);
+
+						String trunc = xpath.evaluate("IsTruncated", listBucketResult);
 						isTruncated = Boolean.parseBoolean(trunc);
-						contents = (NodeList) xpath.evaluate("Contents", listBucketResult,
-								XPathConstants.NODESET);
+						contents = (NodeList) xpath.evaluate("Contents", listBucketResult, XPathConstants.NODESET);
 						item = 0;
 						System.out.println(contents.getLength());
 
@@ -119,13 +116,11 @@ public class ListRequestImpl extends CommonRequestImpl<ListRequest> implements
 					current = new Content();
 					current.bucket = bucket;
 					current.key = xpath.evaluate("Key", c);
-					current.lastModified = parent.awsDate(xpath.evaluate(
-							"LastModified", c));
+					current.lastModified = parent.awsDate(xpath.evaluate("LastModified", c));
 					current.etag = xpath.evaluate("ETag", c);
-					current.etag = current.etag.substring(1,current.etag.length()-1);
+					current.etag = current.etag.substring(1, current.etag.length() - 1);
 					current.size = Long.parseLong(xpath.evaluate("Size", c));
-					current.storageClass = Enum.valueOf(S3.StorageClass.class,
-							xpath.evaluate("StorageClass", c));
+					current.storageClass = Enum.valueOf(S3.StorageClass.class, xpath.evaluate("StorageClass", c));
 					return current;
 				}
 				catch (Exception e) {
@@ -135,7 +130,7 @@ public class ListRequestImpl extends CommonRequestImpl<ListRequest> implements
 
 			@Override
 			public void remove() {
-				if ( current != null)
+				if (current != null)
 					try {
 						bucket.delete(current.key);
 					}

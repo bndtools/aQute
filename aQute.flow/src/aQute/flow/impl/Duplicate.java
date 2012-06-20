@@ -8,21 +8,20 @@ import aQute.service.flow.*;
 
 /**
  * Duplicates strings.
- * 
  */
 
 @Component(factory = "aQute.service.flow.Pipe/duplicate")
-public class Duplicate implements Pipe<String, String> {
-	Sink<String> sink;
+public class Duplicate implements Pipe<String,String> {
+	Sink<String>	sink;
 
 	interface Config {
 		int $0();
 	}
 
-	Config config;
+	Config	config;
 
 	@Activate
-	void activate(Map<String, Object> props) {
+	void activate(Map<String,Object> props) {
 		config = Configurable.createConfigurable(Config.class, props);
 	}
 

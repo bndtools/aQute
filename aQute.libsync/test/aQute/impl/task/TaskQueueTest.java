@@ -41,11 +41,11 @@ public class TaskQueueTest extends TestCase {
 	public void testSimple() throws Exception {
 		final Semaphore s = new Semaphore(0);
 		final AtomicBoolean throwException = new AtomicBoolean(false);
-		
+
 		tq.addWorker(new Worker<Print>() {
 
 			public void execute(Print work) {
-				System.out.println(work.message + " " + throwException ) ;
+				System.out.println(work.message + " " + throwException);
 				if (throwException.get())
 					throw new RuntimeException("Failed");
 
@@ -55,19 +55,18 @@ public class TaskQueueTest extends TestCase {
 		});
 		Print p = new Print();
 		p.message = "Hello world";
-		
-		
+
 		tq.latency = 2000;
 		tq.nosweep = true;
-		
+
 		{
 			// Test a failure
 			throwException.set(true);
-			
+
 			// TaskData td =
-			TaskData td = tq.with(p).queue();			
+			TaskData td = tq.with(p).queue();
 			Thread.sleep(1000);
-			assertEquals(1,ds.get(DummyLog.class).getEntries().size() );
+			assertEquals(1, ds.get(DummyLog.class).getEntries().size());
 			assertEquals(1, tq.store.find(td).where("&(state=QUEUED)(after>%s)", System.currentTimeMillis()).count());
 			throwException.set(false);
 			Thread.sleep(5000);
@@ -77,7 +76,7 @@ public class TaskQueueTest extends TestCase {
 			assertEquals(1, tq.store.find(td).where("state=SUCCEEDED").count());
 			assertTrue(ds.get(DummyLog.class).check("Failed"));
 		}
-		
+
 		/*
 		 * Test periodic and cancel
 		 */
@@ -92,18 +91,17 @@ public class TaskQueueTest extends TestCase {
 			Thread.sleep(1000); // wait for the db to be updated
 			s.acquire();
 			assertEquals(1, tq.store.find(td).where("state=QUEUED").count());
-			
+
 			tq.cancel(td._id);
 			assertEquals(1, tq.store.find(td).where("state=CANCELED").count());
 			Thread.sleep(5000);
 			tq.sweep();
 			Thread.sleep(1000); // wait for the db to be updated
-			assertEquals( 0, s.availablePermits());
-			
+			assertEquals(0, s.availablePermits());
+
 			assertTrue(ds.get(DummyLog.class).check()); // no erorrs?
 		}
-		
-		
+
 		throwException.set(false);
 		{
 			// Test if the task data is executed
@@ -124,7 +122,7 @@ public class TaskQueueTest extends TestCase {
 			TaskData td = tq.with(p).after(now + 2000).queue();
 			assertFalse(tq.activeTasks.containsKey(td._id));
 			assertEquals(1, tq.store.find(td).where("state=QUEUED").count());
-			
+
 			Thread.sleep(3000); // timeout
 			tq.sweep(); // ensure the sweeper runs
 			s.acquire(); // has the worker been called?
@@ -132,18 +130,17 @@ public class TaskQueueTest extends TestCase {
 			assertEquals(1, tq.store.find(td).where("state=SUCCEEDED").count());
 			assertTrue(ds.get(DummyLog.class).check()); // no erorrs?
 		}
-		
-		
+
 		Thread.sleep(1000);
 		tq.deactivate();
 
 	}
-	
+
 	/**
 	 * Test if the sweeper does its job
 	 */
-	
+
 	public void testSweeper() {
-		
+
 	}
 }

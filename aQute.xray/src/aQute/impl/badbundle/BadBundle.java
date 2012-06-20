@@ -13,21 +13,21 @@ public class BadBundle implements Runnable, ManagedService {
 
 	@Reference
 	void setMetaType(MetaTypeService ea) {
-		
+
 	}
 
 	public void run() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Reference
 	void setLogService(LogService log) {
-		
+
 	}
 
 	public void updated(Dictionary properties) throws ConfigurationException {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

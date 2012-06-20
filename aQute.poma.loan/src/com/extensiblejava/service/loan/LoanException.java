@@ -3,7 +3,7 @@ package com.extensiblejava.service.loan;
 public class LoanException extends RuntimeException {
 
 	public LoanException() {
-			this(null, null);
+		this(null, null);
 	}
 
 	public LoanException(String message) {

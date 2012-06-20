@@ -1,4 +1,5 @@
 package aQute.aws.credentials;
+
 import java.io.*;
 import java.util.*;
 
@@ -14,7 +15,7 @@ public class UserCredentials {
 		return getProperties().getProperty("awssecret");
 	}
 
-	private synchronized Properties getProperties()  {
+	private synchronized Properties getProperties() {
 		if (properties != null)
 			return properties;
 
@@ -28,11 +29,13 @@ public class UserCredentials {
 			InputStream in = new FileInputStream(pf);
 			try {
 				properties.load(in);
-			} finally {
+			}
+			finally {
 				in.close();
 			}
 			return properties;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return new Properties();
 		}
 	}

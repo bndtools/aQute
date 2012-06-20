@@ -7,8 +7,7 @@ public class WrapperClassLoader extends ClassLoader {
 	}
 
 	@Override
-	public Class< ? > loadClass(String s, boolean b)
-			throws ClassNotFoundException {
+	public Class< ? > loadClass(String s, boolean b) throws ClassNotFoundException {
 		ClassNotFoundException e = null;
 		try {
 			return super.loadClass(s, b);

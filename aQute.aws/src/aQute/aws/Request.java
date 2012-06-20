@@ -15,8 +15,8 @@ import aQute.libg.cryptography.*;
 public abstract class Request {
 	static XPathFactory				xpf			= XPathFactory.newInstance();
 
-	final SortedMap<String, Object>	arguments	= new TreeMap<String, Object>();
-	private String						endpoint;
+	final SortedMap<String,Object>	arguments	= new TreeMap<String,Object>();
+	private String					endpoint;
 	private String					verb		= "GET";
 	private int						timeout;
 	private Document				response;
@@ -98,8 +98,9 @@ public abstract class Request {
 				response = db.parse(connection.getInputStream());
 			else {
 				InputStream in = connection.getErrorStream();
-				if ( in == null )
-					in = new ByteArrayInputStream( "<?xml version='1.0'?><Error><Code>NO ERROR GIVEN</Code></Error>".getBytes());
+				if (in == null)
+					in = new ByteArrayInputStream(
+							"<?xml version='1.0'?><Error><Code>NO ERROR GIVEN</Code></Error>".getBytes());
 
 				response = db.parse(in);
 			}
@@ -121,8 +122,7 @@ public abstract class Request {
 		return string(getResponse(), expression);
 	}
 
-	public String string(Node node, String expression)
-			throws XPathExpressionException, Exception {
+	public String string(Node node, String expression) throws XPathExpressionException, Exception {
 		return getXpath().evaluate(expression, node);
 	}
 
@@ -131,10 +131,8 @@ public abstract class Request {
 		return nodes(getResponse(), expression);
 	}
 
-	public Iterable<Node> nodes(Node node, String expression)
-			throws XPathExpressionException, Exception {
-		final NodeList list = (NodeList) getXpath().evaluate(expression,
-				node, XPathConstants.NODESET);
+	public Iterable<Node> nodes(Node node, String expression) throws XPathExpressionException, Exception {
+		final NodeList list = (NodeList) getXpath().evaluate(expression, node, XPathConstants.NODESET);
 		return new Iterable<Node>() {
 
 			@Override

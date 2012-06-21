@@ -8,6 +8,7 @@ public interface Library {
 		public String	docUrl;
 		public String	vendor;
 		public String	description;
+		public String	summary;
 	}
 
 	public class Revision extends Meta {
@@ -38,6 +39,7 @@ public interface Library {
 			this.master = revision.master;
 			this.version = revision.version;
 			this.qualifier = revision.qualifier;
+			this.summary = revision.summary;
 		}
 
 		public byte[]	revision;
@@ -46,6 +48,8 @@ public interface Library {
 		public String	url;
 		public boolean	master;
 		public String	qualifier;
+		public String	release;
+		public String	summary;
 	}
 
 	public class Program extends Meta {
@@ -54,6 +58,7 @@ public interface Library {
 		public String				mailingList;
 		public String				scm;
 		public List<RevisionRef>	revisions	= new ArrayList<RevisionRef>();
+		public String				logo;
 
 	}
 
@@ -61,7 +66,7 @@ public interface Library {
 
 	Program getProgram(String bsn) throws Exception;
 
-	Iterable< ? extends Program> find(String where) throws Exception;
+	Iterable< ? extends Program> find(String where, int start, int limit) throws Exception;
 
 	void master(RevisionRef rev);
 

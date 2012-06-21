@@ -9,5 +9,10 @@ Service-Component: *
 	osgi.cmpn,\
 	junit.osgi,\
 	biz.aQute.bnd.annotation;version=1.44.0,\
-	com.springsource.javax.servlet
+	com.springsource.javax.servlet,\
+	aQute.libg;version=2.7.3
 Bundle-Version: 1.0.3
+
+Conditional-Package: aQute.lib*
+
+Include-Resource: static/default=static

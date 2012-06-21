@@ -11,14 +11,18 @@ public class LibraryRestManager implements ResourceManager {
 
 	interface POptions extends Options {
 		int limit();
+
+		String bsn();
+
+		int start();
 	}
 
 	public Iterable< ? extends Program> getProgram(POptions o) throws Exception {
-		return library.find("bsn=*");
+		return library.find(null, o.start(), o.limit());
 	}
 
-	public Iterable< ? extends Program> getProgram(String s) throws Exception {
-		return library.find("bsn=" + s);
+	public Program getProgram(String bsn) throws Exception {
+		return library.getProgram(bsn);
 	}
 
 	public String getShit() {

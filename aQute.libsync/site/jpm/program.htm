@@ -1,0 +1,54 @@
+
+<div ng-controller="ProgramCtl">
+	<form novalidate class="simple-form">
+	<h2>{{program.bsn}}</h2>
+		<table style="width: 100%">
+			<tr>
+				<td class="label">Name</td>
+				<td>{{program.bsn}}</td>
+			</tr>
+			<tr>
+				<td class="label">Description</td>
+				<td>{{program.description}}</td>
+			</tr>
+			<tr>
+				<td class="label">Vendor</td>
+				<td>{{program.vendor}}</td>
+			</tr>
+			<tr>
+				<td class="label">Mailing list</td>
+				<td>{{program.mailingList}}</td>
+			</tr>
+			<tr>
+				<td class="label">Source control</td>
+				<td>{{program.scm}}</td>
+			</tr>
+			<tr>
+				<td class="label">Masters</td>
+				<td>
+					<table>
+						<tr ng-repeat="r in masters">
+							<td><a href=#program/{{program.bsn}}/{{r.version}}.{{r.qualifier}}">{{r.version}}{{qualifier(r)}}</a></td>
+							<td>{{r.summary}}</td>
+							<td><a href="{{r.url}}">download</a></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">Staging</td>
+				<td>
+					<table>
+						<tr ng-repeat="r in staging()">
+							<td><a href=#program/{{program.bsn}}/{{r.version}}.{{r.qualifier}}">{{r.version}}{{qualifier(r)}}</a></td>
+							<td>{{r.summary}}</td>
+							<td><a href="{{r.url}}">download</a></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+
+	</form>
+
+</div>

@@ -1,5 +1,5 @@
 -runfw: org.apache.felix.framework;version='[4.0.2,4.0.2]'
--runtrace: true
+
 -runbundles: org.apache.felix.shell,\
 	org.apache.felix.shell.tui,\
 	org.apache.felix.scr,\
@@ -28,7 +28,6 @@
 -runproperties: felix.cm.dir=/var/cm,\
 	org.osgi.framework.system.packages.extra=javax.management,\
 	org.osgi.service.http.port=8080,\
--runtrace=true,\
 	org.osgi.framework.storage=xyz
 
 -runrequire:\

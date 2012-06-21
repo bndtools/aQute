@@ -97,10 +97,15 @@ public class LibraryImpl implements Library {
 		return p;
 	}
 
-	public Iterable< ? extends Program> find(String where) throws Exception {
+	public Iterable< ? extends Program> find(String where, int skip, int limit) throws Exception {
 		if (where == null)
 			where = "(bsn=*)";
-		return programs.find(where).select();
+
+		Cursor<ProgramImpl> cursor = programs.find(where).skip(skip);
+		if (limit > 0)
+			cursor.limit(limit);
+
+		return cursor.select();
 	}
 
 	private RevisionImpl parse(String spec, Reporter reporter) throws IOException {

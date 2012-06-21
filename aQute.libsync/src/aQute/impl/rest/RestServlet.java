@@ -12,7 +12,6 @@ import org.osgi.service.http.*;
 import org.osgi.service.log.*;
 
 import aQute.bnd.annotation.component.*;
-import aQute.bnd.annotation.metatype.*;
 import aQute.lib.collections.*;
 import aQute.lib.converter.*;
 import aQute.lib.json.*;
@@ -98,7 +97,9 @@ public class RestServlet extends HttpServlet {
 						out = new DeflaterOutputStream(out);
 						rsp.setHeader("Content-Encoding", "deflate");
 					}
+					String s = codec.enc().put(result).toString();
 					codec.enc().to(out).put(result).flush();
+					out.close();
 					return;
 				}
 			}
@@ -128,7 +129,7 @@ public class RestServlet extends HttpServlet {
 		try {
 			int i = 0, p = 0;
 			if (arguments.length > 0 && Options.class.isAssignableFrom((Class) types[0])) {
-				arguments[0] = Configurable.createConfigurable((Class) types[0], parameters);
+				arguments[0] = Mapper.map((Class) types[0], parameters);
 				i++;
 			}
 

@@ -2,10 +2,13 @@
 @gutter:		20px;
 @cwidth:		60px;
 @columns:		12;
-
+@linkcolor:     #2E9AFE;
 @page:			12* (@gutter + @cwidth);
 
 
+div {
+	width: 100%;
+}
 
 .debug {
   xoutline:			1px solid #F0F0F0;
@@ -25,11 +28,46 @@ p, pre, h1, h2, h3, h4, h5 {
 	margin: 0px;
 }
 h1, h2, h3, h4 {
-	padding: 0 0px 4px 0px;
-	margin:  0;
+	padding: 0 0px 6px 0px;
+	margin:  0px;
 	font-family: 'Verdana', serif;
 }
 
+h1 {
+	padding-bottom: 3px;
+	border-bottom: 1px solid black;
+	margin-bottom: 4px;
+}
+
+table {
+	width:100%;
+ td {
+	width: 3*@cwidth+2*@gutter;
+	vertical-align:top;
+	padding-left:10px;
+	padding-right:10px;
+	&:first-child {
+		padding-left:0;
+	}
+	&:last-child {
+		width:auto;
+		padding-right:0;
+	}
+  }
+}
+
+
+a {
+	text-decoration: none;
+	color: @linkcolor;
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.label {
+	font-weight: bold;
+}
 .w(@columns,@left:10px,@right:10px) {
   display: 			inline;
   float: 			left;
@@ -37,6 +75,8 @@ h1, h2, h3, h4 {
   width: 			@columns*(@gutter + @cwidth)-@gutter;
   .debug;
 }
+
+.w4 { .w(4, 0, 0); }
 
 .push(@columns) {
 	position: 		relative;
@@ -141,6 +181,12 @@ background-color:#fefefe; background-image: -moz-linear-gradient(top , #fefefe, 
 	}
 }
 
+table, tr, td {
+	padding:0;
+	margin: 0;
+	width:100%;
+}
+
 #navreserve {
 	margin-top: 80px;
 }
@@ -149,7 +195,6 @@ background-color:#fefefe; background-image: -moz-linear-gradient(top , #fefefe, 
 #page {
 	.container(12);
 }
-
 
 
 #external {
@@ -186,4 +231,10 @@ background-color:#fefefe; background-image: -moz-linear-gradient(top , #fefefe, 
 	.fill(red,5);
 }
 
+input.ng-invalid.ng-dirty {
+	background-color: #FA787E;
+}
+input.ng-valid.ng-dirty {
+	background-color: #78FA89;
+}
 

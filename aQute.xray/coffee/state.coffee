@@ -124,6 +124,10 @@ setService = (g) ->
 		return "orphan"	if d.getting.length is 0
 		"normal"
 
+	g.select("title")
+		.text (d) -> d.name + "\n" + d.ids
+	
+	g.onclick( (e) -> alert "hello" )
 #
 # Components
 #

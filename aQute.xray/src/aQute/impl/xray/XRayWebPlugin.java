@@ -13,6 +13,7 @@ import org.apache.felix.webconsole.*;
 import org.osgi.framework.*;
 import org.osgi.framework.hooks.service.*;
 import org.osgi.framework.hooks.service.ListenerHook.ListenerInfo;
+import org.osgi.service.cm.*;
 import org.osgi.service.log.*;
 
 import aQute.bnd.annotation.component.*;
@@ -40,21 +41,21 @@ import aQute.lib.json.*;
 }, properties = {
 	"felix.webconsole.label=xray"
 })
-@SuppressWarnings("rawtypes")
 public final class XRayWebPlugin extends AbstractWebConsolePlugin {
-	private static final long		serialVersionUID		= 1L;
-	private static String			PLUGIN_NAME				= "xray";
+	private static final long			serialVersionUID		= 1L;
+	private static String				PLUGIN_NAME				= "xray";
 
-	final static int				TITLE_LENGTH			= 14;
-	final static Pattern			LISTENER_INFO_PATTERN	= Pattern.compile("\\(objectClass=([^)]+)\\)");
-	final static JSONCodec			codec					= new JSONCodec();
+	final static int					TITLE_LENGTH			= 14;
+	final static Pattern				LISTENER_INFO_PATTERN	= Pattern.compile("\\(objectClass=([^)]+)\\)");
+	final static JSONCodec				codec					= new JSONCodec();
 
-	private BundleContext			context;
-	private LogReaderService		logReader;
-	private LogService				log;
-	private ScrService				scr;
-	private MultiMap<String,Bundle>	listeners				= new MultiMap<String,Bundle>();
-	private ServiceRegistration		lhook;
+	private BundleContext				context;
+	private LogReaderService			logReader;
+	private LogService					log;
+	private MultiMap<String,Bundle>		listeners				= new MultiMap<String,Bundle>();
+	private ServiceRegistration			lhook;
+	private volatile ScrService			scr;
+	private volatile ConfigurationAdmin	cfg;
 
 	/*
 	 * Called at startup
@@ -116,8 +117,49 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 	public void doGet(HttpServletRequest rq, HttpServletResponse rsp) throws ServletException, IOException {
 		if (rq.getPathInfo().endsWith("/state.json"))
 			getState(rq, rsp);
+		else if (rq.getPathInfo().endsWith("/config.json"))
+			getConfig(rq, rsp);
 		else
 			super.doGet(rq, rsp);
+	}
+
+	/**
+	 * Create a JSON file.
+	 * 
+	 * @param rq
+	 * @param rsp
+	 */
+	private void getConfig(HttpServletRequest rq, HttpServletResponse rsp) {
+		ConfigurationAdmin cfg = this.cfg;
+		try {
+			if (cfg != null) {
+				Configuration cfgs[] = cfg.listConfigurations(null);
+				ArrayList<Map<String,Object>> output = new ArrayList<Map<String,Object>>();
+				if (cfgs != null) {
+					for (Configuration config : cfgs) {
+						Map<String,Object> map = new HashMap<String,Object>();
+						Dictionary<String,Object> d = config.getProperties();
+						if (d != null) {
+							Enumeration<String> e = d.keys();
+							while (e.hasMoreElements()) {
+								String key = e.nextElement();
+								Object value = d.get(key);
+								map.put(key, value);
+							}
+						}
+						output.add(map);
+					}
+				}
+				rsp.setContentType("application/json");
+				rsp.setCharacterEncoding("utf-8");
+				OutputStream out = rsp.getOutputStream();
+				codec.enc().charset("utf-8").to(out).writeDefaults().put(output).flush();
+				out.close();
+			}
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -218,6 +260,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 					service.name = name;
 					service.shortName = from(TITLE_LENGTH, name);
 				}
+				service.ids.add((Long) reference.getProperty("service.id"));
 				if (reference.getUsingBundles() != null)
 					for (Bundle b : reference.getUsingBundles()) {
 						service.g.add(bundles.get(b));
@@ -320,52 +363,53 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 		return row;
 	}
 
-	private void layoutServiceFirst(Collection<BundleDef> bundles, Collection<ServiceDef> services) {
-		LinkedList<BundleDef> bs = new LinkedList<BundleDef>(bundles);
-		int column = 0;
-		int row = 0;
-
-		for (ServiceDef sd : services) {
-			sd.column = column++;
-			if (!sd.r.isEmpty()) {
-				// layout to middle of registering services.
-				sd.row = Integer.MAX_VALUE;
-
-				for (BundleDef bd : sd.r) {
-					if (bs.remove(bd)) {
-						bd.row = row++;
-					}
-					sd.row = Math.min(bd.row, sd.row);
-				}
-				continue;
-			}
-
-			int first = Integer.MAX_VALUE;
-			for (BundleDef bd : sd.l) {
-				if (bs.remove(bd)) {
-					bd.row = row++;
-				}
-				first = Math.min(first, bd.row);
-			}
-			for (BundleDef bd : sd.g) {
-				if (bs.remove(bd)) {
-					bd.row = row++;
-				}
-				first = Math.min(first, bd.row);
-			}
-			sd.row = first;
-		}
-		for (BundleDef bd : bs) {
-			bd.row = row++;
-		}
-		ServiceDef previous = null;
-		for (ServiceDef sd : services) {
-			if (previous != null && sd.row == previous.row)
-				sd.row++;
-
-			previous = sd;
-		}
-	}
+	// private void layoutServiceFirst(Collection<BundleDef> bundles,
+	// Collection<ServiceDef> services) {
+	// LinkedList<BundleDef> bs = new LinkedList<BundleDef>(bundles);
+	// int column = 0;
+	// int row = 0;
+	//
+	// for (ServiceDef sd : services) {
+	// sd.column = column++;
+	// if (!sd.r.isEmpty()) {
+	// // layout to middle of registering services.
+	// sd.row = Integer.MAX_VALUE;
+	//
+	// for (BundleDef bd : sd.r) {
+	// if (bs.remove(bd)) {
+	// bd.row = row++;
+	// }
+	// sd.row = Math.min(bd.row, sd.row);
+	// }
+	// continue;
+	// }
+	//
+	// int first = Integer.MAX_VALUE;
+	// for (BundleDef bd : sd.l) {
+	// if (bs.remove(bd)) {
+	// bd.row = row++;
+	// }
+	// first = Math.min(first, bd.row);
+	// }
+	// for (BundleDef bd : sd.g) {
+	// if (bs.remove(bd)) {
+	// bd.row = row++;
+	// }
+	// first = Math.min(first, bd.row);
+	// }
+	// sd.row = first;
+	// }
+	// for (BundleDef bd : bs) {
+	// bd.row = row++;
+	// }
+	// ServiceDef previous = null;
+	// for (ServiceDef sd : services) {
+	// if (previous != null && sd.row == previous.row)
+	// sd.row++;
+	//
+	// previous = sd;
+	// }
+	// }
 
 	/**
 	 * Try to construct a readable name from a fqn that is likely too long
@@ -451,6 +495,9 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 	 * Use the ScrService to create the components
 	 */
 	private void doComponents(Bundle bundle, BundleDef bd) {
+		if (bundle == null || bundle.getState() == Bundle.UNINSTALLED)
+			return;
+
 		org.apache.felix.scr.Component[] components = scr.getComponents(bundle);
 		if (components != null) {
 			for (org.apache.felix.scr.Component component : components) {
@@ -474,7 +521,6 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 	 * Use the LogReaderService to find out about log messages
 	 */
 	private void doLog(Bundle bundle, BundleDef bd) {
-		@SuppressWarnings("unchecked")
 		Enumeration<LogEntry> e = logReader.getLog();
 		StringBuilder sb = new StringBuilder();
 		Formatter f = new Formatter(sb);
@@ -508,6 +554,11 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 	@Reference(type = '?')
 	void setScr(ScrService scr) {
 		this.scr = scr;
+	}
+
+	@Reference(type = '?')
+	void setCfg(ConfigurationAdmin cfg) {
+		this.cfg = cfg;
 	}
 
 	private synchronized void addListenerInfo(ListenerInfo o) {

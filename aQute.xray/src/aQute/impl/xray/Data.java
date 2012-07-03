@@ -31,6 +31,7 @@ public interface Data {
 		public Integer[]			registering;
 		public Integer[]			listening;
 		public Integer[]			getting;
+		public List<Long>			ids	= new ArrayList<Long>();
 
 		/*
 		 * Transient helpers to build up registering, listening and getting.

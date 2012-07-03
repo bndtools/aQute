@@ -33,7 +33,6 @@ public class BlobStoreComponent implements Store {
 
 	@Activate
 	void activate(Map< ? , ? > map) {
-		System.out.println("activated");
 		config = Configurable.createConfigurable(Config.class, map);
 		AWSCredentials credentials = new BasicAWSCredentials(config._accessKey(), config._secretKey());
 		client = new AmazonS3Client(credentials);

@@ -1,9 +1,13 @@
 Private-Package: aQute.impl.gitposthook,\
-	aQute.data,\
+	aQute.service.data,\
 	aQute.impl.gitposthook.servlet,\
-	aQute.data.common
+	aQute.data.common,\
+	aQute.lib.base64,\
+	aQute.lib.hex,\
+	aQute.lib.json,\
+	aQute.lib.converter
 Service-Component: *
-Conditional-Package: aQute.lib*
+Conditional-Package: aQute.libg.*
 Import-Package: aQute.service.task;resolution:=optional,\
 	*
 Export-Package: aQute.service.task

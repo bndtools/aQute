@@ -17,8 +17,8 @@
 	ee.minimum;version=1.2.0,\
 	com.springsource.javax.servlet;version=2.5.0,\
 	org.apache.felix.webconsole;version=3.1.2,\
-	aQute.libg;version=2.5.0,\
-	org.apache.felix.scr
+	org.apache.felix.scr,\
+	aQute.libg;version=2.7.3
 
 	
 -runproperties: org.osgi.service.http.port=8090

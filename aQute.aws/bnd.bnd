@@ -1,4 +1,10 @@
-Private-Package: test
+Export-Package: test,\
+	aQute.aws,\
+	aQute.aws.credentials,\
+	aQute.aws.s3,\
+	aQute.aws.sdb,\
+	aQute.aws.ses,\
+	aQute.aws.sqs
 -runbundles: osgi.cmpn,\
 	org.apache.felix.scr,\
 	org.apache.felix.shell,\
@@ -10,3 +16,5 @@ Service-Component: *
 	biz.aQute.bnd.annotation,\
 	junit.osgi,\
 	biz.aQute.bndlib;version=1.52.2
+	
+Conditional-Package: aQute.lib*

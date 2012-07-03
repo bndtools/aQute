@@ -1,8 +1,13 @@
 Service-Component: *
-Private-Package: aQute.impl.library,\
-	aQute.data,\
-	aQute.impl.libsync.web
-Export-Package: aQute.service.library
-Conditional-Package: !aQute.lib.osgi, aQute.lib*
+Private-Package: aQute.lib.json,\
+	aQute.impl.library,\
+	aQute.service.data,\
+	aQute.impl.libsync.web,\
+	aQute.impl.metadata.osgi,\
+	aQute.lib.converter,\
+	aQute.lib.base64,\
+	aQute.lib.data
+Export-Package: aQute.service.library,\
+	aQute.service.osgimetadata
 
 Include-Resource: static=generated/site

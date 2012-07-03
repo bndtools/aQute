@@ -1,4 +1,5 @@
-Private-Package: aQute.webserver
+Private-Package: aQute.webserver,\
+	aQute.bnd.annotation.metatype
 -runbundles: osgi.cmpn,\
 	org.apache.felix.scr,\
 	org.apache.felix.shell,\

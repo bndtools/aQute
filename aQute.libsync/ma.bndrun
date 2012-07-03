@@ -8,8 +8,6 @@
 	org.apache.felix.metatype,\
 	org.apache.felix.log,\
 	org.apache.felix.webconsole,\
-	osgi.cmpn,\
-	aQute.libsync.core;version=latest,\
 	com.mongodb;version=2.7.3,\
 	aQute.libsync.mongo;version=latest,\
 	aQute.timer;version=latest,\
@@ -19,12 +17,17 @@
 	aQute.xray.plugin;version=latest,\
 	aQute.libsync.githubposthook;version=latest,\
 	aQute.libsync.library;version=latest,\
-	biz.aQute.bndlib;version=1.53.2,\
 	aQute.webserver;version=latest,\
 	aQute.freedns;version=latest,\
-	aQute.libsync.rest;version=latest
+	aQute.libsync.rest;version=latest,\
+	aQute.libsync.configurer;version=latest,\
+	aQute.libsync.s3.blobstore;version=latest,\
+	org.eclipse.equinox.coordinator;version=1.1.0,\
+	org.eclipse.equinox.supplement;version=1.3.0,\
+	aQute.libsync.filecache.simple;version=latest,\
+	biz.aQute.bndlib;version=2.0.0,\
+	aQute.libsync.email.ses;version=latest
 
-## Uncomment if you need to change the HTTP port
 -runproperties: felix.cm.dir=/var/cm,\
 	org.osgi.framework.system.packages.extra=javax.management,\
 	org.osgi.service.http.port=8080,\
@@ -45,3 +48,56 @@ Bundle-Version: 1.0.0
 JPM-Command: ma
 JPM-Service: ma;jvmargs="-Xmn100M -Xms500M -Xmx500M"
 -runee: JavaSE-1.6
+
+# felix.cm.dir=/var/cm,
+
+-runproperties:\
+	org.osgi.framework.system.packages.extra=javax.management,\
+	org.osgi.service.http.port=8080,\
+	org.osgi.framework.storage=xyz, \
+	bnd.configuration= '[ \
+   { \
+      "service.factoryPid":			"aQute.executor.ExecutorImpl", \
+      "type":						"FIXED", \
+      "service.pid":				"DefaultExecutor", \
+      "size":						10 \
+   },{ \
+      "service.factoryPid":			"aQute.impl.freedns.Freedns", \
+      "service.pid":				"jpm4j.org", \
+      "key":						"", \
+      "url":						"http://freedns.afraid.org/dynamic/update.php?VDZ0MHA2MzFVMVVBQU12bjFTWTo3NzQ4Njc2" \
+   },{ \
+      "[debug]exceptions":			true, \
+      "[exec]exceptions":			true, \
+      "service.factoryPid":			"aQute.webserver.WebServer", \
+      "service.pid":				"WebServer", \
+      "[debug]directories":[ \
+         							"${workspace}/aQute.jpm.static/generated/site", \
+         							"/Ws/aQute/aQute.libsync/generated/site" \
+      ], \
+      "alias":						"/", \
+      "bundles":					false \
+   },{ \
+      "[debug]db":					"test", \
+      "[exec]db":					"jpm4j", \
+      "service.factoryPid":			"aQute.impl.store.mongo.MongoDBImpl", \
+      "host":						"", \
+      "[exec].password":			"jpm4j", \
+      "[exec]user":					"@{jpm4j.password}", \
+      "service.pid":				"Db" \
+   }, { \
+      "service.factoryPid":			"aQute.impl.blobstore.s3.S3BlobStoreImpl", \
+      "service.pid":				"JPMBucket", \
+      ".awsSecret": 				"@{.awsSecret}", \
+      ".awsId": 					"@{.awsId}", \
+      "bucket": 					"jpm4j", \
+      "storageClass": 				"REDUCED", \
+	}, { \
+      "service.pid":				"aQute.impl.filecache.simple.SimpleFileCacheImpl", \
+	}, { \
+	  "service.pid":                 "EmailService", \
+      "service.factoryPid":          "aQute.impl.email.ses.EmailImpl", \
+      ".awsSecret": 				"@{.awsSecret}", \
+      ".awsId": 					"@{.awsId}", \
+    } \
+]'

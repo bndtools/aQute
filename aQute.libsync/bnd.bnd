@@ -9,14 +9,15 @@
 	org.apache.felix.log;version=1.0.0,\
 	com.mongodb
 -runfw: org.apache.felix.framework
--buildpath: osgi.cmpn,\
-	com.springsource.javax.servlet,\
+-buildpath: com.springsource.javax.servlet,\
+	biz.aQute.bndlib;version=2.0.0, \
 	junit.osgi,\
 	aQute.libg;version=2.7.3,\
 	org.mockito.mockito-all,\
 	com.mongodb,\
 	osgi.core;version=4.2.1,\
-	biz.aQute.bndlib;version=1.53.0,\
-	com.hazelcast;version=2.0.1
+	com.hazelcast;version=2.0.1,\
+	osgi.cmpn;version=4.3.0,\
+	aQute.aws;version=latest
 
 -sub: *.bnd

@@ -1,22 +1,24 @@
 
 <form novalidate class="simple-form">
-	<table style="width: 100%">
+	<table>
 
 		<tr>
-			<td style="width: 50%">Search</td>
-			<td style="width: 50%"><input type='text' ng-model="bsn"
-				required />
+			<td class="label">Search</td>
+			<td><input type='text' ng-model="query" required />
 				<button ng-click="search()" ng-disabled="!canSearch()">Go</button></td>
 		</tr>
 	</table>
 </form>
 
-<button ng-click="prev()" ng-disabled="start==0">Prev {{start}}</button>
-<button ng-click="next()" ng-disabled="!programs">Next</button>
+<div id="prevnext">
+	<button class="left" ng-click="prev()" ng-disabled="start==0">Prev
+		{{start}}</button>
+	<button class="right" ng-click="next()" ng-disabled="!programs">Next</button>
+</div>
 
-<table style="width: 100%">
+<table>
 	<tr ng-repeat="p in programs">
-		<td style="width: 50%"><a href="#/program/{{p.bsn}}?">{{p.bsn}}</a></td>
-		<td style="width: 50%">{{p.description}}</td>
+		<td class="label"><a href="#/p/{{p._id}}?">{{p._id}}</a></td>
+		<td>{{p.description}}</td>
 	</tr>
 </table>

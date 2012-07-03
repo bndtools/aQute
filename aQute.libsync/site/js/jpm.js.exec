@@ -1,1 +1,2 @@
-coffee -cpj - ../_coffee/main.coffee ../_coffee/util.coffee
+coffee -cpj - ../_coffee/main.coffee ../_coffee/util.coffee ../_coffee/setup.coffee
+

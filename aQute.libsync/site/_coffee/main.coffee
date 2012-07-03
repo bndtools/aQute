@@ -1,52 +1,49 @@
+# 
+# Main program for the jpm.html page. 
+
+
+PAGE_SIZE 	= 100				# Default page size
+Program 	= undefined		# shared resource manager for programs
+
 #
-# Module initialize
+# Controller for the search fragment
 #
-
-window.JPM = angular.module( 'jpm', ['ngResource'] );
-
-PAGE_SIZE = 3
-
-rp = ($routeProvider) -> $routeProvider.
-       when('/program/:bsn',{ templateUrl: '/jpm/program.htm', 	controller: ProgramCtl }).
-       when('/program',	  	{ templateUrl: '/jpm/search.htm', 	controller: SearchCtl }).
-       otherwise( 		    { redirectTo: '/notfound' } )
-       
-window.JPM.config( [ '$routeProvider', rp ])
-
-
-Program = undefined
-
-window.JPMCtl = ($scope, $resource, $location, $routeParams ) ->
-    Program = $resource('/rest/program/:bsn',{}, {
-      'get': {method:'GET', params: {}},
-      'query': {method: 'GET', params:{filter:@filter,start:@start,limit:3}, isArray:true}
-    })
-
-    
-window.SearchCtl = ($scope, $location, $routeParams ) ->
+SearchCtl = ($scope, $location, $routeParams ) ->
     $scope.start 	= $routeParams.start;
-    $scope.bsn   	= $routeParams.bsn;
+    $scope.query    = "*";
     $scope.count   	= 0;
     
     $scope.search 	= -> $scope.start  = 0; search();
-    $scope.next 	= -> $scope.start  = Number($scope.start) + 3; search();
-    $scope.prev 	= -> if $scope.start >= 3
-        $scope.start = Number($scope.start)-3; 
+    $scope.next 	= -> $scope.start  = Number($scope.start) + PAGE_SIZE; search();
+    $scope.prev 	= -> if $scope.start >= PAGE_SIZE
+        $scope.start = Number($scope.start)-PAGE_SIZE; 
         search() 
-    $scope.canSearch= -> $scope.bsn
+    $scope.canSearch= -> $scope.query
     search 			= -> 
         $scope.start = 0 unless 0 <= $scope.start <= 100000;
-        $scope.programs = Program.query({filter:$scope.bsn,start:$scope.start})
-        $location.search("bsn=#{$scope.bsn}&start=#{$scope.start}")
+        $scope.programs = Program.query({query:$scope.query,start:$scope.start})
+        $location.search("start=#{$scope.start}")
     
-    if ( $scope.bsn )
+    if ( $scope.query )
         search()
 
-window.ProgramCtl = ($scope, $location, $routeParams ) ->
-    $scope.program = Program.get( $routeParams )
-    $scope.qualifier = (r) -> if r.master then '' else '.' + r.qualifier
-    $scope.masters = ->	if ($scope.program) then i for i in $scope.program.revisions when i.master else []
-    $scope.staging = -> if ($scope.program) then i for i in $scope.program.revisions when !i.master else [] 
+#
+# Controller for the program fragment
+# See jpm/
 
+ProgramCtl = ($scope, $location, $routeParams ) ->
+    $scope.program 		= Program.get( $routeParams )
+    $scope.qualifier 	= (r) -> if r.master then '' else '.' + r.qualifier
+    $scope.masters 		= -> if ($scope.program) then i for i in $scope.program.revisions when i.master else []
+    $scope.staging 		= -> if ($scope.program) then i for i in $scope.program.revisions when !i.master else [] 
 
-
+#
+# Controller for the revision fragment
+#
+RevisionCtl = ($scope, $location, $routeParams ) ->
+    $scope.program 		= Program.get( $routeParams )
+    $scope.qualifier 	= (r) -> if r.master then '' else '.' + r.qualifier
+    $scope.masters 		= ->	if ($scope.program) then i for i in $scope.program.revisions when i.master else []
+    $scope.staging 		= -> if ($scope.program) then i for i in $scope.program.revisions when !i.master else [] 
+    
+        

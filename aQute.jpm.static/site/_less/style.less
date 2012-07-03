@@ -1,26 +1,56 @@
 
-@gutter:		20px;
+/*
+ * 960px grid
+ */
+ 
 @cwidth:		60px;
+@padding:       10px;
+@gutter:		2*@padding;
 @columns:		12;
+@page:			@columns * (@gutter + @cwidth);
+
+/* Fonts */
+
+.baseFont {
+	font-family: 'Verdana', serif;
+    font-size: 12px;
+    font-weight: normal;	
+}
+
+.label {
+	.baseFont();
+	font-family: 'Arial', serif;
+	font-weight: bold;
+}
+
+
+/* Colors */
 @linkcolor:     #2E9AFE;
-@page:			12* (@gutter + @cwidth);
 
 
+
+
+
+/* Debug */
+.debug {
+  	xoutline:			1px solid #F0F0F0;
+}
+
+/* Resets */
 div {
 	width: 100%;
+	margin: 0px;
+	padding: 0px;
+	.debug;
 }
 
-.debug {
-  xoutline:			1px solid #F0F0F0;
-}
 
 body {
 	width: @page;
 	margin-right: auto;
 	margin-left: auto;
 	background-color: white;
-	font-family: 'Verdana', serif;
-    font-size: 12px;
+	.baseFont;
 }
 
 p, pre, h1, h2, h3, h4, h5 {
@@ -65,9 +95,6 @@ a {
 	}
 }
 
-.label {
-	font-weight: bold;
-}
 .w(@columns,@left:10px,@right:10px) {
   display: 			inline;
   float: 			left;
@@ -78,24 +105,16 @@ a {
 
 .w4 { .w(4, 0, 0); }
 
-.push(@columns) {
-	position: 		relative;
-	left: 			@columns*(@gutter + @cwidth)px;
-}
-.pull(@columns) {
-	position: 		relative;
-	left: 			-(@columns*(@gutter + @cwidth)px);
-}
-.prefix(@columns) {
-	padding-left: @columns*(@gutter + @cwidth);
-}
-
-.suffix(@columns) {
-	padding-right: @columns*(@gutter + @cwidth);
-}
 
 .rounded(@radius:5px) {
 	border-radius: @radius;	
+}
+
+.left {
+	float: left;
+}
+.right {
+	float: right;
 }
 
 .fill(@c, @radius:5px) {
@@ -113,6 +132,14 @@ background-color:#fefefe; background-image: -moz-linear-gradient(top , #fefefe, 
   line-height: 0;
   width: 0;
   height: 0;
+  
+  &:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
 }
 
 .container(@columns:12) {
@@ -127,6 +154,7 @@ background-color:#fefefe; background-image: -moz-linear-gradient(top , #fefefe, 
 	.container;
 	position: fixed;
 	top: 10px;
+	height: 50px;
 	
 	background-color:#02010f; 
 	background-image: -moz-linear-gradient(90deg, #02010f, #727373 20px,#000000 100px); 
@@ -139,7 +167,7 @@ background-color:#fefefe; background-image: -moz-linear-gradient(top , #fefefe, 
 	
 
 	ul {
-		padding: 6px 0px 20px 0px;
+		padding: 0px;
 		margin: 0px;
 		li {
 			.w(1);
@@ -160,6 +188,8 @@ background-color:#fefefe; background-image: -moz-linear-gradient(top , #fefefe, 
 		li:first-child {
      		border-left: 0px none;
 			background-image: url(../img/logo-60.png);
+			height: 34px;
+			width: 60px;
 			a {
 				color:red;
 			}
@@ -169,7 +199,7 @@ background-color:#fefefe; background-image: -moz-linear-gradient(top , #fefefe, 
 			.w(3);
 			float: right;
 			input {
-				position: relative; top: -2px;
+				position: relative; top: 1px;
 				height: 14px;
 				float: right;
 				background-color: gray;
@@ -187,6 +217,21 @@ table, tr, td {
 	width:100%;
 }
 
+.share_icon {
+	display: block;
+	float:right;
+	width: 30px;
+	height: 30px;
+	background-repeat: no-repeat;	
+}
+.facebook { .share_icon; background-image: url(/img/facebook-24x24.png); }
+.twitter { .share_icon;  background-image: url(/img/twitter-24x24.png);}
+.googlep { .share_icon; background-image: url(/img/google+-24x24.png);}
+.linkedin { .share_icon; background-image: url(/img/linkedin-24x24.png);}
+.stackoverflow { .share_icon; background-image: url(/img/stackoverflow-24x24.png);}
+.email { .share_icon; background-image: url(/img/email-24x24.png);}
+
+/* JPM specific layout */
 #navreserve {
 	margin-top: 80px;
 }
@@ -224,17 +269,44 @@ table, tr, td {
 
 #footer {
 	clear: both;
-	.container(12);
+   	.container(12);
 	> div {
 		.w(3);
 	}
 	.fill(red,5);
+	margin-bottom: 20px;
 }
 
-input.ng-invalid.ng-dirty {
-	background-color: #FA787E;
+#prevnext {
+	padding-top: 4px;
+	padding-bottom: 10px;
 }
-input.ng-valid.ng-dirty {
-	background-color: #78FA89;
+
+table {
+	margin-top: 12px;
+	padding-top: 20px;
+	border-top: 1px solid black;
+	td {
+		padding-bottom: 6px;
+	}
+}
+
+form {
+	table {
+		margin: 0px;
+		border: 0px none;
+	}
+}
+input {
+	.ng-invalid.ng-dirty {
+		background-color: #FA787E;
+	}
+	.ng-valid.ng-dirty {
+		background-color: #78FA89;
+	}
+}
+
+.ng-cloak {
+	display: none;
 }
 

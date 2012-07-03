@@ -23,6 +23,17 @@
 			</head>
 
 			<body>
+				<!-- Facebook -->
+				<div id="fb-root"></div>
+				<script>(function(d, s, id) {
+				  var js, fjs = d.getElementsByTagName(s)[0];
+				  if (d.getElementById(id)) return;
+				  js = d.createElement(s); js.id = id;
+				  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+				  fjs.parentNode.insertBefore(js, fjs);
+				}(document, 'script', 'facebook-jssdk'));
+				</script>
+
 				<div id="nav">
 					<ul>
 						<li>
@@ -30,7 +41,7 @@
 							<a href="index.html">&#160;</a>
 						</li>
 						<li>
-							<a href="repos.html">Repos</a>
+							<a href="jpm.html#/">Browse</a>
 						</li>
 						<li>
 							<a href="install.html">Install</a>

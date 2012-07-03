@@ -66,8 +66,8 @@ public class MongoStoreImpl<T> implements Store<T> {
 		DBObject o = (DBObject) mcnv.toMongo(document);
 		WriteResult result = db.insert(o);
 		error(result);
-		DBObject dbo = result.getLastError();
-		System.out.println(dbo + " " + o);
+		// DBObject dbo = result.getLastError();
+		// System.out.println(dbo + " " + o);
 	}
 
 	public void update(T document) throws Exception {

@@ -20,12 +20,13 @@ class Node {
 	String					comment;
 
 	Node getNode(String path) {
-		System.out.println("Get node " + path);
+		// System.out.println("Get node " + path);
 		int n = path.indexOf('/');
 		if (n >= 0) {
 			String name = path.substring(0, n + 1); // Include /
 			String remainder = path.substring(n + 1);
-			System.out.println("Descent " + path + " local=" + name + " remainder=" + remainder);
+			// System.out.println("Descent " + path + " local=" + name +
+			// " remainder=" + remainder);
 			Node node = getLocalNode(name);
 			if (remainder.isEmpty())
 				return node; // directory node
@@ -38,7 +39,7 @@ class Node {
 	private Node getLocalNode(String name) {
 		Node node = entries.get(name);
 		if (node == null) {
-			System.out.println("Creating new node " + name);
+			// System.out.println("Creating new node " + name);
 
 			node = new Node();
 			node.name = name;
@@ -55,7 +56,7 @@ class Node {
 	 * @throws Exception
 	 */
 	void fixupCatalogs(Map<SHA1,Node> shas) throws Exception {
-		System.out.println("Fixing up " + name);
+		// System.out.println("Fixing up " + name);
 		if (isDirectory()) {
 			for (Node node : entries.values()) {
 				if (node.size < 0)

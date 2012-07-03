@@ -55,8 +55,6 @@ public class MongoDBImpl implements aQute.service.store.DB {
 		 * The to be used password
 		 */
 		String _password();
-
-		boolean init();
 	};
 
 	Config				config;
@@ -81,9 +79,6 @@ public class MongoDBImpl implements aQute.service.store.DB {
 		} else
 			mongo = new Mongo();
 
-		this.db = mongo.getDB(config.db());
-		if (config.init())
-			this.db.dropDatabase();
 		this.db = mongo.getDB(config.db());
 
 		// Log in if required

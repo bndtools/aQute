@@ -9,8 +9,8 @@ import org.osgi.service.http.*;
 import org.osgi.service.log.*;
 
 import aQute.bnd.annotation.component.*;
-import aQute.impl.gitposthook.Data.Import;
-import aQute.impl.gitposthook.Data.Posthook;
+import aQute.impl.gitposthook.Data.ImportData;
+import aQute.impl.gitposthook.Data.PosthookData;
 import aQute.impl.gitposthook.*;
 import aQute.lib.hex.*;
 import aQute.lib.json.*;
@@ -31,31 +31,15 @@ public class GithubPostHookServlet extends HttpServlet {
 	public void doPost(HttpServletRequest rq, HttpServletResponse rsp) {
 
 		try {
-			Import imp = new Import();
+			ImportData imp = new ImportData();
 			imp.ip = rq.getRemoteAddr();
 			imp.user = rq.getRemoteUser();
 			imp.time = System.currentTimeMillis();
-			Reader r = rq.getReader();
-			StringBuilder sb = new StringBuilder();
 
-			int c;
-			while ((c = r.read()) >= 0) {
-				if (c == '%') {
-					char a = (char) r.read();
-					char b = (char) r.read();
-					c = Hex.nibble(a) * 16 + Hex.nibble(b);
-				}
-				if (c > 127) {
-					log.log(LogService.LOG_ERROR, "Invalid character in payload " + c + " " + sb);
-				}
-				sb.append((char) c);
-			}
-			sb.delete(0, 8);
-			String s = sb.toString();
-			System.out.println("Payload = " + s);
+			String s = convertToJson(rq);
 			log.log(LogService.LOG_INFO, "Github hook request from " + imp.ip + " payload" + s + " ");
 
-			Posthook work = codec.dec().from(s).get(Posthook.class);
+			PosthookData work = codec.dec().from(s).get(PosthookData.class);
 			imp.posthook = work;
 			worker.execute(imp);
 			rsp.setStatus(HttpServletResponse.SC_OK);
@@ -66,6 +50,27 @@ public class GithubPostHookServlet extends HttpServlet {
 			log.log(LogService.LOG_ERROR, "Processing git post hook", e);
 			rsp.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		}
+	}
+
+	private String convertToJson(HttpServletRequest rq) throws IOException {
+		Reader r = rq.getReader();
+		StringBuilder sb = new StringBuilder();
+
+		int c;
+		while ((c = r.read()) >= 0) {
+			if (c == '%') {
+				char a = (char) r.read();
+				char b = (char) r.read();
+				c = Hex.nibble(a) * 16 + Hex.nibble(b);
+			}
+			if (c > 127) {
+				log.log(LogService.LOG_ERROR, "Invalid character in payload " + c + " " + sb);
+			}
+			sb.append((char) c);
+		}
+		sb.delete(0, 8);
+		String s = sb.toString();
+		return s;
 	}
 
 	@Reference

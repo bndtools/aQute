@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import javax.net.ssl.*;
+
 import aQute.lib.base64.*;
 import aQute.lib.collections.*;
 import aQute.lib.io.*;
@@ -38,8 +40,13 @@ public class RepositoryImpl implements Repository {
 		return read(Tree.class, "git/trees/" + sha);
 	}
 
-	public URI getBlob(String sha) throws Exception {
-		return new URI("https://github.com/api/v2/json/blob/show/" + owner + "/" + repo + "/" + sha);
+	public InputStream getBlob(final String sha) throws Exception {
+		URL url = new URL(baseurl + "git/blobs/" + sha);
+		HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+		// conn.setRequestProperty("Accept",
+		// "application/vnd.github.VERSION.raw");
+		conn.addRequestProperty("Accept", "application/vnd.github.raw");
+		return conn.getInputStream();
 	}
 
 	private <T> T read(Class<T> clazz, String string) throws Exception {
@@ -65,7 +72,7 @@ public class RepositoryImpl implements Repository {
 		}
 	}
 
-	public URI getBlob(Tree root, String path) throws Exception {
+	public InputStream getBlob(Tree root, String path) throws Exception {
 		String parts[] = path.split("/");
 		Entry e = find(root, parts, 0);
 		if (e == null)
@@ -116,5 +123,10 @@ public class RepositoryImpl implements Repository {
 			return null;
 
 		return new SortedList<Branch>(read);
+	}
+
+	@Override
+	public URI getURI(Commit commit, String path) throws URISyntaxException {
+		return new URI("https://github.com/" + owner + "/" + repo + "/blob/" + commit.sha + path + "?raw=true");
 	}
 }

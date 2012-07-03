@@ -97,7 +97,6 @@ public class RestServlet extends HttpServlet {
 						out = new DeflaterOutputStream(out);
 						rsp.setHeader("Content-Encoding", "deflate");
 					}
-					String s = codec.enc().put(result).toString();
 					codec.enc().to(out).put(result).flush();
 					out.close();
 					return;
@@ -122,6 +121,12 @@ public class RestServlet extends HttpServlet {
 
 	private Object[] mapArguments(Type[] types, Map parameters, List<String> parts, InputStream in) throws Exception {
 
+		for (Map.Entry e : (Iterable<Map.Entry>) parameters.entrySet()) {
+			Object v = e.getValue();
+			if (v.getClass().isArray() && Array.getLength(v) == 1) {
+				e.setValue(Array.get(v, 0));
+			}
+		}
 		// TODO quick checks to see it can never match
 
 		Object[] arguments = new Object[types.length];
@@ -129,7 +134,7 @@ public class RestServlet extends HttpServlet {
 		try {
 			int i = 0, p = 0;
 			if (arguments.length > 0 && Options.class.isAssignableFrom((Class) types[0])) {
-				arguments[0] = Mapper.map((Class) types[0], parameters);
+				arguments[0] = converter.convert(types[0], parameters);
 				i++;
 			}
 

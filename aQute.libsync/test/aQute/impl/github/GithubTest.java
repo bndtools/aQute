@@ -1,7 +1,6 @@
 package aQute.impl.github;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import java.util.jar.*;
 
@@ -45,9 +44,8 @@ public class GithubTest extends TestCase {
 		System.out.println(files);
 
 		for (String sha : files) {
-			URL blob = r.getBlob(sha).toURL();
+			InputStream in = r.getBlob(sha);
 
-			InputStream in = blob.openStream();
 			try {
 				JarInputStream jar = new JarInputStream(in);
 				Manifest m = jar.getManifest();
@@ -83,7 +81,7 @@ public class GithubTest extends TestCase {
 		for (Entry entry : tree.tree) {
 			System.out.println(entry.path);
 		}
-		assertEquals("ihello\n", IO.collect(r.getBlob(tree, "test2").toURL()));
+		assertEquals("ihello\n", IO.collect(r.getBlob(tree, "test2")));
 
 		Digester<SHA1> digester = SHA1.getDigester();
 		Entry e = r.getEntry(tree, "test2");
@@ -91,7 +89,7 @@ public class GithubTest extends TestCase {
 		// gits shas are calculated with a header prefix
 		String header = String.format("blob %d\u0000", e.size);
 		digester.write(header.getBytes());
-		IO.copy(r.getBlob(tree, "test2").toURL().openStream(), digester);
+		IO.copy(r.getBlob(tree, "test2"), digester);
 		assertEquals(e.sha.toLowerCase(), Hex.toHexString(digester.digest().toByteArray()).toLowerCase());
 	}
 

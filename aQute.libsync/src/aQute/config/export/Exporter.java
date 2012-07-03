@@ -45,10 +45,10 @@ public class Exporter {
 		Protocol p = new Protocol();
 		p.version = 1;
 		p.date = new Date();
-		p.size = list.length;
 		encoder.put(p).append('\n');
 
-		if (list != null)
+		if (list != null) {
+			p.size = list.length;
 			for (Configuration c : list) {
 				Dictionary<String,Object> d = c.getProperties();
 				Export export = new Export();
@@ -89,6 +89,7 @@ public class Exporter {
 				// encoder.put(encoder.digest());
 				encoder.append('\n');
 			}
+		}
 		osw.flush();
 	}
 

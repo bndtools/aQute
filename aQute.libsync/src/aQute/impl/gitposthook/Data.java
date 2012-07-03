@@ -5,14 +5,14 @@ import java.util.*;
 import aQute.data.common.*;
 
 public class Data {
-	public static class Import {
+	public static class ImportData {
 		public String	ip;
 		public String	user;
 		public long		time;
-		public Posthook	posthook;
+		public PosthookData	posthook;
 	}
 
-	public static class Posthook {
+	public static class PosthookData {
 		public Map<String, ? >	__extra;
 		public String			before;
 		public String			after;

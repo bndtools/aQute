@@ -229,14 +229,13 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 				// Throttle the number of active tasks
 				throttle.acquire();
 
-				System.out.println("Contains (should be true) " + activeTasks.containsKey(task.data._id));
 				if (activeTasks.remove(task.data._id) == null) {
 					// The task was already gone for some reason.
 					// Which is perfectly legal
 					throttle.release();
 					continue;
 				}
-				System.out.println("Contains (should be false) " + activeTasks.containsKey(task.data._id));
+
 				final TaskData td = task.data;
 				Runnable r = new Runnable() {
 
@@ -265,11 +264,9 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 								int count;
 								long now = System.currentTimeMillis();
 								if (td.periodic <= 0) {
-									System.out.println("Success ");
 									count = store.find(td).set("state", TaskData.State.SUCCEEDED)
 											.set("stateChange", now).update();
 								} else {
-									System.out.println("Reschedule " + now + td.periodic);
 									count = store.find(td).set("after", now + td.periodic).set("stateChange", now)
 											.update();
 
@@ -303,7 +300,6 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 				executor.execute(r);
 			}
 			catch (InterruptedException e) {
-				System.out.println("Quiting");
 				return;
 			}
 			catch (Exception e) {
@@ -390,9 +386,7 @@ public class TaskQueueImpl extends Thread implements TaskQueue {
 				activeTasks.remove(td._id);
 			} else {
 				store.find(td).set("after", now + latency).update();
-				System.out.println("Before insertion " + activeTasks.size());
 				activeTasks.put(td._id, codec.enc().put(td).toString());
-				System.out.println("After insertion " + activeTasks.size());
 			}
 		}
 	}

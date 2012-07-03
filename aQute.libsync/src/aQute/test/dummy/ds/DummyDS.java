@@ -48,76 +48,82 @@ public class DummyDS {
 			ClassLoader loader = type.getClassLoader();
 			if (loader != null) {
 				URL url = loader.getResource(type.getName().replace('.', '/') + ".class");
-				Analyzer a = new Analyzer();
-				Clazz clazz = new Clazz(a, "", new URLResource(url));
-				Map<String,String> d = ComponentAnnotationReader.getDefinition(clazz);
-				System.out.println(d);
+				if (url != null) {
 
-				for (String key : d.keySet()) {
-					if ("activate:".equals(key))
-						activate = findMethod(d.get(key));
-					else if ("deactivate:".equals(key))
-						deactivate = findMethod(d.get(key));
-					else {
-						Matcher matcher = REFERENCE.matcher(key);
-						if (matcher.matches()) {
-							Reference r = new Reference();
-							r.name = matcher.group(1);
-							r.set = findMethod(matcher.group(2));
-							r.unset = findMethod(matcher.group(3));
+					Analyzer a = new Analyzer();
+					Clazz clazz = new Clazz(a, "", new URLResource(url));
+					Map<String,String> d = ComponentAnnotationReader.getDefinition(clazz);
+					System.out.println(d);
 
-							String type = d.get(key);
-							if (type.endsWith("*")) {
-								r.multiple = true;
-								r.optional = true;
-								r.dynamic = true;
-							} else if (type.endsWith("?")) {
-								r.multiple = false;
-								r.optional = true;
-								r.dynamic = true;
-							} else if (type.endsWith("+")) {
-								r.multiple = true;
-								r.optional = false;
-								r.dynamic = true;
-							} else {
-								r.multiple = false;
-								r.optional = false;
-								r.dynamic = false;
+					for (String key : d.keySet()) {
+						if ("activate:".equals(key))
+							activate = findMethod(d.get(key));
+						else if ("deactivate:".equals(key))
+							deactivate = findMethod(d.get(key));
+						else {
+							Matcher matcher = REFERENCE.matcher(key);
+							if (matcher.matches()) {
+								Reference r = new Reference();
+								r.name = matcher.group(1);
+								r.set = findMethod(matcher.group(2));
+								r.unset = findMethod(matcher.group(3));
+
+								String type = d.get(key);
+								if (type.endsWith("*")) {
+									r.multiple = true;
+									r.optional = true;
+									r.dynamic = true;
+								} else if (type.endsWith("?")) {
+									r.multiple = false;
+									r.optional = true;
+									r.dynamic = true;
+								} else if (type.endsWith("+")) {
+									r.multiple = true;
+									r.optional = false;
+									r.dynamic = true;
+								} else {
+									r.multiple = false;
+									r.optional = false;
+									r.dynamic = false;
+								}
+
+								references.add(r);
 							}
-
-							references.add(r);
 						}
 					}
-				}
 
-				for (Reference ref : references) {
-					Method m = ref.set;
-					Class< ? > requested = m.getParameterTypes()[0];
-					List<Component< ? >> refComp = map.get(requested);
-					if (refComp == null || refComp.isEmpty()) {
-						if (!ref.optional)
-							throw new IllegalStateException(type + " requires at least one component for " + ref.name
-									+ " of type " + requested);
-					} else {
-						for (Component< ? > c : refComp) {
-							m.setAccessible(true);
-							m.invoke(instance, c.wire(ordered));
-							if (!ref.multiple)
-								break;
-						}
-					}
-				}
-				if (activate != null) {
-					activate.setAccessible(true);
-					Class< ? > types[] = activate.getParameterTypes();
-					Object[] parameters = new Object[types.length];
-					for (int i = 0; i < types.length; i++) {
-						if (Map.class.isAssignableFrom(types[i])) {
-							parameters[i] = properties;
+					for (Reference ref : references) {
+						Method m = ref.set;
+						Class< ? > requested = m.getParameterTypes()[0];
+						List<Component< ? >> refComp = map.get(requested);
+						if (refComp == null || refComp.isEmpty()) {
+							if (!ref.optional) {
+								throw new IllegalStateException(type + " requires at least one component for "
+										+ ref.name + " of type " + requested);
+							}
 						} else
-							throw new IllegalArgumentException("Not a pojo, requires " + types[i]);
+							for (Component< ? > c : refComp) {
+								m.setAccessible(true);
+								m.invoke(instance, c.wire(ordered));
+								if (!ref.multiple)
+									break;
+							}
 					}
-					activate.invoke(instance, parameters);
+					if (activate != null) {
+						activate.setAccessible(true);
+						Class< ? > types[] = activate.getParameterTypes();
+						Object[] parameters = new Object[types.length];
+						for (int i = 0; i < types.length; i++) {
+							if (Map.class.isAssignableFrom(types[i])) {
+								parameters[i] = properties;
+							} else if (map.containsKey(types[i]))
+								parameters[i] = map.get(types[i]).get(0).instance;
+							else
+								throw new IllegalArgumentException("Not a pojo " + activate.getDeclaringClass()
+										+ ", requires " + types[i]);
+						}
+						activate.invoke(instance, parameters);
+					}
 				}
 			}
 			ordered.add(this);
@@ -172,7 +178,6 @@ public class DummyDS {
 		return c;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> Component<T> add(T instance) throws Exception {
 		return add((Class<T>) instance.getClass()).instance(instance);
 	}
@@ -184,4 +189,5 @@ public class DummyDS {
 
 		return c.cast(components.get(0).instance);
 	}
+
 }

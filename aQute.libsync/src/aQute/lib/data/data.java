@@ -322,6 +322,10 @@ public class data<T> implements Map<String,Object> {
 		return c.size > 0;
 	}
 
+	public Type getType(String f) {
+		return cache.fields.get(f).getGenericType();
+	}
+
 	public static Field[] fields(Class c) {
 		return getCache(c).fs;
 	}

@@ -16,7 +16,6 @@ public class Logger implements InvocationHandler {
 		this.type = type;
 	}
 
-	@SuppressWarnings("unchecked")
 	static <T> T newInstance(Class<T> clazz, String type) {
 		return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class< ? >[] {
 			clazz

@@ -88,7 +88,6 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 				return cursor.hasNext();
 			}
 
-			@SuppressWarnings("unchecked")
 			public T next() {
 				try {
 					DBObject object = cursor.next();
@@ -136,7 +135,7 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 	}
 
 	private DBCursor getDBCursor() {
-		System.out.println("Filter: " + where);
+		// System.out.println("Filter: " + where);
 		final DBCursor cursor = store.db.find(where, options);
 		if (limit != 0)
 			cursor.limit(limit);

@@ -204,7 +204,6 @@ public class Site {
 		}
 
 		Document getXmlContent() throws Exception {
-			String s = IO.collect(source);
 			StringBuilder sb = new StringBuilder(Processor.process(source));
 			Matcher m = MARKER.matcher(sb);
 			boolean open = false;

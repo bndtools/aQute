@@ -1,3 +1,4 @@
 Export-Package: aQute.service.cafs,\
 	aQute.service.cafs.data
 Private-Package: aQute.impl.cafs
+Conditional-Package: aQute.lib*

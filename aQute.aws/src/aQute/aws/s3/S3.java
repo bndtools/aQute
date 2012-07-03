@@ -50,7 +50,7 @@ public class S3 {
 
 	String							awsId;
 	private SecretKeySpec			secret;
-	boolean							debug			= true;
+	boolean							debug			= false;
 
 	public S3(String awsId, String secret) {
 		this.secret = new SecretKeySpec(secret.getBytes(), "HmacSHA1");
@@ -60,7 +60,7 @@ public class S3 {
 	public Bucket createBucket(String bucket, String... region) throws Exception {
 		Bucket b = new Bucket(this, bucket);
 		SortedMap<String,String> map = null;
-		if (region.length > 0) {
+		if (region != null && region.length > 0) {
 			map = new TreeMap<String,String>(String.CASE_INSENSITIVE_ORDER);
 			map.put("LocationConstraint", region[0]);
 		}
@@ -138,7 +138,7 @@ public class S3 {
 			u += "/" + qsb;
 
 		URL url = new URL(u);
-		System.out.println(u);
+		// System.out.println(u);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
 		if (content != null)
@@ -176,7 +176,7 @@ public class S3 {
 		}
 
 		if (bucket != null) {
-			sb.append("/").append(bucket);
+			sb.append("/").append(bucket.toLowerCase());
 			conn.setRequestProperty("Host", bucket + ".s3.amazonaws.com");
 		}
 

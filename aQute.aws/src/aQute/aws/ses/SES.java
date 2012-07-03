@@ -1,8 +1,10 @@
 package aQute.aws.ses;
 
+import java.io.*;
+
 import aQute.aws.*;
 
-public class SES {
+public class SES implements Closeable {
 	Protocol	aws;
 
 	public SES(Protocol protocol) {
@@ -67,9 +69,17 @@ public class SES {
 			return this;
 		}
 
-		public String from(String address) throws Exception {
-			request.arg("Source", address);
+		public SESRequest from(String address) throws Exception {
+			request.arg("Source", address.toLowerCase());
+			return this;
+		}
+
+		public String send() throws Exception {
 			return request.string("SendEmailResponse/SendEmailResult/MessageId");
 		}
+	}
+
+	public void close() {
+
 	}
 }

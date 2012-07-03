@@ -88,9 +88,9 @@ public class AWS {
 
 				conn.setRequestProperty("X-Amzn-Authorization", "AWS3-HTTPS AWSAccessKeyId=" + accessKey
 						+ ", Algorithm=HmacSHA256, Signature=" + Base64.encodeBase64(signature));
-				System.out.println(url.toExternalForm());
-				System.out.println(conn.getRequestProperty("Date"));
-				System.out.println(conn.getRequestProperty("X-Amzn-Authorization"));
+				// System.out.println(url.toExternalForm());
+				// System.out.println(conn.getRequestProperty("Date"));
+				// System.out.println(conn.getRequestProperty("X-Amzn-Authorization"));
 
 				return conn;
 			}

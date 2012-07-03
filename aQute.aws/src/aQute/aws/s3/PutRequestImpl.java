@@ -55,7 +55,7 @@ class PutRequestImpl extends CommonRequestImpl<PutRequest> implements PutRequest
 			headers.put("Content-Length", Long.toString(tmpfile.length()));
 			in = new FileInputStream(tmpfile);
 		}
-		System.out.println(headers);
+		// System.out.println(headers);
 		parent.construct(S3.METHOD.PUT, bucket.getName(), key, in, headers, null);
 	}
 

@@ -28,10 +28,9 @@ javac.debug:  on
 # Bnd Options
 -sources:       true
 -sourcepath:    ${project}/src 
+-pluginpath: ${build}/plugins/org.osgi.impl.bundle.bindex/org.osgi.impl.bundle.bindex-2.2.0.jar
 -plugin: aQute.lib.deployer.FileRepo;location=${repo},\
-	org.osgi.impl.bundle.bindex.BundleIndexerImpl;path:=${repo}/org.osgi.impl.bundle.bindex/org.osgi.impl.bundle.bindex-2.2.0.jar,\
-	aQute.lib.deployer.FileRepo;location=/Users/aqute/bnd/repo;name=aQute;readonly=false,\
-	aQute.lib.deployer.FileRepo;location=/Ws/Release/repo;name=Release;readonly=false
+	org.osgi.impl.bundle.bindex.BundleIndexerImpl
 
 
 -versionpolicy: "[${version;==;${@}},${version;+;${@}})"

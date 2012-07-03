@@ -17,10 +17,11 @@
 		<dirname property="workspacedir" file="${projectdir}" />
 		<taskdef resource="aQute/bnd/ant/taskdef.properties">
 			<classpath>
-				<path location="${workspacedir}/cnf/repo/biz.aQute.bnd/biz.aQute.bnd-1.31.0.jar"/>
+				<path location="${workspacedir}/cnf/plugins/biz.aQute.bnd/biz.aQute.bnd-1.52.3.jar"/>
 			</classpath>
 		</taskdef>
 
+		<echo message="Preparing in ${projectdir}"/>
 		<bndprepare basedir="${projectdir}" print="false" top="${release.dir}" />
 
 		<!-- mark init has been run -->

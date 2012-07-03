@@ -9,7 +9,7 @@ Include-Resource: @jar/txtmark-0.6.jar, OSGI-OPT/=@jar/txtmark-0.6-sources.jar
 
 
 -exportcontents: com.github.rjeschke.txtmark.*;version=1.0.0
--sources: true
+-sources: false
 
 Bundle-Version: 0.6.0
 

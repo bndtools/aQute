@@ -1,3 +1,4 @@
+-sources: false
 -classpath: jar/js.jar
 
 Export-Package: !org.mozilla.javascript.xml.impl.xmlbeans,org.mozilla.classfile, org.mozilla.javascript.*

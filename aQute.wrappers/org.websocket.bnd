@@ -12,6 +12,6 @@ Include-Resource: @jar/WebSocket.jar, OSGI-OPT/=@jar/WebSocket-src.zip
 
 
 -exportcontents: org.java_websocket
--sources: true
+-sources: false
 
 Bundle-Version: 1.0.2

@@ -1,0 +1,4 @@
+Private-Package: aQute.impl.filecache.simple
+Conditional-Package: aQute.lib*
+Export-Package: aQute.service.filecache
+Service-Component: *

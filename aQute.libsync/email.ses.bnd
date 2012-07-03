@@ -1,0 +1,9 @@
+Service-Component: *
+Private-Package: aQute.impl.email.ses,\
+	aQute.aws,\
+	aQute.aws.ses,\
+	aQute.aws.s3,\
+	aQute.aws.sqs
+	
+Conditional-Package: aQute.lib*
+Export-Package: aQute.service.email

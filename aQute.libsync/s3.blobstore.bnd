@@ -1,0 +1,6 @@
+Service-Component: *
+Private-Package: aQute.impl.blobstore.s3,\
+	aQute.aws.s3
+	
+Conditional-Package: aQute.lib*
+Export-Package: aQute.service.blobstore

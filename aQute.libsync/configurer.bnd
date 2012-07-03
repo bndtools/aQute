@@ -1,0 +1,6 @@
+Private-Package: 	aQute.impl.configurer, org.osgi.service.coordinator
+Conditional-Package: aQute.lib*
+Export-Package: aQute.service.init
+Import-Package: org.osgi.service.coordinator;resolution:=optional,\
+	*
+Service-Component: *

@@ -21,7 +21,7 @@ import aQute.lib.io.*;
 import aQute.libg.cryptography.*;
 import aQute.webserver.WebServer.Config;
 
-@Component(provide = {}, configurationPolicy = ConfigurationPolicy.require, immediate = true, designateFactory = Config.class)
+@Component(provide = {}, configurationPolicy = ConfigurationPolicy.optional, immediate = true, designateFactory = Config.class)
 public class WebServer extends HttpServlet {
 	private static final long	serialVersionUID	= 1L;
 	static SimpleDateFormat		format				= new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
@@ -76,7 +76,7 @@ public class WebServer extends HttpServlet {
 	interface Config {
 		String alias();
 
-		boolean bundles();
+		boolean noBundles();
 
 		File[] directories();
 
@@ -92,6 +92,10 @@ public class WebServer extends HttpServlet {
 	@Activate
 	void activate(Map<String,Object> props, BundleContext context) throws NamespaceException, ServletException {
 		this.config = Configurable.createConfigurable(Config.class, props);
+		String alias = config.alias();
+		if (alias == null || alias.isEmpty())
+			alias = "/";
+
 		this.http.registerServlet(config.alias(), this, null, null);
 		this.cache = context.getDataFile("cache");
 		cache.mkdir();
@@ -227,9 +231,9 @@ public class WebServer extends HttpServlet {
 		Cache c = findFile(path);
 		if (c != null)
 			return c;
-		if (config.bundles())
-			return findBundle(path);
-		return null;
+		// if (config.noBundles())
+		// return null;
+		return findBundle(path);
 	}
 
 	Cache findFile(String path) throws Exception {

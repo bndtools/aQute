@@ -20,7 +20,7 @@ import aQute.lib.io.*;
 import aQute.lib.json.*;
 import aQute.lib.tag.*;
 import aQute.libg.command.*;
-import aQute.libg.reporter.*;
+import aQute.service.reporter.*;
 
 import com.github.rjeschke.txtmark.*;
 

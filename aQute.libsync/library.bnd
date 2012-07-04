@@ -6,7 +6,10 @@ Private-Package: aQute.lib.json,\
 	aQute.impl.metadata.osgi,\
 	aQute.lib.converter,\
 	aQute.lib.base64,\
-	aQute.lib.data
+	aQute.lib.data,\
+	aQute.lib.io,\
+	aQute.libg.cryptography,\
+	aQute.lib.hex
 Export-Package: aQute.service.library,\
 	aQute.service.osgimetadata
 

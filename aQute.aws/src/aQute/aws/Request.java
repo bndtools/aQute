@@ -10,6 +10,7 @@ import javax.xml.xpath.*;
 import org.w3c.dom.*;
 
 import aQute.lib.hex.*;
+import aQute.lib.io.*;
 import aQute.libg.cryptography.*;
 
 public abstract class Request {
@@ -102,7 +103,8 @@ public abstract class Request {
 					in = new ByteArrayInputStream(
 							"<?xml version='1.0'?><Error><Code>NO ERROR GIVEN</Code></Error>".getBytes());
 
-				response = db.parse(in);
+				String collect = IO.collect(in);
+				response = db.parse(new ByteArrayInputStream(collect.getBytes("UTF-8")));
 			}
 		}
 		return response;

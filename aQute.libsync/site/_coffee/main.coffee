@@ -34,8 +34,8 @@ SearchCtl = ($scope, $location, $routeParams ) ->
 ProgramCtl = ($scope, $location, $routeParams ) ->
     $scope.program 		= Program.get( $routeParams )
     $scope.qualifier 	= (r) -> if r.master then '' else '.' + r.qualifier
-    $scope.masters 		= -> if ($scope.program) then i for i in $scope.program.revisions when i.master else []
-    $scope.staging 		= -> if ($scope.program) then i for i in $scope.program.revisions when !i.master else [] 
+    $scope.type         = (r) -> if r.master then 'master' else 'staged'
+    
 
 #
 # Controller for the revision fragment

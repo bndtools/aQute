@@ -22,27 +22,10 @@
 			<td>{{program.scm}}</td>
 		</tr>
 		<tr>
-			<td class="label">Masters</td>
-			<td>
-				<table>
-					<tr>
-						<td><a ng-repeat="r in masters()"
-							href=#program/{{program._id}}/r/{{r.version}}">{{r.version}}</a></td>
-						<td>{{r.summary}}</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="label">Staging</td>
-			<td>
-				<table>
-					<tr ng-repeat="r in staging()">
-						<td><a
-							href=#program/{{program._id}}/{{r.version}}.{{r.qualifier}}">{{r.version}}{{qualifier(r)}}</a></td>
-						<td>{{r.summary}}</td>
-					</tr>
-				</table>
+			<td class="label">Revisions</td>
+			<td><a class="{{type(r)}}"
+				ng-repeat="r in program.revisions"
+				href="#/p/{{program._id}}/r/{{r.version.base}}">{{r.version.base}}</a></td>
 			</td>
 		</tr>
 	</table>

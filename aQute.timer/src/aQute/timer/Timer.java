@@ -10,7 +10,7 @@ public class Timer extends java.util.Timer {
 
 	@Deactivate
 	void deactivate() {
-
+		super.cancel();
 	}
 
 	class Wrapper extends TimerTask {

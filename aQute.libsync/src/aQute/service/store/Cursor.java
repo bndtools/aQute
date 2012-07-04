@@ -42,6 +42,8 @@ public interface Cursor<T> extends Iterable<T> {
 
 	public Cursor<T> set(String field, Object value) throws Exception;
 
+	public Cursor<T> set(String field) throws Exception;
+
 	public Cursor<T> unset(String field) throws Exception;
 
 	public Cursor<T> append(String field, Object... value) throws Exception;

@@ -17,7 +17,7 @@ import com.mongodb.*;
  * gets a DB object and provides access to the stores. This component implements
  * the aQute.service.store service.
  */
-@Component(configurationPolicy = ConfigurationPolicy.require, designateFactory = Config.class)
+@Component(configurationPolicy = ConfigurationPolicy.require, designateFactory = Config.class, servicefactory = true)
 public class MongoDBImpl implements aQute.service.store.DB {
 	Mongo		mongo;
 	DB			db;

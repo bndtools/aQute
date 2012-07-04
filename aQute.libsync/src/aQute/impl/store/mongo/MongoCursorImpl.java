@@ -4,6 +4,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import aQute.lib.converter.*;
+import aQute.lib.data.*;
 import aQute.service.store.*;
 
 import com.mongodb.*;
@@ -22,9 +23,16 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 	DBObject				update;
 	int						skip;
 	int						limit;
+	data<T>					target;
 
 	public MongoCursorImpl(MongoStoreImpl<T> store) {
 		this.store = store;
+	}
+
+	public MongoCursorImpl(MongoStoreImpl<T> store, T target) throws Exception {
+		this(store);
+		this.target = data.wrap(target);
+		or(target);
 	}
 
 	public MongoCursorImpl<T> where(String ldap, Object... args) throws Exception {
@@ -247,9 +255,10 @@ public class MongoCursorImpl<T> implements Iterable<T>, Cursor<T> {
 		return this;
 	}
 
-	public MongoCursorImpl<T> optimistic(T value) {
-		// TODO
-		return this;
+	@Override
+	public Cursor<T> set(String field) throws Exception {
+		if (target == null)
+			throw new IllegalArgumentException("No target set. Use find(T t) to set target");
+		return set(field, target.get(field));
 	}
-
 }

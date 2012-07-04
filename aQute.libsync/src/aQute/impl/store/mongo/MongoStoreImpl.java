@@ -91,8 +91,7 @@ public class MongoStoreImpl<T> implements Store<T> {
 	}
 
 	public MongoCursorImpl<T> find(T select) throws Exception {
-		MongoCursorImpl<T> cursor = new MongoCursorImpl<T>(this);
-		return cursor.or(select);
+		return new MongoCursorImpl<T>(this, select);
 	}
 
 	void error(WriteResult result) {
@@ -290,7 +289,10 @@ public class MongoStoreImpl<T> implements Store<T> {
 		db.drop();
 	}
 
-	public Cursor<T> optimistic(T p) {
-		return new MongoCursorImpl<T>(this).optimistic(p);
+	/**
+	 * TODO implement optimistic locking
+	 */
+	public Cursor<T> optimistic(T p) throws Exception {
+		return find(p);
 	}
 }

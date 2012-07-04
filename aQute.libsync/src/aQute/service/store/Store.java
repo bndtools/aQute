@@ -17,6 +17,6 @@ public interface Store<T> {
 
 	public byte[] uniqueId();
 
-	public Cursor<T> optimistic(T p);
+	public Cursor<T> optimistic(T p) throws Exception;
 
 }

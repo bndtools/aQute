@@ -6,6 +6,7 @@ import java.net.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.jar.*;
+import java.util.zip.*;
 
 import aQute.lib.data.*;
 import aQute.lib.osgi.*;
@@ -48,7 +49,20 @@ public class OSGiMetadataParser extends ReporterAdapter {
 	}
 
 	void parse() throws Exception {
-		Jar jar = new Jar(file);
+		Jar jar;
+		try {
+			jar = new Jar(file);
+		}
+		catch (ZipException e) {
+			System.out.println("cant open this " + file);
+			try {
+				jar = new Jar(file.getName(), new FileInputStream(file));
+			}
+			catch (Exception ee) {
+				System.out.println("cant open stream " + file);
+				jar = new Jar(file.getName(), revision.url.toURL().openStream());
+			}
+		}
 		Analyzer analyzer = new Analyzer();
 		try {
 			analyzer.setJar(jar);

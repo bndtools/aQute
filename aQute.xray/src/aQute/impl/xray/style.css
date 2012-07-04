@@ -9,6 +9,13 @@
 	fill: #FFE070;
 }
 
+.ACTIVE_r {
+	stroke: red ;
+	stroke-dasharray: 5px;
+	stroke-width: 3px;
+	fill: #FFE070;
+}
+
 .STARTING {
 	stroke: grey;
 	stroke-width: 1px;

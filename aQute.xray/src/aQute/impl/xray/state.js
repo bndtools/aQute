@@ -246,7 +246,7 @@
       return "translate(" + d.x + "," + d.y + ")";
     });
     bs.select("use").attr("class", function(d) {
-      return d.state;
+      return d.state + (d.revisions !== 1 ? "_r" : "");
     });
     cs = bs.selectAll("g.led").data((function(d) {
       return d.components;

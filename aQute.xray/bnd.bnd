@@ -10,15 +10,15 @@
 	org.apache.felix.metatype,\
 	aQute.timer;version=latest
 -runfw: org.apache.felix.framework
--buildpath: osgi.core,\
-	osgi.cmpn,\
+-buildpath: osgi.cmpn,\
 	biz.aQute.bnd.annotation,\
 	junit.osgi,\
 	ee.minimum;version=1.2.0,\
 	com.springsource.javax.servlet;version=2.5.0,\
 	org.apache.felix.webconsole;version=3.1.2,\
 	org.apache.felix.scr,\
-	aQute.libg;version=2.7.3
+	aQute.libg;version=2.7.3,\
+	osgi.core;version=4.3.0
 
 	
 -runproperties: org.osgi.service.http.port=8090

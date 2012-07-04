@@ -61,6 +61,7 @@ public interface Data {
 		public List<ComponentDef>	components	= new ArrayList<ComponentDef>();
 		public String				log;
 		public boolean				errors;
+		public int					revisions;
 
 		transient int				index;
 		transient int				orphans;

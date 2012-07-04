@@ -181,7 +181,7 @@ setBundle = (bs) ->
     	.attr "transform", (d) -> "translate(" + (d.x) + "," + (d.y) + ")"
 
     bs.select("use")
-    	.attr "class", (d) -> d.state
+    	.attr "class", (d) -> d.state + (if d.revisions!= 1 then "_r" else "")
 
     cs = bs.selectAll("g.led").data( ((d) -> d.components), (d) -> d.id )
     
@@ -195,6 +195,7 @@ setBundle = (bs) ->
     bs.select("use[led=log]")
     	.attr("style", (d) ->  if d.errors or d.log then return "visibility:visible;" else return "visibility:hidden;" ).select("title")
     	.text (d) -> d.log
+
 
 #
 # Port concept

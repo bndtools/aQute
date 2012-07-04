@@ -13,6 +13,7 @@ import org.apache.felix.webconsole.*;
 import org.osgi.framework.*;
 import org.osgi.framework.hooks.service.*;
 import org.osgi.framework.hooks.service.ListenerHook.ListenerInfo;
+import org.osgi.framework.wiring.*;
 import org.osgi.service.cm.*;
 import org.osgi.service.log.*;
 
@@ -42,20 +43,20 @@ import aQute.lib.json.*;
 	"felix.webconsole.label=xray"
 })
 public final class XRayWebPlugin extends AbstractWebConsolePlugin {
-	private static final long			serialVersionUID		= 1L;
-	private static String				PLUGIN_NAME				= "xray";
+	private static final long					serialVersionUID		= 1L;
+	private static String						PLUGIN_NAME				= "xray";
 
-	final static int					TITLE_LENGTH			= 14;
-	final static Pattern				LISTENER_INFO_PATTERN	= Pattern.compile("\\(objectClass=([^)]+)\\)");
-	final static JSONCodec				codec					= new JSONCodec();
+	final static int							TITLE_LENGTH			= 14;
+	final static Pattern						LISTENER_INFO_PATTERN	= Pattern.compile("\\(objectClass=([^)]+)\\)");
+	final static JSONCodec						codec					= new JSONCodec();
 
-	private BundleContext				context;
-	private LogReaderService			logReader;
-	private LogService					log;
-	private MultiMap<String,Bundle>		listeners				= new MultiMap<String,Bundle>();
-	private ServiceRegistration			lhook;
-	private volatile ScrService			scr;
-	private volatile ConfigurationAdmin	cfg;
+	private BundleContext						context;
+	private LogReaderService					logReader;
+	private LogService							log;
+	private MultiMap<String,Bundle>				listeners				= new MultiMap<String,Bundle>();
+	private ServiceRegistration<ListenerHook>	lhook;
+	private volatile ScrService					scr;
+	private volatile ConfigurationAdmin			cfg;
 
 	/*
 	 * Called at startup
@@ -69,15 +70,15 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 		 * Register a ListenerHook to find out about any services that are
 		 * searched for.
 		 */
-		lhook = context.registerService(ListenerHook.class.getName(), new ListenerHook() {
+		lhook = context.registerService(ListenerHook.class, new ListenerHook() {
 
-			public synchronized void added(Collection listeners) {
+			public synchronized void added(Collection<ListenerInfo> listeners) {
 				for (Object o : listeners) {
 					addListenerInfo((ListenerInfo) o);
 				}
 			}
 
-			public synchronized void removed(Collection listeners) {
+			public synchronized void removed(Collection<ListenerInfo> listeners) {
 				for (Object o : listeners) {
 					removeListenerInfo((ListenerInfo) o);
 				}
@@ -250,7 +251,7 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 			}
 		}
 
-		for (ServiceReference reference : context.getServiceReferences(null, null)) {
+		for (ServiceReference< ? > reference : context.getServiceReferences((String) null, null)) {
 
 			for (String name : (String[]) reference.getProperty("objectClass")) {
 				ServiceDef service = services.get(name);
@@ -488,6 +489,11 @@ public final class XRayWebPlugin extends AbstractWebConsolePlugin {
 		if (logReader != null)
 			doLog(bundle, bd);
 
+		BundleRevisions revisions = bundle.adapt(BundleRevisions.class);
+		if (revisions != null) {
+			List<BundleRevision> list = revisions.getRevisions();
+			bd.revisions = list.size();
+		}
 		return bd;
 	}
 

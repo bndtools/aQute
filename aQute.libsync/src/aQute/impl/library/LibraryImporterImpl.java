@@ -11,6 +11,7 @@ import aQute.lib.data.*;
 import aQute.lib.io.*;
 import aQute.libg.cryptography.*;
 import aQute.libg.reporter.Messages.ERROR;
+import aQute.libg.reporter.Messages.WARNING;
 import aQute.libg.reporter.*;
 import aQute.service.library.*;
 import aQute.service.library.Library.Importer;
@@ -39,7 +40,11 @@ public class LibraryImporterImpl extends ReporterAdapter implements Library.Impo
 
 		ERROR Revision_OlderVersion_AsAlreadyImportedFrom_(String bsn, String version, URL url);
 
-		void AlreadyImported_(URI url);
+		WARNING AlreadyImported_(URI url);
+
+		ERROR RequiredField_IsNull(String name);
+
+		ERROR InvalidField_Value_(String name, Object field);
 
 	}
 
@@ -122,6 +127,7 @@ public class LibraryImporterImpl extends ReporterAdapter implements Library.Impo
 	}
 
 	public File getFile() throws Exception {
+
 		return parent.fileCache.get(url.toString(), url);
 	}
 
@@ -132,11 +138,22 @@ public class LibraryImporterImpl extends ReporterAdapter implements Library.Impo
 	 */
 	private void verify(Revision rev) {
 		check(rev.bsn, "bsn", aQute.lib.osgi.Verifier.SYMBOLICNAME);
-		// check(rev.version, "version", aQute.lib.osgi.Verifier.VERSION);
+		if (rev.version == null) {
+			messages.RequiredField_IsNull("version");
+			return;
+		}
+		check(rev.version.base, "version.base", aQute.lib.osgi.Verifier.VERSION);
 	}
 
-	private void check(String field, String name, Pattern symbolicname) {
+	private void check(Object field, String name, Pattern pattern) {
+		if (field == null) {
+			messages.RequiredField_IsNull(name);
 
+		}
+		if (pattern.matcher(name.toString()).matches())
+			return;
+
+		messages.InvalidField_Value_(name, field);
 	}
 
 	@Override

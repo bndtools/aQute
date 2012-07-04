@@ -1,6 +1,7 @@
 package aQute.impl.cafs;
 
 import java.io.*;
+import java.util.concurrent.*;
 import java.util.zip.*;
 
 import aQute.bnd.annotation.component.*;
@@ -94,5 +95,11 @@ public class CAFSImpl implements CAFS {
 
 	public void clearForTest() throws Exception {
 		cafs.all().remove();
+	}
+
+	@Override
+	public boolean store(byte[] sha, Callable<InputStream> in) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

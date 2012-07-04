@@ -61,7 +61,7 @@ public class GithubWorker implements Worker<Data.ImportData> {
 								.message("From github repo " + work.posthook.repository.name);
 						Revision revision = imp.fetch();
 						if (revision != null) {
-							format.format("%40s %15s %2s %4d %s\n", revision.bsn, revision.version,
+							format.format("%40s %15s %2s %4d %s\n", revision.bsn, revision.version.base,
 									revision.master ? 'M' : 'S', imp.getErrors().size(), revision.summary);
 						} else {
 							format.format("%40s %15s %2s %4d %s\n", "?", "?", "?", imp.getErrors().size(),

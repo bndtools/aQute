@@ -1,6 +1,7 @@
 package aQute.impl.filecache.simple;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -16,6 +17,15 @@ import aQute.service.filecache.*;
 @Component(designate = SimpleFileCacheImpl.Config.class, configurationPolicy = ConfigurationPolicy.require)
 public class SimpleFileCacheImpl implements FileCache {
 	static Converter	converter	= new Converter();
+
+	static public class Entry {
+		public String	name;
+		public long		access;
+		public File		file;
+		public long		expires;
+	}
+
+	Map<String,Entry>	entries	= new HashMap<String,SimpleFileCacheImpl.Entry>();
 
 	interface Config {
 		String cacheDir();
@@ -223,5 +233,17 @@ public class SimpleFileCacheImpl implements FileCache {
 	@Reference()
 	void setExecutor(Executor executor) {
 		this.executor = executor;
+	}
+
+	// TODO needs to check the url for diff, use etag or timeout
+	@Override
+	public File get(String name, final URI url) throws Exception {
+		return get(name, new Callable<InputStream>() {
+
+			@Override
+			public InputStream call() throws Exception {
+				return url.toURL().openStream();
+			}
+		});
 	}
 }

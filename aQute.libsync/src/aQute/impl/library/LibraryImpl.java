@@ -1,5 +1,6 @@
 package aQute.impl.library;
 
+import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -7,7 +8,6 @@ import org.osgi.service.log.*;
 
 import aQute.bnd.annotation.component.*;
 import aQute.lib.converter.*;
-import aQute.libg.version.*;
 import aQute.service.filecache.*;
 import aQute.service.library.*;
 import aQute.service.store.*;
@@ -35,16 +35,6 @@ public class LibraryImpl implements Library {
 	}
 
 	static public class ProgramImpl extends Program {
-
-		public RevisionRef getRevision(String version) {
-			Version v = new Version(version).getWithoutQualifier();
-			for (RevisionRef ref : revisions) {
-				Version vv = new Version(ref.version).getWithoutQualifier();
-				if (vv.equals(v))
-					return ref;
-			}
-			return null;
-		}
 
 		public boolean upsert(RevisionRef ref) {
 			boolean upsert = revisions.remove(ref);
@@ -90,8 +80,22 @@ public class LibraryImpl implements Library {
 	}
 
 	String filename(Revision rev) {
-		Version v = new Version(rev.version);
-		return rev.bsn + "/" + v.getWithoutQualifier() + "/" + rev.bsn + "-" + v.getWithoutQualifier() + ".jar";
+		return rev.bsn + "/" + rev.version.base + "/" + rev.bsn + "-" + rev.version.base + ".jar";
+	}
+
+	void unsetMetadataProviders(MetadataProvider mdp) {
+		mdps.remove(mdp);
+	}
+
+	@Override
+	public Revision getRevision(String bsn, String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Importer importer(URI url) throws Exception {
+		return new LibraryImporterImpl(this, url);
 	}
 
 	@Reference
@@ -110,18 +114,8 @@ public class LibraryImpl implements Library {
 		mdps.add(mdp);
 	}
 
-	void unsetMetadataProviders(MetadataProvider mdp) {
-		mdps.remove(mdp);
-	}
-
-	@Override
-	public Revision getRevision(String bsn, String version) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Importer importer(String url) throws Exception {
-		return new LibraryImporterImpl(this, url);
+	@Reference
+	void setFileCache(FileCache cache) {
+		this.fileCache = cache;
 	}
 }

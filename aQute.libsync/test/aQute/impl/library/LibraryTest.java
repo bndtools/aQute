@@ -50,28 +50,30 @@ public class LibraryTest extends TestCase {
 	public void testSimple() throws Exception {
 		assertNotNull(lib);
 		final File v270 = IO.getFile(base, "test/repo/aQute.libg-2.7.0.jar");
-		Revision r270 = lib.importer(v270.toURI().toString()).fetch();
+		Revision r270 = lib.importer(v270.toURI()).fetch();
 
-		assertNotNull("Should have created a revision", r270);
+		assertNotNull("Should have created a revision 270", r270);
 		assertEquals(r270.bsn, "aQute.libg");
-		assertEquals(r270.version, "2.7.0");
+		assertEquals(r270.version.base, "2.7.0");
 
 		final File v271 = IO.getFile(base, "test/repo/aQute.libg-2.7.1.jar");
 
-		Revision r271 = lib.importer(v271.toURI().toString()).fetch();
-		assertNotNull(r271);
+		Revision r271 = lib.importer(v271.toURI()).fetch();
+		assertNotNull("Should have created a revision 271", r271);
+		assertEquals(r271.bsn, "aQute.libg");
+		assertEquals(r271.version.base, "2.7.1");
 
 		Program program = lib.getProgram("aQute.libg");
 		assertNotNull(program);
 		assertEquals(2, program.revisions.size());
-		RevisionRef x270 = program.revisions.get(0);
-		RevisionRef x271 = program.revisions.get(1);
+		RevisionRef x270 = program.revisions.get(1);
+		RevisionRef x271 = program.revisions.get(0);
 
 		assertNotNull(x270);
 		assertEquals("aQute.libg", x270.bsn);
-		assertEquals("2.7.0", x270.version);
+		assertEquals("2.7.0", x270.version.base);
 		assertNotNull(x271);
 		assertEquals("aQute.libg", x271.bsn);
-		assertEquals("2.7.1", x271.version);
+		assertEquals("2.7.1", x271.version.base);
 	}
 }

@@ -12,11 +12,11 @@ import aQute.lib.osgi.*;
 import aQute.lib.osgi.Descriptors.PackageRef;
 import aQute.libg.header.*;
 import aQute.libg.reporter.*;
-import aQute.libg.version.*;
 import aQute.service.library.*;
 import aQute.service.library.Library.PackageDef;
 import aQute.service.library.Library.PackageType;
 import aQute.service.library.Library.Revision;
+import aQute.service.library.Library.Version;
 import aQute.service.osgimetadata.*;
 
 public class OSGiMetadataParser extends ReporterAdapter {
@@ -116,11 +116,8 @@ public class OSGiMetadataParser extends ReporterAdapter {
 		Entry<String,Attrs> bundleSymbolicName = domain.getBundleSymbolicName();
 		revision.bsn = bundleSymbolicName.getKey();
 
-		String vrs = domain.getBundleVersion();
-		if (vrs == null || !Verifier.isVersion(vrs))
-			vrs = "0";
+		revision.version = createVersion(domain.getBundleVersion()); // normalize
 
-		revision.version = new Version(vrs).toString(); // normalize
 		revision.description = domain.get(Constants.BUNDLE_DESCRIPTION);
 		revision.vendor = domain.get(Constants.BUNDLE_VENDOR);
 		revision.docUrl = getURI(jar, domain.get(Constants.BUNDLE_DOCURL));
@@ -130,6 +127,22 @@ public class OSGiMetadataParser extends ReporterAdapter {
 		h2d(revision, "licenses", "name", domain.get("Bundle-License"), "Bundle-License");
 		h2d(revision, "developers", "id", domain.get("Bundle-Developer"), "Bundle-Developer");
 		h2d(revision, "contributors", "id", domain.get("Bundle-Contributor"), "Bundle-Contributor");
+	}
+
+	/**
+	 * Normalize a version
+	 * 
+	 * @param vrs
+	 * @return
+	 */
+	private Version createVersion(String vrs) {
+		if (vrs == null)
+			vrs = "0";
+		aQute.libg.version.Version v = aQute.libg.version.Version.parseVersion(vrs);
+		Version result = new Version();
+		result.base = v.getWithoutQualifier().toString();
+		result.qualifier = v.getQualifier();
+		return result;
 	}
 
 	private URI getURI(Jar jar, String string) {

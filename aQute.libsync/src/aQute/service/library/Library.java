@@ -1,5 +1,6 @@
 package aQute.service.library;
 
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -10,12 +11,51 @@ public interface Library {
 		IMPORT, EXPORT, PRIVATE
 	};
 
+	class Version {
+		public String	base;
+		public String	qualifier;
+		public String	classifier;
+		public String	original;
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((base == null) ? 0 : base.hashCode());
+			result = prime * result + ((classifier == null) ? 0 : classifier.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Version other = (Version) obj;
+			if (base == null) {
+				if (other.base != null)
+					return false;
+			} else if (!base.equals(other.base))
+				return false;
+			if (classifier == null) {
+				if (other.classifier != null)
+					return false;
+			} else if (!classifier.equals(other.classifier))
+				return false;
+			return true;
+		}
+	}
+
 	public class Revision {
 		public String				_id;												// Unique
-																						// id
+		public byte[]				previous;											// id
 		public URI					url;
 		public String				bsn;
-		public String				version;
+		public Version				version;
+		public boolean				updated;
 		public String				tag;
 		public boolean				master;
 		public long					insertDate;
@@ -78,6 +118,7 @@ public interface Library {
 	}
 
 	class RevisionRef {
+
 		public RevisionRef() {}
 
 		public RevisionRef(Revision revision) {
@@ -88,16 +129,49 @@ public interface Library {
 			this.version = revision.version;
 			this.summary = revision.summary;
 			this.tag = revision.tag;
+			this.updated = revision.updated;
 		}
 
 		public URI		url;
 		public String	bsn;
-		public String	version;
+		public Version	version;
 		public String	revision;
 		public String	tag;
 		public boolean	master;
 		public String	release;
 		public String	summary;
+		public boolean	updated;
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((bsn == null) ? 0 : bsn.hashCode());
+			result = prime * result + ((version == null) ? 0 : version.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			RevisionRef other = (RevisionRef) obj;
+			if (bsn == null) {
+				if (other.bsn != null)
+					return false;
+			} else if (!bsn.equals(other.bsn))
+				return false;
+			if (version == null) {
+				if (other.version != null)
+					return false;
+			} else if (!version.equals(other.version))
+				return false;
+			return true;
+		}
 	}
 
 	class Program {
@@ -111,6 +185,7 @@ public interface Library {
 		public String				vendor;
 		public String				description;
 		public URI					icon;
+		public String				lastImport;
 		public Map<String,Object>	__extra;
 	}
 
@@ -128,7 +203,11 @@ public interface Library {
 		Importer owner(String email);
 
 		Importer message(String msg);
+
+		File getFile() throws Exception;
+
+		URI getURL();
 	}
 
-	Importer importer(String url) throws Exception;
+	Importer importer(URI url) throws Exception;
 }

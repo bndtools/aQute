@@ -48,7 +48,7 @@ public class GithubWorker implements Worker<Data.ImportData> {
 			public void run() {
 				try {
 					setTrace(true);
-					Set<String> uris = new HashSet<String>();
+					Set<URI> uris = new HashSet<URI>();
 					scan(uris);
 					// delta(uris);
 
@@ -56,7 +56,7 @@ public class GithubWorker implements Worker<Data.ImportData> {
 					Formatter format = new Formatter(sb);
 					format.format("%40s %15s %2s %20s %s\n", "Symbolic Name", "Version", "M", "Qual.", "Summary");
 
-					for (String url : uris) {
+					for (URI url : uris) {
 						Library.Importer imp = library.importer(url).owner(work.posthook.repository.owner.email)
 								.message("From github repo " + work.posthook.repository.name);
 						Revision revision = imp.fetch();
@@ -96,7 +96,7 @@ public class GithubWorker implements Worker<Data.ImportData> {
 
 			}
 
-			void scan(Set<String> uris) throws Exception {
+			void scan(Set<URI> uris) throws Exception {
 				List<Branch> branches = repo.getBranches();
 				for (Branch branch : branches) {
 					Commit commit = repo.getCommit(branch.commit.sha);
@@ -104,12 +104,12 @@ public class GithubWorker implements Worker<Data.ImportData> {
 				}
 			}
 
-			private void scan(Commit commit, Set<String> uris) throws Exception {
+			private void scan(Commit commit, Set<URI> uris) throws Exception {
 				Tree tree = repo.getTree(commit.tree.sha);
 				collect(commit, tree, "", uris);
 			}
 
-			private void collect(Commit commit, Tree tree, String name, Set<String> uris) throws Exception {
+			private void collect(Commit commit, Tree tree, String name, Set<URI> uris) throws Exception {
 				for (final Entry entry : tree.tree) {
 					if (entry.path.endsWith(".jar")) {
 						importEntry(commit, entry, name + "/" + entry.path, uris);
@@ -120,10 +120,10 @@ public class GithubWorker implements Worker<Data.ImportData> {
 				}
 			}
 
-			private void importEntry(final Commit commit, final Entry entry, final String path, Set<String> uris)
+			private void importEntry(final Commit commit, final Entry entry, final String path, Set<URI> uris)
 					throws Exception {
 				URI uri = repo.getURI(commit, path);
-				uris.add(uri.toString());
+				uris.add(uri);
 			}
 
 			// void delta(Set<String> uris) throws Exception {

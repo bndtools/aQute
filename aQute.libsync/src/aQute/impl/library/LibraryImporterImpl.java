@@ -8,10 +8,10 @@ import java.util.regex.*;
 import aQute.impl.library.LibraryImpl.ProgramImpl;
 import aQute.impl.library.LibraryImpl.RevisionImpl;
 import aQute.lib.data.*;
-import aQute.lib.osgi.*;
+import aQute.lib.io.*;
+import aQute.libg.cryptography.*;
 import aQute.libg.reporter.Messages.ERROR;
 import aQute.libg.reporter.*;
-import aQute.libg.version.*;
 import aQute.service.library.*;
 import aQute.service.library.Library.Importer;
 import aQute.service.library.Library.Revision;
@@ -24,7 +24,8 @@ public class LibraryImporterImpl extends ReporterAdapter implements Library.Impo
 	Callable<InputStream>	getter;
 	boolean					existed;
 	String					path;
-	String					url;
+	final URI				url;
+	File					file;
 
 	interface ImporterMessages {
 
@@ -38,83 +39,90 @@ public class LibraryImporterImpl extends ReporterAdapter implements Library.Impo
 
 		ERROR Revision_OlderVersion_AsAlreadyImportedFrom_(String bsn, String version, URL url);
 
+		void AlreadyImported_(URI url);
+
 	}
 
 	final ImporterMessages	messages	= ReporterMessages.base(this, ImporterMessages.class);
 	String					owner;
 	String					message;
 
-	public LibraryImporterImpl(LibraryImpl parent, String url) {
+	public LibraryImporterImpl(LibraryImpl parent, URI url) {
 		this.parent = parent;
 		this.url = url;
 	}
 
 	public Revision fetch() throws Exception {
-		String uniqueId = new URL(url).toExternalForm();
-		RevisionImpl rev = parent.revisions.find("_id=%s", uniqueId).one();
-		if (rev != null && rev.master) {
-			messages.AlreadyImported_(uniqueId);
-			return rev;
+		File file = getFile();
+		String sha = digest(file);
+
+		RevisionImpl revision = parent.revisions.find("_id=%s", sha).one();
+		if (revision != null) {
+			messages.AlreadyImported_(url);
+			return revision;
 		}
 
-		rev = new RevisionImpl();
-		rev.url = new URI(url);
-		rev.owner = owner;
-		rev.message = message;
+		revision = new RevisionImpl();
+		revision._id = sha;
+		revision.url = url;
+		revision.owner = owner;
+		revision.message = message;
 
 		for (MetadataProvider md : parent.mdps) {
-			trace("parsing %s with %s", rev.url, md);
-			Report report = md.parser(rev);
+			trace("parsing %s with %s", revision.url, md);
+			Report report = md.parser(LibraryImporterImpl.this, revision);
 			getInfo(report);
 		}
 
-		verify(rev);
+		verify(revision);
 
-		if (!isOk()) {
+		if (!isOk())
+			return null;
+
+		// TODO classifier
+		RevisionImpl previous = parent.revisions
+				.find("&(bsn=%s)(version.base=%s)", revision.bsn, revision.version.base).one();
+		if (previous != null && previous.master) {
+			messages.Revision__ExistsAsMaster(revision.bsn, revision.version.base);
 			return null;
 		}
 
-		ProgramImpl program = parent.programs.find("_id=%s", rev.bsn).one();
-		if (program != null) {
-			RevisionRef ref = program.getRevision(rev.version);
-			if (ref != null) {
-				if (ref.master) {
-					messages.Revision__ExistsAsMaster(rev.bsn, rev.version);
-					return null;
-				}
-			}
-		}
+		parent.revisions.insert(revision);
 
-		rev._id = uniqueId;
-		parent.revisions.upsert(rev);
-
-		// Create a ref to the revision
-		RevisionRef ref = new RevisionRef(rev);
-		String version = new Version(rev.version).getWithoutQualifier().toString();
+		ProgramImpl program = parent.programs.find("_id=%s", revision.bsn).one();
+		RevisionRef reference = new RevisionRef(revision);
 
 		if (program == null) {
-			// Program does not exist yet
 			program = new ProgramImpl();
-			program._id = rev.bsn;
-			data.assignIfNotSet(rev, program, "docUrl", "vendor", "description", "icon");
-			program.revisions.add(ref);
+			program._id = revision.bsn;
+			data.assignIfNotSet(revision, program, "docUrl", "vendor", "description", "icon");
+			program.revisions.add(reference);
 			parent.programs.insert(program);
 		} else {
+			program.revisions.remove(reference);
+			program.revisions.add(0, reference);
+			program.lastImport = reference.revision;
 
-			data.assignIfNotSet(rev, program, "docUrl", "vendor", "description", "icon");
-			program.revisions.add(ref);
-			int n = parent.programs.optimistic(program)
-					.where("!(&(revisions.master=true)(revisions.version=%s))", version).append("revisions", ref)
+			int n = parent.programs //
+					.find(program) //
+					.set("revisions", program.revisions) //
+					.set("lastImport", program.lastImport) //
 					.update();
-
-			if (n == 0) {
-				messages.Revision__ExistsAsMaster(rev.bsn, rev.version);
-				return null;
-			}
-			program.revisions.add(ref);
-
+			if (n != 1)
+				error("Could not update program %s in database, count was %d", program._id, n);
 		}
-		return rev;
+		return revision;
+	}
+
+	private String digest(File file) throws Exception {
+		Digester<SHA1> digester = SHA1.getDigester();
+		IO.copy(file, digester);
+
+		return digester.digest().asHex();
+	}
+
+	public File getFile() throws Exception {
+		return parent.fileCache.get(url.toString(), url);
 	}
 
 	/**
@@ -123,8 +131,8 @@ public class LibraryImporterImpl extends ReporterAdapter implements Library.Impo
 	 * @param rev
 	 */
 	private void verify(Revision rev) {
-		check(rev.bsn, "bsn", Verifier.SYMBOLICNAME);
-		check(rev.version, "version", Verifier.VERSION);
+		check(rev.bsn, "bsn", aQute.lib.osgi.Verifier.SYMBOLICNAME);
+		// check(rev.version, "version", aQute.lib.osgi.Verifier.VERSION);
 	}
 
 	private void check(String field, String name, Pattern symbolicname) {
@@ -143,4 +151,8 @@ public class LibraryImporterImpl extends ReporterAdapter implements Library.Impo
 		return this;
 	}
 
+	@Override
+	public URI getURL() {
+		return url;
+	}
 }

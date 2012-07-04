@@ -5,5 +5,5 @@ import aQute.service.reporter.*;
 
 public interface MetadataProvider {
 
-	Report parser(Revision partialRevision) throws Exception;
+	Report parser(Library.Importer importer, Revision revision) throws Exception;
 }
